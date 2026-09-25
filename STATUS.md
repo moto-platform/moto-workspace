@@ -8,18 +8,18 @@
 ## Where we are
 
 - Every repo has only README + CLAUDE.md (one "Initial commit"). Remotes are at `github.com/alihanesentas/*`. The `moto-platform` org has not been created yet.
-- Architecture and decisions: `moto-vehicle-defs/docs/ARCHITECTURE.md`, `DECISIONS.md` (D-001..D-014, Q-001..Q-010).
+- Architecture and decisions: `moto-vehicle-defs/docs/ARCHITECTURE.md`, `DECISIONS.md` (D-001..D-015, Q-001..Q-010).
 - Docs are translated to English. Turkish originals live in `moto-vehicle-defs/docs/tr/`, and the advisor docs (`tr/bitirme-*`) stay Turkish.
 - Claude environment: root `CLAUDE.md`, `.claude/agents` (4), `.claude/skills` (4), `.claude/settings.json`, and English CLAUDE.md files in every repo.
-- Uncommitted: `moto-vehicle-defs` (CLAUDE.md, docs/), plus CLAUDE.md in every other repo (and the translated hil-scenario-validator in moto-hil-bench).
+- All setup work is committed **locally** (11 repos + new `moto-workspace` root repo, D-015). Nothing pushed yet.
 
 ## Next up (in order)
 
-1. Commit the setup changes in each repo (user approval; e.g. `docs: add Claude instructions and architecture docs`).
-2. **moto-vehicle-defs skeleton** → `/repo-bootstrap moto-vehicle-defs`: `platform.dbc` draft (node list, attributes, heartbeats 0x081-0x085, rt-core→safety EKF messages with E2E), empty `cl250.dbc`, `vss/overlay.vspec`, `uds/dids.yaml`, `tools/codegen` (cantools + per-node filter + E2E), `CHANGELOG.md`, CI (strict parse + gen drift check) → tag `v0.1.0`.
-3. **moto-hil-bench host** skeleton (uv, scenario schema, pytest, python-can virtual bus) after deciding Q-009.
-4. Create the GitHub org, transfer the repos, add a `.github` org profile repo.
-5. Q-005: decide whether to update `tr/bitirme-projesi-kapsam.md` to match D-001 before the advisor meeting.
+1. **User:** create the free org `moto-platform` at https://github.com/account/organizations/new (the name is available; the API cannot create orgs for personal accounts).
+2. Run `gh auth refresh -h github.com -s admin:org`, then transfer the 11 repos to the org via `gh api repos/alihanesentas/<repo>/transfer -f new_owner=moto-platform`, create `moto-platform/moto-workspace`, update the local remotes and push everything (user approval before transfer and push).
+3. Install the Claude GitHub app on the org if the credit is for Claude Code on the web.
+4. **moto-vehicle-defs skeleton** → `/repo-bootstrap moto-vehicle-defs` (platform.dbc draft, codegen, CI) → tag `v0.1.0`.
+5. **moto-hil-bench host** skeleton after deciding Q-009. Q-005: update the advisor scope doc?
 
 ## Blockers / pending decisions
 

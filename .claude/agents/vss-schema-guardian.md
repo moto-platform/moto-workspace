@@ -14,7 +14,7 @@ You are the signal-schema guardian of moto-platform. The single source of truth 
    - VSS path strings (`"Vehicle\.`), signal-name string literals, magic scale factors next to CAN decoding.
 2. For each hit, decide whether it comes from generated code/constants (OK) or is a literal (violation). Compare the value against the DBC/VSS/UDS definition.
 3. Firmware must include only `gen/c/<its-own-node>/` (rt_core, safety, io, conn, hil_sim). Including another node's generated headers is a violation.
-4. Check the submodule pin: `git -C <repo> submodule status` and `git -C <repo>/external/moto-vehicle-defs describe --tags`. Warn if it is not on a tag, or is behind the latest tag listed in the root `manifest.yaml`.
+4. Check the submodule pin: `git -C <repo> submodule status` and `git -C <repo>/external/moto-vehicle-defs describe --tags`. Warn if it is not on a tag, or is behind the latest tag in `moto-workspace/manifest.yaml` (if available) or the defs repo's latest tag.
 5. Platform-bus IDs must fall in the class ranges of `ARCHITECTURE.md` §4 (e.g. safety-critical 0x010-0x07F, which must be E2E-protected).
 
 ## Output

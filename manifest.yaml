@@ -1,8 +1,7 @@
 # manifest.yaml
 # Lives in the moto-platform workspace root (not a repo itself). Records which
 # version of each repo is known to work together. Update it whenever a new
-# "known good combination" is established. Org: github.com/moto-platform (D-002);
-# until the org transfer, repos are at github.com/alihanesentas (GitHub redirects after transfer).
+# "known good combination" is established. Org: github.com/moto-platform (D-002).
 
 repos:
   - name: moto-vehicle-defs

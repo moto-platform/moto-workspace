@@ -1,0 +1,4 @@
+# The 11 platform repos are independent git repos, cloned by setup.sh
+/moto-*/
+.DS_Store
+.claude/settings.local.json

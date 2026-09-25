@@ -1,0 +1,50 @@
+# manifest.yaml
+# Lives in the moto-platform workspace root (not a repo itself). Records which
+# version of each repo is known to work together. Update it whenever a new
+# "known good combination" is established. Org: github.com/moto-platform (D-002);
+# until the org transfer, repos are at github.com/alihanesentas (GitHub redirects after transfer).
+
+repos:
+  - name: moto-vehicle-defs
+    url: https://github.com/moto-platform/moto-vehicle-defs.git
+    ref: main             # pin to v0.1.0 once tagged (D-013)
+
+  - name: moto-rt-core
+    url: https://github.com/moto-platform/moto-rt-core.git
+    ref: main             # pin to a tag after the first release
+
+  - name: moto-connectivity-node
+    url: https://github.com/moto-platform/moto-connectivity-node.git
+    ref: main
+
+  - name: moto-safety-node
+    url: https://github.com/moto-platform/moto-safety-node.git
+    ref: main
+
+  - name: moto-io-node
+    url: https://github.com/moto-platform/moto-io-node.git
+    ref: main
+
+  - name: moto-linux-node
+    url: https://github.com/moto-platform/moto-linux-node.git
+    ref: main
+
+  - name: moto-hil-bench
+    url: https://github.com/moto-platform/moto-hil-bench.git
+    ref: main
+
+  - name: moto-server
+    url: https://github.com/moto-platform/moto-server.git
+    ref: main
+
+  - name: moto-ml
+    url: https://github.com/moto-platform/moto-ml.git
+    ref: main
+
+  - name: moto-mobile
+    url: https://github.com/moto-platform/moto-mobile.git
+    ref: main
+
+  - name: moto-mcp
+    url: https://github.com/moto-platform/moto-mcp.git
+    ref: main

@@ -1,0 +1,33 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(git status:*)",
+      "Bash(git diff:*)",
+      "Bash(git log:*)",
+      "Bash(git show:*)",
+      "Bash(git branch:*)",
+      "Bash(git describe:*)",
+      "Bash(git submodule status:*)",
+      "Bash(git -C * status:*)",
+      "Bash(git -C * diff:*)",
+      "Bash(git -C * log:*)",
+      "Bash(git -C * describe:*)",
+      "Bash(git -C * submodule status:*)",
+      "Bash(ls:*)",
+      "Bash(wc:*)",
+      "Bash(grep:*)",
+      "Bash(find:*)",
+      "Bash(uv run ruff check:*)",
+      "Bash(uv run pytest:*)",
+      "Bash(ctest:*)",
+      "Bash(cmake --build:*)",
+      "Bash(arm-none-eabi-size:*)",
+      "Bash(make gen:*)",
+      "Bash(make check:*)"
+    ],
+    "deny": [
+      "Bash(git push --force:*)",
+      "Read(**/.DS_Store)"
+    ]
+  }
+}

@@ -6,7 +6,7 @@
 repos:
   - name: moto-vehicle-defs
     url: https://github.com/moto-platform/moto-vehicle-defs.git
-    ref: main             # pin to v0.1.0 once tagged (D-013)
+    ref: v0.1.0           # commit acef075 (D-013)
 
   - name: moto-rt-core
     url: https://github.com/moto-platform/moto-rt-core.git

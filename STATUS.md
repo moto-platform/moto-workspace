@@ -23,8 +23,11 @@
 
 **Goal: data collection system ready (2026-09-27, workshop day).** Today: CAN 10 Hz via BLE v2 → Android recorder (CSV + meta.json per phase0 §3.2) → manual export.
 1. ✅ connectivity-node#1 merged (CI green: native tests + 3 ESP32 builds; BLE 4.2 flag fix; CI submodule pattern D-031).
-2. ✅ moto-mobile#3 merged: session recorder + APK artifact (APK also at ~/Desktop/moto-apk/). Next: flash ESP32 (mock first, then real) and record the first session.
-3. **Cloud: data-pipeline gaps** (ready to start): (a) BLE schema v3 with device timestamp, 100 Hz raw IMU batches, CAN bus-health counters and per-signal age/valid flags (firmware + schema + app decoder + recorder imu.csv); (b) moto-server bootstrap: session-bundle upload API + CLI import, validation report, Parquet conversion, storage layout; (c) app upload to the server.
+2. ✅ moto-mobile#3 merged: session recorder + APK artifact (APK also at ~/Desktop/moto-apk/).
+   **Local next (workshop):** when the ESP32 is on USB, flash the mock env (`pio run -e esp32-s3-devkitc-1-mock -t upload` in moto-connectivity-node; `platformio_local.ini` already exists locally), then verify BLE → app → recording → export end-to-end. Then the real env on the bike.
+   **Hardware:** the user forgot the OBD adapter. The chain is CL250 6-pin DLC → Honda adapter (OBD2 16-pin female) → a robust OBD2 **male** pigtail (or OBD2→DB9 with a screw-lock DB9) → ESP. Pins 6/14/4-5. Verify the adapter mapping with a continuity test. Secure both joints with ties/tape and strain relief. Long term: a direct Honda 6-pin male harness.
+   **Also useful without OBD:** measure mass (with/without rider), front/rear weight split, rear wheel rolling radius, tire pressures (vehicle-work-plan §5) and replace the D-029 provisional values.
+3. **Cloud: data-pipeline gaps** (ready to start; add repo secret `MOTO_DEFS_TOKEN` to moto-server first, D-031): (a) BLE schema v3 with device timestamp, 100 Hz raw IMU batches, CAN bus-health counters and per-signal age/valid flags (firmware + schema + app decoder + recorder imu.csv); (b) moto-server bootstrap: session-bundle upload API + CLI import, validation report, Parquet conversion, storage layout; (c) app upload to the server.
 4. **moto-hil-bench host** skeleton after deciding Q-009.
 
 ## Blockers / pending decisions
@@ -36,8 +39,8 @@
 
 ## Recent sessions
 
+- 2026-09-27 (local): moto-mobile#2/#3 and connectivity-node#1 merged; defs v0.1.0 tagged; ESP32 BLE 4.2 build fix; CI submodule fix + classic PAT (D-031); disk cleanup (+29 GB); APK downloaded. OBD adapter left at home.
 - 2026-09-26 (cloud A, release): D-024..D-027 confirmed, defs v0.1.0 (`acef075`; tag push pending), manifest pinned, defs#1/workspace#1 closed, connectivity-node#1 realigned + safety-reviewed, mobile#2 drift test; D-030 proposed.
 - 2026-09-26 (cloud A, cont.): codegen refactor, defs#2 merged; D-028 Motorcycle VSS extensions, D-029 provisional limits + faster speed polling; found the duplicate defs bootstrap.
 - 2026-09-25 (cloud A): moto-vehicle-defs bootstrap — CL250 YAML, platform.dbc, VSS overlay, codegen + CI, legacy notes; D-024..D-027, Q-014..Q-016.
 - 2026-09-25 (cont.): Legacy HondaCl250_Telemetry analysed, transferred (private, archived, tag legacy-final). Verified CL250 facts D-019; D-020..D-023.
-- 2026-09-25 (cont.): Org created, repos transferred and pushed, back to private, per-repo Claude asset sync added.

@@ -7,7 +7,7 @@
 
 ## Where we are
 
-- 11 repos + `moto-workspace` in `github.com/moto-platform`, private (D-017). Decisions D-001..D-032 (D-030, D-032 = Claude proposals pending confirmation). Open questions Q-001..Q-018.
+- 11 repos + `moto-workspace` in `github.com/moto-platform`, **public** (D-033). Decisions D-001..D-032 (D-030, D-032 = Claude proposals pending confirmation). Open questions Q-001..Q-018.
 - moto-vehicle-defs `v0.1.0` = `acef075` (tag pushed). Consumers pin it. `manifest.yaml` is unchanged until the PRs below merge.
 - **Data pipeline (D-032), 3 PRs open for user review. Merge order: conn → mobile → server:**
   - [connectivity-node#2](https://github.com/moto-platform/moto-connectivity-node/pull/2): BLE telemetry v3 (node clock, ages, CAN health; v2 fallback at low MTU) + 100 Hz IMU blocks (MPU-6050 compatible, GPIO1/2) + read-only CAN health. **CI green**: 52 native tests, schema check, 3 ESP32 builds. safety-reviewer OK (no effect on the poller or TX gate); vss-schema-guardian clean; architecture-guard OK.

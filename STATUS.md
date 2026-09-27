@@ -22,9 +22,9 @@
 ## Next up (in order)
 
 **Goal: data collection system ready (2026-09-27, workshop day).** Today: CAN 10 Hz via BLE v2 → Android recorder (CSV + meta.json per phase0 §3.2) → manual export.
-1. **User:** add repo secret `MOTO_DEFS_TOKEN` to moto-connectivity-node (org secrets don't reach private repos on the Free plan) → rerun CI → merge connectivity-node#1. Its ESP32 build was fixed and verified locally (BLE 4.2 flag, commit 7ddc128).
-2. **moto-mobile PR `feat/session-recorder`** (session recorder + APK artifact in CI), in progress. Merge when green.
-3. **Cloud: data-pipeline gaps** (after 1+2 are merged): (a) BLE schema v3 with device timestamp, 100 Hz raw IMU batches, CAN bus-health counters and per-signal age/valid flags (firmware + schema + app decoder + recorder imu.csv); (b) moto-server bootstrap: session-bundle upload API + CLI import, validation report, Parquet conversion, storage layout; (c) app upload to the server.
+1. ✅ connectivity-node#1 merged (CI green: native tests + 3 ESP32 builds; BLE 4.2 flag fix; CI submodule pattern D-031).
+2. ✅ moto-mobile#3 merged: session recorder + APK artifact (APK also at ~/Desktop/moto-apk/). Next: flash ESP32 (mock first, then real) and record the first session.
+3. **Cloud: data-pipeline gaps** (ready to start): (a) BLE schema v3 with device timestamp, 100 Hz raw IMU batches, CAN bus-health counters and per-signal age/valid flags (firmware + schema + app decoder + recorder imu.csv); (b) moto-server bootstrap: session-bundle upload API + CLI import, validation report, Parquet conversion, storage layout; (c) app upload to the server.
 4. **moto-hil-bench host** skeleton after deciding Q-009.
 
 ## Blockers / pending decisions

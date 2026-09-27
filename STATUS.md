@@ -2,45 +2,42 @@
 
 > Keep it short (≤60 lines). Updated by the `/handoff` skill. "Recent sessions" keeps at most 5 one-line entries; drop the oldest.
 
-**Phase:** 1 — moto-vehicle-defs v0.1.0 released; legacy port realigned (connectivity-node PR open), mobile port merged
-**Last updated:** 2026-09-26
+**Phase:** 1 — data-collection pipeline (BLE v3 + IMU → app → moto-server) in review
+**Last updated:** 2026-09-27
 
 ## Where we are
 
-- All 11 repos + `moto-workspace` in `github.com/moto-platform`, **private** (D-017). Decisions D-001..D-030 (D-024..D-027 user-confirmed; D-030 = Claude proposal), open Q-001..Q-016 (Q-014/Q-015 provisional via D-029).
-- **moto-vehicle-defs `v0.1.0` = commit `acef075`** on `main` (CHANGELOG 0.1.0, `make check`/`make drift` clean, CI green). The annotated tag exists locally but the session's git proxy refused the tag push (HTTP 403) → **user must push/create tag `v0.1.0` on `acef075`**. `manifest.yaml` already pins `ref: v0.1.0`.
-- Closed without merging: moto-vehicle-defs#1 and moto-workspace#1 (superseded by defs#2). Their `claude/eager-edison-asifnn` branches could not be deleted from the session (proxy 403) → **user deletes them**.
-- **moto-connectivity-node [#1](https://github.com/moto-platform/moto-connectivity-node/pull/1)** (open, for user review/merge):
-  - Realigned to defs v0.1.0: submodule relative URL @ `acef075`, only `gen/c/conn/` API (IDs, DIDs, formulas, poll/timeouts, `stale_after_ms`), responses via `vehicle_cl250_parse_response()`.
-  - TX gate: request-ID check + `vehicle_cl250_frame_allowed()`. Poller off: `CONN_VEHICLE_TESTER=0` (no TWAI driver).
-  - Latches off on a foreign tester or repeated bus-off; 0x78 cap. Native tests 35/35.
-  - Reviews: vss-schema-guardian clean, architecture-guard ok, safety-reviewer no blocker (findings applied).
-  - **CI red only because the `MOTO_DEFS_TOKEN` secret is empty in this repo** (org secret not granted / Free plan).
-- **moto-mobile #1 merged** by the user (BLE schema v2). Follow-up [moto-mobile#2](https://github.com/moto-platform/moto-mobile/pull/2) (open): byte-identical schema drift test vs connectivity-node + optional `MOTO_CONN_READ_TOKEN` in CI; `flutter analyze` clean, 15/15 tests.
-- `HondaCl250_Telemetry` untouched (tag `legacy-final`).
+- 11 repos + `moto-workspace` in `github.com/moto-platform`, private (D-017). Decisions D-001..D-032 (D-030, D-032 = Claude proposals pending confirmation). Open questions Q-001..Q-018.
+- moto-vehicle-defs `v0.1.0` = `acef075` (tag pushed). Consumers pin it. `manifest.yaml` is unchanged until the PRs below merge.
+- **Data pipeline (D-032), 3 PRs open for user review. Merge order: conn → mobile → server:**
+  - [connectivity-node#2](https://github.com/moto-platform/moto-connectivity-node/pull/2): BLE telemetry v3 (node clock, ages, CAN health; v2 fallback at low MTU) + 100 Hz IMU blocks (MPU-6050 compatible, GPIO1/2) + read-only CAN health. **CI green**: 52 native tests, schema check, 3 ESP32 builds. safety-reviewer OK (no effect on the poller or TX gate); vss-schema-guardian clean; architecture-guard OK.
+  - [moto-mobile#4](https://github.com/moto-platform/moto-mobile/pull/4): v3/v2 + IMU decoder, `imu.csv`, CAN health/MTU events, firmware-update banner, upload with settings, status and retry. The token is in the keystore. 98 tests. CI builds the `moto-mobile-apk` artifact.
+  - [moto-server#1](https://github.com/moto-platform/moto-server/pull/1): FastAPI `POST/GET /sessions`, report, CLI `import`, schema-driven re-decode, validation report, Parquet + SQLite, MDF4 stub, docker-compose. 46 tests locally. **CI red only because the repo secret `MOTO_DEFS_TOKEN` is missing.**
+  - The session format is `moto-mobile/docs/session-format.md`. The BLE schema single source is `moto-connectivity-node/docs/ble_telemetry_packet_schema.json`; mobile and server keep verbatim copies with drift tests (Q-017).
+- D-032 + Q-017/Q-018 are on moto-vehicle-defs branch `claude/jolly-euler-rdlvqr` (no PR yet); this STATUS is on the workspace branch of the same name.
+- `HondaCl250_Telemetry` untouched.
 
 ## Next up (in order)
 
-**Goal: data collection system ready (2026-09-27, workshop day).** Today: CAN 10 Hz via BLE v2 → Android recorder (CSV + meta.json per phase0 §3.2) → manual export.
-1. ✅ connectivity-node#1 merged (CI green: native tests + 3 ESP32 builds; BLE 4.2 flag fix; CI submodule pattern D-031).
-2. ✅ moto-mobile#3 merged: session recorder + APK artifact (APK also at ~/Desktop/moto-apk/).
-   **Local next (workshop):** when the ESP32 is on USB, flash the mock env (`pio run -e esp32-s3-devkitc-1-mock -t upload` in moto-connectivity-node; `platformio_local.ini` already exists locally), then verify BLE → app → recording → export end-to-end. Then the real env on the bike.
-   **Hardware:** the user forgot the OBD adapter. The chain is CL250 6-pin DLC → Honda adapter (OBD2 16-pin female) → a robust OBD2 **male** pigtail (or OBD2→DB9 with a screw-lock DB9) → ESP. Pins 6/14/4-5. Verify the adapter mapping with a continuity test. Secure both joints with ties/tape and strain relief. Long term: a direct Honda 6-pin male harness.
-   **Also useful without OBD:** measure mass (with/without rider), front/rear weight split, rear wheel rolling radius, tire pressures (vehicle-work-plan §5) and replace the D-029 provisional values.
-3. **Cloud: data-pipeline gaps** (ready to start; add repo secret `MOTO_DEFS_TOKEN` to moto-server first, D-031): (a) BLE schema v3 with device timestamp, 100 Hz raw IMU batches, CAN bus-health counters and per-signal age/valid flags (firmware + schema + app decoder + recorder imu.csv); (b) moto-server bootstrap: session-bundle upload API + CLI import, validation report, Parquet conversion, storage layout; (c) app upload to the server.
-4. **moto-hil-bench host** skeleton after deciding Q-009.
+1. **User:** add the repo secret `MOTO_DEFS_TOKEN` to moto-server (D-031), then re-run its CI. Review and merge conn#2 → mobile#4 → server#1. Confirm or change D-032 and merge the defs/workspace `claude/jolly-euler-rdlvqr` branches.
+2. **Workshop:** flash the mock env, then the real env. With the IMU wired to GPIO1/2 (SDA/SCL, 3V3), check the `[IMU]` boot line and the `[HEAP]` line in the 10 s report. Record a session in the app, upload it to `moto-server serve` on the laptop (http on the LAN; the app warns), and read `moto-server report <id>`.
+3. Bench: loop timing with BLE at MTU 185/50/23 and IMU present/absent/unplugged (safety-reviewer scenarios 5-8).
+4. Q-018 tester hardening in connectivity-node (latch persistence, listen-only start, RX before the timeout check) → safety-reviewer. Needs a user decision (D-030 amendment).
+5. defs: fix generated `vehicle_cl250.decode()` (unpacks 10 of 9 fields; suggested task) → patch release v0.1.1 (the user tags it).
+6. moto-server: MDF4 export (asammdf), a TLS reverse-proxy example for exposed deployments.
+7. **moto-hil-bench host** skeleton after deciding Q-009.
 
 ## Blockers / pending decisions
 
+- D-032 (BLE v3 layout, IMU part/scale, session upload path) and D-030 await user confirmation. Q-017: move the BLE schema into defs codegen? Q-018: tester hardening.
 - Q-009 (HIL realism level) blocks the hil-bench host.
-- Q-014/Q-015: provisional values in D-029; final values from the planned measurement device + server.
-- Q-002 (safety-node on INVALID/lost rt-core data), more important with D-021.
-- Q-016 remainder, Q-001 remainder (passive CL250 broadcast?), Q-003, Q-006. License not decided.
+- Q-014/Q-015: provisional values in D-029; final values from measurements (this pipeline).
+- Q-002, Q-016 remainder, Q-001 remainder, Q-003, Q-006. License not decided.
 
 ## Recent sessions
 
-- 2026-09-27 (local): moto-mobile#2/#3 and connectivity-node#1 merged; defs v0.1.0 tagged; ESP32 BLE 4.2 build fix; CI submodule fix + classic PAT (D-031); disk cleanup (+29 GB); APK downloaded. OBD adapter left at home.
-- 2026-09-26 (cloud A, release): D-024..D-027 confirmed, defs v0.1.0 (`acef075`; tag push pending), manifest pinned, defs#1/workspace#1 closed, connectivity-node#1 realigned + safety-reviewed, mobile#2 drift test; D-030 proposed.
-- 2026-09-26 (cloud A, cont.): codegen refactor, defs#2 merged; D-028 Motorcycle VSS extensions, D-029 provisional limits + faster speed polling; found the duplicate defs bootstrap.
+- 2026-09-27 (cloud, data pipeline): BLE schema v3 + IMU blocks (conn#2, CI green), mobile v3/imu.csv/upload (mobile#4), moto-server bootstrap (server#1); D-032 proposed, Q-017/Q-018; guardians + safety review done.
+- 2026-09-27 (local): moto-mobile#2/#3 and connectivity-node#1 merged; defs v0.1.0 tagged; ESP32 BLE 4.2 build fix; CI submodule fix + classic PAT (D-031); disk cleanup; APK downloaded. OBD adapter left at home.
+- 2026-09-26 (cloud A, release): D-024..D-027 confirmed, defs v0.1.0, manifest pinned, defs#1/workspace#1 closed, connectivity-node#1 realigned + safety-reviewed, mobile#2 drift test; D-030 proposed.
+- 2026-09-26 (cloud A, cont.): codegen refactor, defs#2 merged; D-028 Motorcycle VSS extensions, D-029 provisional limits + faster speed polling.
 - 2026-09-25 (cloud A): moto-vehicle-defs bootstrap — CL250 YAML, platform.dbc, VSS overlay, codegen + CI, legacy notes; D-024..D-027, Q-014..Q-016.
-- 2026-09-25 (cont.): Legacy HondaCl250_Telemetry analysed, transferred (private, archived, tag legacy-final). Verified CL250 facts D-019; D-020..D-023.

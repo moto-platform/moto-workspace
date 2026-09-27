@@ -21,19 +21,11 @@
 
 ## Next up (in order)
 
-1. **User:**
-   - Push tag `v0.1.0` (defs, `acef075`).
-   - Give `MOTO_DEFS_TOKEN` to moto-connectivity-node (or add a repo secret), re-run CI, then review/merge connectivity-node#1 and mobile#2.
-   - Optionally add `MOTO_CONN_READ_TOKEN` to moto-mobile.
-   - Delete the two superseded branches.
-   - Confirm D-030.
-2. **moto-hil-bench host** skeleton (simulated CL250 UDS responder using `gen/python/moto_defs`) — decide **Q-009** first; `/repo-bootstrap moto-hil-bench`.
-3. connectivity-node follow-ups:
-   - Rename the default env to `-vehicle-tester`.
-   - Make the unverified 11-bit fallback opt-in.
-   - Move `kMaxBusOffEvents` to defs (next defs MINOR).
-   - Check GPIO4 recessive on the real board.
-4. Later `/signal-change`: CoG height + cornering-warning output message, Q-016 remainder (heartbeat/VALID VSS paths).
+**Goal: data collection system ready (2026-09-27, workshop day).** Today: CAN 10 Hz via BLE v2 → Android recorder (CSV + meta.json per phase0 §3.2) → manual export.
+1. **User:** add repo secret `MOTO_DEFS_TOKEN` to moto-connectivity-node (org secrets don't reach private repos on the Free plan) → rerun CI → merge connectivity-node#1. Its ESP32 build was fixed and verified locally (BLE 4.2 flag, commit 7ddc128).
+2. **moto-mobile PR `feat/session-recorder`** (session recorder + APK artifact in CI), in progress. Merge when green.
+3. **Cloud: data-pipeline gaps** (after 1+2 are merged): (a) BLE schema v3 with device timestamp, 100 Hz raw IMU batches, CAN bus-health counters and per-signal age/valid flags (firmware + schema + app decoder + recorder imu.csv); (b) moto-server bootstrap: session-bundle upload API + CLI import, validation report, Parquet conversion, storage layout; (c) app upload to the server.
+4. **moto-hil-bench host** skeleton after deciding Q-009.
 
 ## Blockers / pending decisions
 

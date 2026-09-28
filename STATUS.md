@@ -8,18 +8,9 @@
 ## Where we are
 
 - 11 repos + `moto-workspace`, public (D-033). Decisions D-001..D-034. D-030 and D-034 are Claude proposals waiting for user confirmation; D-032 is confirmed.
-- **Data pipeline merged:** connectivity#2, mobile#4 and server#1 (BLE v3 + 100 Hz IMU → app → `POST /sessions` → re-decode, Parquet, SQLite).
-  - Repo secrets `MOTO_DEFS_TOKEN` / `MOTO_CONN_READ_TOKEN` are set on moto-server and moto-mobile. Org secrets did not reach the repos.
-  - The latest APK is at `~/Desktop/moto-apk/app-release.apk` (main `102d5a1`).
-- **Q-018 done (connectivity#3 merged):**
-  - The latch and the bus-off budget persist across resets (RTC no-init + CRC, fail-safe). Only a power-on clears them.
-  - The node listens ≥2 s listen-only before its first request, and drains RX before any TX or timeout check.
-  - safety-reviewer: all findings fixed.
-- **moto-rt-core#1 open, CI green:**
-  - CMake presets `host-tests` (Unity, ASan/UBSan) and `target-m7-*` (Cortex-M7, no board yet).
-  - defs pinned to `v0.1.0`.
-  - ISO-TP core `features/uds/isotp_core`: 34 tests, 1220 B flash, 0 B RAM.
-  - Recorded as D-034 in defs#5, which is also open.
+- **Data pipeline merged:** connectivity#2, mobile#4 and server#1 (BLE v3 + 100 Hz IMU → app → `POST /sessions` → re-decode, Parquet, SQLite). Repo secrets `MOTO_DEFS_TOKEN` / `MOTO_CONN_READ_TOKEN` are set on server and mobile (org secrets did not reach the repos). APK: `~/Desktop/moto-apk/app-release.apk` (`102d5a1`).
+- **Q-018 done (connectivity#3 merged):** latch + bus-off budget persist across resets (RTC no-init + CRC, fail-safe; only power-on clears them); ≥2 s listen-only before the first request; RX drained before any TX or timeout check. safety-reviewer: all findings fixed.
+- **moto-rt-core#1 open, CI green:** CMake presets `host-tests` (Unity, ASan/UBSan) and `target-m7-*` (Cortex-M7, no board yet), defs `v0.1.0`; ISO-TP core `features/uds/isotp_core` (34 tests, 1220 B flash, 0 B RAM). Recorded as D-034 in defs#5 (open).
 - The H7 board (H743 vs H723) is not chosen, so there is no CubeMX project, startup code or linker script yet.
 - defs `main` is `v0.1.0` + docs commits. No schema changes since the tag. `HondaCl250_Telemetry` untouched.
 

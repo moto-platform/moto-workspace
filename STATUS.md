@@ -21,14 +21,7 @@
 
 ## Next up (in order)
 
-1. **User:** merge the open PRs:
-   - rt-core#1
-   - defs#5 (D-034..D-036, Q-019)
-   - workspace#4
-   - connectivity#4, server#2, mobile#5
-   - the LICENSE PRs #1 in hil-bench, io-node, linux-node, mcp, ml, safety-node
-
-   Then tag `v0.1.0` on connectivity-node, moto-mobile, moto-server and moto-rt-core (after CI is green on `main`), and pin those tags in `manifest.yaml`.
+1. **User:** merge the open PRs: rt-core#1, defs#5 (D-034..D-036, Q-019), workspace#4, connectivity#4, server#2, mobile#5, and the LICENSE PRs #1 in hil-bench, io-node, linux-node, mcp, ml, safety-node. Then tag `v0.1.0` on connectivity-node, moto-mobile, moto-server and moto-rt-core (after CI is green on `main`) and pin those tags in `manifest.yaml`.
 2. **NEXT SESSION, rt-core host platform layer + ISO-TP glue (D-034)** (`/feature-module moto-rt-core uds`):
    - `hal/can_port.h`: a HAL-free CAN port interface (send / receive / state / error counters).
    - `hal/host/`:

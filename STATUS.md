@@ -36,18 +36,9 @@
    - Server IDs and own DIDs first via `/signal-change` (`uds/dids.yaml`, platform.dbc).
    - Then 0x10 / 0x3E / 0x22 / 0x19 / 0x14, NRCs, P2 / P2* / S3.
 5. **rt-core Ç1, CAN error state machine** behind `hal/can_port` (bus-off recovery, error counters), host tests.
-6. **Workshop:** with the ESP32 on USB:
-   - flash the mock env and install the APK
-   - test BLE → recording → upload end-to-end
-   - bench checks from connectivity#3: TX at boot and the mode switch, reset reasons, TXD pull-up, ignition-switched power
-7. **Small follow-ups:**
-   - BLE latch wording in 3 repos
-   - moto-server `session_id` validation and unzip cap
-   - connectivity CI: anonymous defs clone
-   - replace rt-core `app/host/sim_ecu` with the moto-hil-bench live model (D-035) once it exists
-8. **Hardware / measurement:**
-   - OBD chain: 6-pin → Honda adapter → OBD2 pigtail → ESP
-   - mass, weight split, rolling radius and tire pressures → replace the D-029 provisional values
+6. **Workshop (ESP32 on USB):** flash the mock env + install the APK, BLE → recording → upload end-to-end; connectivity#3 bench checks (TX at boot/mode switch, reset reasons, TXD pull-up, ignition power).
+7. **Small follow-ups:** BLE latch wording (3 repos); moto-server `session_id` validation + unzip cap; connectivity CI anonymous defs clone; swap rt-core `app/host/sim_ecu` for the hil-bench live model (D-035) when it exists.
+8. **Hardware / measurement:** OBD chain (6-pin → Honda adapter → OBD2 pigtail → ESP); mass, weight split, rolling radius, tire pressures → replace the D-029 provisional values.
 9. **Skeleton repos:** tag `v0.1.0` when they get code:
    `for r in moto-safety-node moto-io-node moto-linux-node moto-hil-bench moto-ml moto-mcp; do gh release create v0.1.0 -R moto-platform/$r --target main --title v0.1.0 --generate-notes; done`
 

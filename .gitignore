@@ -2,3 +2,5 @@
 /moto-*/
 .DS_Store
 .claude/settings.local.json
+.claude/worktrees/
+WORKTREES.md

@@ -24,3 +24,9 @@ This folder is the `moto-workspace` repo (manifest, setup, shared `.claude/`). I
 | `architecture-guard` | sonnet | Checks repo scope, layering, dependency direction, bus rules and decisions |
 | `safety-reviewer` | opus | ISO 26262/MISRA-aware review of safety-critical changes |
 | `hil-scenario-validator` | — | Repo-owned by moto-hil-bench (not synced) |
+
+## Worktrees
+
+- Code changes happen in `<repo>/.claude/worktrees/<topic>` on branch `claude/<topic>` (one worktree per PR). `.claude/worktrees/` is ignored (workspace `.gitignore`; each repo's `.git/info/exclude`, added by the script below).
+- `python3 scripts/worktrees.py` writes `WORKTREES.md` (generated, gitignored): every worktree of the workspace and the 11 repos with its PR state and a verdict. **remove** = merged, clean (submodules included) and nothing unpushed.
+- After a PR is merged: `python3 scripts/worktrees.py --prune` removes the **remove** rows and their local branches. `/handoff` runs the report and asks before pruning.

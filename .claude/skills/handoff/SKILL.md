@@ -22,7 +22,8 @@ Goal: the next session should resume by reading only `STATUS.md` (≤60 lines), 
    - `Blockers / pending decisions` — reference Q-IDs,
    - `Recent sessions` — prepend one line for this session; keep at most 5 lines, drop the oldest.
    Stay under 60 lines. Remove anything stale.
-4. If a repo's `CLAUDE.md` became inaccurate (new module, changed build command), fix that line too.
-5. Reply to the user with a 3-5 line summary, list the uncommitted repos, and suggest `/clear` (or a fresh chat) to continue with a clean context.
+4. **Worktrees:** run `python3 scripts/worktrees.py --check` from the workspace root. List the rows marked **remove** in the reply and ask the user before running `python3 scripts/worktrees.py --prune`. Never delete a worktree marked keep/review.
+5. If a repo's `CLAUDE.md` became inaccurate (new module, changed build command), fix that line too.
+6. Reply to the user with a 3-5 line summary, list the uncommitted repos, and suggest `/clear` (or a fresh chat) to continue with a clean context.
 
 Do not commit unless the user asks.

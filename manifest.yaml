@@ -10,11 +10,11 @@ repos:
 
   - name: moto-rt-core
     url: https://github.com/moto-platform/moto-rt-core.git
-    ref: main             # pin to a tag after the first release
+    ref: v0.1.0           # commit 9ea9ab9 (D-036)
 
   - name: moto-connectivity-node
     url: https://github.com/moto-platform/moto-connectivity-node.git
-    ref: main
+    ref: v0.1.0           # commit 8be145a (D-036)
 
   - name: moto-safety-node
     url: https://github.com/moto-platform/moto-safety-node.git
@@ -34,7 +34,7 @@ repos:
 
   - name: moto-server
     url: https://github.com/moto-platform/moto-server.git
-    ref: main
+    ref: v0.1.0           # commit 93e9edb (D-036)
 
   - name: moto-ml
     url: https://github.com/moto-platform/moto-ml.git
@@ -42,7 +42,7 @@ repos:
 
   - name: moto-mobile
     url: https://github.com/moto-platform/moto-mobile.git
-    ref: main
+    ref: v0.1.0           # commit 17d7d3b (D-036)
 
   - name: moto-mcp
     url: https://github.com/moto-platform/moto-mcp.git

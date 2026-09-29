@@ -27,7 +27,8 @@
     ],
     "deny": [
       "Bash(git push --force:*)",
-      "Read(**/.DS_Store)"
+      "Read(**/.DS_Store)",
+      "Read(**/docs/archive/**)"
     ]
   }
 }

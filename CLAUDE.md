@@ -23,7 +23,7 @@ This folder is the `moto-workspace` repo (manifest, setup, shared `.claude/`). I
 | `vss-schema-guardian` | haiku | Detects hardcoded CAN IDs/signals/VSS paths, checks the defs submodule pin |
 | `architecture-guard` | sonnet | Checks repo scope, layering, dependency direction, bus rules and decisions |
 | `safety-reviewer` | opus | ISO 26262/MISRA-aware review of safety-critical changes |
-| `hil-scenario-validator` | — | Repo-owned by moto-hil-bench (not synced) |
+| `hil-scenario-validator` | haiku | Repo-owned by moto-hil-bench (not synced): checks HIL scenario YAML against the schema and vehicle independence |
 
 ## Worktrees
 

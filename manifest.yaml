@@ -10,7 +10,7 @@ repos:
 
   - name: moto-rt-core
     url: https://github.com/moto-platform/moto-rt-core.git
-    ref: v0.1.0           # commit 9ea9ab9 (D-036)
+    ref: v0.2.0           # commit c39407f (D-036)
 
   - name: moto-connectivity-node
     url: https://github.com/moto-platform/moto-connectivity-node.git

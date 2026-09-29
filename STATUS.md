@@ -3,27 +3,27 @@
 > Keep it short (≤60 lines). Updated by the `/handoff` skill. "Recent sessions" keeps at most 5 one-line entries; drop the oldest.
 
 **Phase:** 1 data pipeline done in code (bench test pending) · 2 rt-core without hardware: ISO-TP core + host platform layer/glue (Ç2)
-**Last updated:** 2026-09-28
+**Last updated:** 2026-09-29
 
 ## Where we are
 
 - 11 repos + `moto-workspace`, public (D-033), MIT (D-036). Decisions D-001..D-036. D-030 is still a Claude proposal awaiting confirmation.
 - **Releases v0.1.0:** defs (`acef075`), rt-core (`9ea9ab9`), connectivity-node, mobile and server. `manifest.yaml` pins these five tags. The other six repos are skeletons with no tag and stay on `main`.
-- **rt-core#2 open, CI green** (D-034 host layer + ISO-TP glue):
+- **rt-core#2 merged** (`05b5efe`, D-034 host layer + ISO-TP glue; not tagged yet):
   - `hal/can_types.h`, `can_port.h`, `hal_time.h`
   - `hal/host`: in-process vbus, SocketCAN, and a monotonic or manual ms clock
   - `services/timebase` and `services/can_if` (RX routing + a **fixed, fail-closed D-020 vehicle-bus guard**)
   - `features/uds/isotp_link`: `isotp_link_open_vehicle_cl250()` is the only vehicle link and takes its IDs and padding from gen/
   - the `moto_rtcore_host` SIL program with a simulated CL250 ECU (or `--vcan`)
-  - 63 Unity tests + a SIL smoke run; CI layering checks
+  - 63 Unity tests + SocketCAN test (runs in CI on `vcan0`) + SIL smoke run; CI layering checks
   - The new firmware code is ~1.2 kB flash, 176 B RAM.
   - safety-reviewer: the blocker (opt-in gates) is fixed and the re-review is clean. vss-schema-guardian: clean.
-- **defs#6 open:** Q-020 (vehicle-bus Flow Control), docs only.
+- **defs#6 merged:** Q-020 (vehicle-bus Flow Control) is recorded as an open question, docs only (no tag). Workspace#5 merged (manifest pins + this STATUS).
 - The H7 board (Q-019) is still open, so there is no CubeMX project, startup code or linker script. `HondaCl250_Telemetry` untouched.
 
 ## Next up (in order)
 
-1. **User:** merge rt-core#2, defs#6 and this workspace PR (manifest pin + STATUS). After rt-core#2: tag rt-core `v0.2.0` (bump `project(VERSION)` first, D-036) and move the manifest pin.
+1. **rt-core v0.2.0:** bump `project(VERSION 0.2.0)` in rt-core (PR, CI green), then `gh release create v0.2.0 -R moto-platform/moto-rt-core --target main --generate-notes`, then pin `manifest.yaml` to `v0.2.0` (D-036).
 2. **User decision Q-020:** allow a byte-exact FC.CTS on the vehicle bus?
    - Without it, 0x19 (several DTCs) and 0x09 (VIN) cannot work.
    - If yes: `/signal-change` in defs (gate + tests, tag), then the rt-core link-state check, then the safety-reviewer.

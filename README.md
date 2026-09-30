@@ -6,7 +6,7 @@ It holds the cross-repo tooling. The 11 platform repos are independent and are c
 | Path | Purpose |
 |---|---|
 | `manifest.yaml` | Known-good version combination of all repos |
-| `setup.sh` | Clone/update every repo at its manifest ref (`brew install yq` first) |
+| `setup.sh` | Clone/update every repo and its submodules at its manifest ref; stops on any git error (`brew install yq` first) |
 | `CLAUDE.md` | Platform-wide instructions for Claude Code |
 | `STATUS.md` | Session handoff: where we are, what's next |
 | `.claude/agents/`, `.claude/skills/` | Shared Claude Code agents and skills |

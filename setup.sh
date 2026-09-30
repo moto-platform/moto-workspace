@@ -4,10 +4,15 @@
 #   ./setup.sh                    → clone/update all
 #   ./setup.sh moto-vehicle-defs  → apply only that repo's ref
 #
+# Every repo ends on its manifest ref with its submodules (external/moto-vehicle-defs)
+# at the commits that ref pins. Any git error stops the script.
+#
 # Requires: yq (YAML reader) — install: brew install yq  (or pip install yq)
 
 set -euo pipefail
 MANIFEST="manifest.yaml"
+NAME=""
+trap 'echo "✗ setup.sh stopped${NAME:+ at $NAME}: see the error above" >&2' ERR
 
 if ! command -v yq &> /dev/null; then
   echo "yq not found. Install: brew install yq  (or pip install yq)"
@@ -28,12 +33,17 @@ for i in $(seq 0 $((REPO_COUNT - 1))); do
 
   if [ -d "$NAME" ]; then
     echo "→ $NAME exists, updating to $REF..."
-    (cd "$NAME" && git fetch --all --tags && git checkout "$REF" && git pull --ff-only origin "$REF" 2>/dev/null || true)
+    git -C "$NAME" fetch --all --tags
   else
     echo "→ cloning $NAME ($REF)..."
     git clone "$URL" "$NAME"
-    (cd "$NAME" && git checkout "$REF" && git submodule update --init --recursive)
   fi
+  git -C "$NAME" checkout "$REF"
+  # A branch ref fast-forwards to its remote; a tag checks out as a detached HEAD, already exact.
+  if git -C "$NAME" symbolic-ref -q HEAD > /dev/null; then
+    git -C "$NAME" pull --ff-only origin "$REF"
+  fi
+  git -C "$NAME" submodule update --init --recursive
 done
 
 echo ""

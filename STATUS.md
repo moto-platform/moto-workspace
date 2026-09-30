@@ -18,10 +18,12 @@
   - The client watches the functional IDs and reports to diag. The temporary `uds_iso14229.h` is gone.
 - **Checks:** ctest 13/13 incl. SIL `--uds-scenario` (13 steps, P2 2 ms / 50 ms); coverage 97.4 % / 90.7 %; MISRA clean; M7: server 468 B RAM, about 2.7 kB flash.
 - **Reviews:** architecture-guard OK; vss-schema-guardian CLEAN; safety-reviewer ×2 with no blocker, MAJOR-1 fixed. The rest are recorded in the uds README → "Reviews of the UDS server".
+- **Open findings backlog: `ISSUES.md`** (audit 2026-09-30, IDs A/B/C/D, with a fix plan of one group per session). Read only the group you work on.
 - **Vehicle bus unchanged:** one read-only tester (D-037), gates byte-identical, Q-020 deferred. Start sessions from the workspace root.
 
 ## Next up (in order)
 
+0. **`ISSUES.md` group 1: safety architecture decisions** (A-1 Layer 1 decision function and whether speed is needed, A-2 isolation / Q-002, A-3 sensor → node mapping, B-6, B-3). Opus; `docs-researcher`, then `safety-reviewer`. Output: D/Q entries only.
 1. **rt-core v0.4.0 (the Ç3 server):** `project(VERSION 0.4.0)` PR, merge when green, `gh release create v0.4.0 -R moto-platform/moto-rt-core --target main --title v0.4.0 --generate-notes`, then pin the tag in `manifest.yaml`.
 2. **rt-core Ç1, CAN error state machine + H7 HAL requirements** (`/feature-module moto-rt-core can`, then architecture-guard and safety-reviewer):
    - bus-off recovery (`VEHICLE_CL250_BUS_OFF_BACKOFF_*`), error counters, N_As

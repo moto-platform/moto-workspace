@@ -22,7 +22,7 @@
 
 ## Next up (in order)
 
-1. **Merge ws#19 (ISSUES + this STATUS) and ws#20 (manifest pin defs v0.3.0)**, then `python3 scripts/worktrees.py --prune` after asking.
+1. **Merge ws#19 (ISSUES + this STATUS), ws#20 (manifest pin defs v0.3.0) and defs#15 (README/CLAUDE.md, docs only)**, then `python3 scripts/worktrees.py --prune` after asking.
 2. **rt-core v0.4.0 (the Ç3 server):**
    - `project(VERSION 0.4.0)` PR, merge when green
    - `gh release create v0.4.0 -R moto-platform/moto-rt-core --target main --title v0.4.0 --generate-notes`

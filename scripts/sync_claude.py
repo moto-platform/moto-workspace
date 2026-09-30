@@ -22,8 +22,11 @@ IMPORT_LINE = "@.claude/PLATFORM-RULES.md"
 LEDGER = ".claude/.synced"  # list of files this script owns in the repo
 
 COMMON_AGENTS = ["docs-researcher", "vss-schema-guardian", "architecture-guard"]
-FIRMWARE = {"agents": COMMON_AGENTS + ["safety-reviewer"], "skills": ["repo-bootstrap", "feature-module"]}
+SAFETY_AGENTS = COMMON_AGENTS + ["safety-reviewer"]
+FIRMWARE = {"agents": SAFETY_AGENTS, "skills": ["repo-bootstrap", "feature-module"]}
 SOFTWARE = {"agents": COMMON_AGENTS, "skills": ["repo-bootstrap"]}
+# Software repos with invariant-8 code: linux-node's OTA, server's OTA packages (ISSUES C-3)
+SAFETY_SOFTWARE = {"agents": SAFETY_AGENTS, "skills": ["repo-bootstrap"]}
 
 REPO_ASSETS: dict[str, dict[str, list[str]]] = {
     "moto-vehicle-defs": {"agents": COMMON_AGENTS, "skills": ["signal-change", "repo-bootstrap"]},
@@ -31,10 +34,10 @@ REPO_ASSETS: dict[str, dict[str, list[str]]] = {
     "moto-safety-node": FIRMWARE,
     "moto-io-node": FIRMWARE,
     "moto-hil-bench": FIRMWARE,
-    "moto-connectivity-node": {"agents": COMMON_AGENTS, "skills": ["repo-bootstrap", "feature-module"]},
-    "moto-linux-node": SOFTWARE,
+    "moto-connectivity-node": FIRMWARE,  # temporary sole vehicle-bus tester (D-023): tester latch
+    "moto-linux-node": SAFETY_SOFTWARE,
     "moto-mcp": SOFTWARE,
-    "moto-server": SOFTWARE,
+    "moto-server": SAFETY_SOFTWARE,
     "moto-ml": SOFTWARE,
     "moto-mobile": SOFTWARE,
 }

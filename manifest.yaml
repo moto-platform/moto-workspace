@@ -6,11 +6,11 @@
 repos:
   - name: moto-vehicle-defs
     url: https://github.com/moto-platform/moto-vehicle-defs.git
-    ref: v0.3.2           # commit f744511 (D-043, D-050..D-052 codegen checks; RPM 0xF40C 100/300 ms); conn main pins v0.3.0 (conn#8, unreleased); rt-core v0.5.0 pins v0.3.2
+    ref: v0.3.3           # commit 7d121b6 (D-053: client_step_max_ms 10, speed/RPM 110 ms, RPM stale 330); conn main pins v0.3.0 (conn#8, unreleased); rt-core v0.5.1 pins v0.3.3
 
   - name: moto-rt-core
     url: https://github.com/moto-platform/moto-rt-core.git
-    ref: v0.5.0           # commit 5ed2f2d (D-036; DID poller E-4, D-050..D-052; pins defs v0.3.2)
+    ref: v0.5.1           # commit 9af2a5d (D-036; E-10: D-053 step-gap counter and tests at S; pins defs v0.3.3)
 
   - name: moto-connectivity-node
     url: https://github.com/moto-platform/moto-connectivity-node.git

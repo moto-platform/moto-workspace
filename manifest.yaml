@@ -6,7 +6,7 @@
 repos:
   - name: moto-vehicle-defs
     url: https://github.com/moto-platform/moto-vehicle-defs.git
-    ref: v0.3.1           # commit 34664e0 (D-013, D-048; C-2/C-6/C-7, no behaviour change); conn main pins v0.3.0 (conn#8, unreleased); rt-core still pins v0.2.0 (bump to v0.3.1 in E-4)
+    ref: v0.3.1           # commit 34664e0 (D-013, D-048; C-2/C-6/C-7, no behaviour change); conn main pins v0.3.0 (conn#8, unreleased); rt-core main pins v0.3.1 (rt-core#12, unreleased; the v0.4.0 tag below pins v0.2.0)
 
   - name: moto-rt-core
     url: https://github.com/moto-platform/moto-rt-core.git

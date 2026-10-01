@@ -51,11 +51,7 @@
 
 ## Recent sessions
 
-- 2026-10-01 (local, ISSUES group 3):
-  - Merged ws#23, ws#24, conn#6, linux-node#3, server#5, defs#16 and conn#7. rt-core#11 is open (CI green).
-  - vss-schema-guardian CLEAN. safety-reviewer found no blocker; MAJOR-3/4 and MINORs were applied, and MAJOR-1/2 became C-7/C-6.
-  - The first CI run on apt cppcheck 2.13 was caught by the canary.
-  - No new decisions.
+- 2026-10-01 (local, ISSUES group 3): merged ws#23/#24, conn#6/#7, linux-node#3, server#5, defs#16; rt-core#11 open (CI green). vss CLEAN; safety-reviewer no blocker (MAJOR-3/4 + MINORs applied, MAJOR-1/2 → C-7/C-6). The canary caught apt cppcheck 2.13 in CI. No new decisions.
 - 2026-09-30/10-01 (local, rt-core v0.4.0 release): ws#19/#20 + defs#15 merged; rt-core#10 merged after a CI rerun (a 16 min hang in "Install toolchains"); v0.4.0 released and pinned (ws#21).
 - 2026-09-30 (local, E-1 `/signal-change`): D-048; defs#13/#14, defs v0.3.0 released and pinned (ws#19, ws#20); vss CLEAN, safety-reviewer no blocker.
 - 2026-09-30 (local, ISSUES group 2): docs sync; D-046 (MISRA/coverage) + D-047 (voice trigger); defs#12, moto-server#4, ws#17 merged.

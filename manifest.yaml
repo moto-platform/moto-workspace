@@ -6,11 +6,11 @@
 repos:
   - name: moto-vehicle-defs
     url: https://github.com/moto-platform/moto-vehicle-defs.git
-    ref: v0.3.3           # commit 7d121b6 (D-053: client_step_max_ms 10, speed/RPM 110 ms, RPM stale 330); conn main pins v0.3.0 (conn#8, unreleased); rt-core v0.6.0 pins v0.3.3
+    ref: v0.4.0           # commit 866d8be (D-055: RT_CORE DID 0xFD02 RT_CORE_HEALTH, DTC U0001-88 VEHICLE_BUS_OFF_LATCHED, codegen `record` encoding); conn main pins v0.3.0 (conn#8, unreleased); rt-core v0.7.0 pins v0.4.0
 
   - name: moto-rt-core
     url: https://github.com/moto-platform/moto-rt-core.git
-    ref: v0.6.0           # commit e9beb90 (Ç1, D-054: services/can_sm bus-off backoff + D-030 latch, N_As, FDCAN filters, app/comms; pins defs v0.3.3)
+    ref: v0.7.0           # commit 1369d8a (D-055: 0xFD02 health DID provider, U0001-88 monitor, can_sm_state_known(), diag step counters; pins defs v0.4.0)
 
   - name: moto-connectivity-node
     url: https://github.com/moto-platform/moto-connectivity-node.git

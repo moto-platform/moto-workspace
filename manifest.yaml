@@ -6,7 +6,7 @@
 repos:
   - name: moto-vehicle-defs
     url: https://github.com/moto-platform/moto-vehicle-defs.git
-    ref: v0.5.0           # commit db2feec (D-056: generated C encoders round to nearest, saturate at the C type and map NaN to 0; D-056 records the rt-core republisher rules); conn main pins v0.3.0 (conn#8, unreleased); rt-core v0.8.0 pins v0.5.0
+    ref: v0.5.1           # commit f211781 (comment/docs patch: 0x021 VEHICLE_SPEED_AGE comment, no saturation note on STATE *_MAX, D-053/D-054/D-056 wording; ISSUES E-11 (2), E-13 (1), E-14 (1)/(2)); conn main pins v0.5.1 (conn#9, unreleased); rt-core v0.8.0 pins v0.5.0 (gen/ differs in comments only)
 
   - name: moto-rt-core
     url: https://github.com/moto-platform/moto-rt-core.git

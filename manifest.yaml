@@ -6,7 +6,7 @@
 repos:
   - name: moto-vehicle-defs
     url: https://github.com/moto-platform/moto-vehicle-defs.git
-    ref: v0.5.1           # commit f211781 (comment/docs patch: 0x021 VEHICLE_SPEED_AGE comment, no saturation note on STATE *_MAX, D-053/D-054/D-056 wording; ISSUES E-11 (2), E-13 (1), E-14 (1)/(2)); conn main pins v0.5.1 (conn#9, unreleased); rt-core v0.8.0 pins v0.5.0 (gen/ differs in comments only)
+    ref: v0.8.0           # commit 8e2de7e (D-060 GPS BLE block); v0.7.0 = 9ac216a (D-059: one byte-exact FC.CTS in the frame gate, discovery_scan); v0.6.0 = c9d85e1 (D-061 BLE schema in defs, telemetry v4). conn main pins v0.6.0 (unreleased); rt-core v0.8.0 pins v0.5.0 and needs the D-059 link-state check before it takes v0.7.0+
 
   - name: moto-rt-core
     url: https://github.com/moto-platform/moto-rt-core.git

@@ -4,3 +4,7 @@
 .claude/settings.local.json
 .claude/worktrees/
 WORKTREES.md
+# Copyrighted ISO standard PDFs: never commit
+docs-presentation/references/*.pdf
+# Local APK builds (also matched by /moto-*/; listed so it stays ignored if that rule changes)
+/moto-apk/

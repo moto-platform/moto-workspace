@@ -34,7 +34,7 @@ repos:
 
   - name: moto-server
     url: https://github.com/moto-platform/moto-server.git
-    ref: v0.1.0           # commit 93e9edb (D-036)
+    ref: v0.2.0           # commit 5734ec8 (D-036; GPS sessions, pins defs v0.8.0)
 
   - name: moto-ml
     url: https://github.com/moto-platform/moto-ml.git
@@ -42,7 +42,7 @@ repos:
 
   - name: moto-mobile
     url: https://github.com/moto-platform/moto-mobile.git
-    ref: v0.1.0           # commit 17d7d3b (D-036)
+    ref: v0.2.0           # commit e02e978 (D-036; GPS recording + D-063 local-only upload, pins defs v0.8.0)
 
   - name: moto-mcp
     url: https://github.com/moto-platform/moto-mcp.git

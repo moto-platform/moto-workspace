@@ -11,7 +11,7 @@
 - **defs:** v0.8.0 is the latest tag (`manifest.yaml` pins it). `[Unreleased]`: defs#44 `gpsBlock.sequenceRule` wording (PATCH with the next release). defs#45 (D-062 text) merged.
 - **conn:** pins v0.8.0; conn#13 merged (GPS notify in every build, bonded-only CCCD cleared on every connect, `GpsNotifyTracker.h`).
 - **server / mobile:** v0.2.0 released (server 5734ec8, mobile e02e978; both pin defs v0.8.0, main CI green). mobile v0.2.0 carries the D-063 guard (`isLocalServerUrl`, mobile#10). D-063 text merged (defs#46).
-- **Open PR (the user merges):** workspace `claude/pin-server-mobile-0.2.0`: `manifest.yaml` pins server + mobile v0.2.0.
+- **manifest.yaml** pins defs v0.8.0, server v0.2.0, mobile v0.2.0 (workspace#45). No open PRs.
 - **Vehicle bus:** one read-only tester (D-037). `tester_policy` unchanged; D-020 gate passes one byte-exact FC.CTS (D-059; conn has no probe code yet).
 - **Local, uncommitted (left on purpose):** workspace `docs-presentation/` md files (never commit). `ISSUES.md`: unchanged.
 - Local Flutter is 3.44.8 (`~/development/flutter/bin`, not on PATH); CI uses 3.47.5, so never commit a `pubspec.lock` rewritten by a local `pub get`.
@@ -31,7 +31,7 @@
 
 ## Recent sessions
 
-- 2026-10-08 (local, releases + D-063): pruned 2 merged worktrees; user decided **D-063** (mobile blocks GPS-session upload to a non-local server) → mobile#10, defs#46; released moto-server + moto-mobile v0.2.0 (server#8, mobile#9), manifest pin PR open.
+- 2026-10-08 (local, releases + D-063): pruned 2 merged worktrees; user decided **D-063** (mobile blocks GPS-session upload to a non-local server) → mobile#10, defs#46; released moto-server + moto-mobile v0.2.0 (server#8, mobile#9), pinned in manifest (workspace#45).
 - 2026-10-08 (local, GPS sessions): pruned 4 merged worktrees; opened moto-server#7 + moto-mobile#8 (defs v0.8.0, `gps.csv` record/store, bonded subscribe per D-062). CI green, guardians clean. No new decisions.
 - 2026-10-08 (local, GPS on BLE): user decided D-062 (bonded subscribe; seq counts MTU-skipped blocks). defs#44 merged (wording); opened defs#45 (D-062) and conn#13 (GPS notify wiring, `GpsNotifyTracker.h`, 9 new tests).
 - 2026-10-07 (local, Phase 0 PR batch): merged defs#40, workspace#40, defs#42 (D-059), defs#41 (D-060), conn#11 (GPS parser); released defs v0.7.0 + v0.8.0 (defs#43), pinned v0.8.0; later conn#12 (defs v0.8.0 + GPS block packer).

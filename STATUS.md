@@ -2,17 +2,19 @@
 
 > Keep it short (≤60 lines). Updated by the `/handoff` skill. "Recent sessions" keeps at most 5 one-line entries; drop the oldest.
 
-**Phase:** 0 hardware build + measurement tools (D-058..D-062) · 1 data pipeline done in code · 2 rt-core without hardware: republisher, heartbeat, D-059 FC link-state check (rt-core pins defs v0.8.0) · defs v0.8.0
+**Phase:** 0 hardware build + measurement tools (D-058..D-062) · 1 data pipeline done in code · 2 rt-core without hardware: republisher, heartbeat, D-059 FC link-state check (rt-core pins defs v0.8.0); EKF lean designed (D-065), not coded · defs v0.8.0
 **Last updated:** 2026-10-09
 
 ## Where we are
 
-- 11 platform repos + `moto-workspace`, public (D-033), MIT (D-036). Decisions D-001..D-064; **D-057 intentionally unused**. Since 2026-10-09 Claude merges PRs itself, in dependency order, after green CI.
-- **defs:** v0.8.0 is the latest tag (`manifest.yaml` pins it). `[Unreleased]`: defs#44 `gpsBlock.sequenceRule` wording (PATCH with the next release). Merged today: defs#48 (ideas review, open Q-027/Q-028) and defs#49 (**D-064** rt-core heartbeat 0x081 semantics, incl. the 3 s boot window).
+- 11 platform repos + `moto-workspace`, public (D-033), MIT (D-036). Decisions D-001..D-065; **D-057 intentionally unused**. Since 2026-10-09 Claude merges PRs itself, in dependency order, after green CI.
+- **defs:** v0.8.0 is the latest tag (`manifest.yaml` pins it). `[Unreleased]`: defs#44 `gpsBlock.sequenceRule` wording (PATCH with the next release). Merged 2026-10-09: defs#48 (ideas review), defs#49 (**D-064** heartbeat 0x081), defs#50 (D-059 note: rt-core implements the link-state check), defs#51 (**D-065** EKF lean design).
 - **rt-core main** (no release tag since the bootstrap; not in `manifest.yaml`):
   - rt-core#24: `services/com` + `com_core` extracted from the republisher (behaviour-identical), `features/heartbeat` sends 0x081 every 100 ms (E2E, dedicated buffer). NODE_MODE INIT/DEGRADED/NORMAL from the DTC monitors and their unmonitored conditions, ERROR_COUNT = DTC failure onsets (0x14 does not touch it), UPTIME never decreases; NORMAL does not attest the EKF.
   - rt-core#25: defs v0.5.0 → v0.8.0 + the D-059 link-state check. The vehicle link sends the gen/ FC.CTS only when the client armed it for its own session/read request, once, FF_DL ≤ 64, matching response SID; every other FC is withheld (reception cancelled, 2 s hold). `can_if` guard passes the FC byte-exact. A segmented answer to a table read is "unavailable".
   - Both: architecture-guard + safety-reviewer no blocker, findings applied; host 21/21, cppcheck/MISRA clean, M7 builds. Follow-ups in ISSUES **E-16**.
+  - rt-core#26: SIL tests for the 2000 ms cap firing during a reception after the FC (E-16 (3)); test-only.
+- **EKF lean (D-065, user):** 2-state roll EKF [roll, gyro bias] with tan(roll) = v·yaw rate/g; wait-free triple buffers (`services/snapshot`) between the EKF task and comms, comms sends 0x020; `services/alive` → heartbeat `ekf_stalled`; CLAMPED from a new provisional defs limit; four PRs. architecture-guard carry-overs: ISSUES **E-17**.
 - **conn:** pins v0.8.0; GPS notify (conn#13) and the D-059 probe env (conn#14). Until rt-core runs on hardware, conn stays the temporary sole tester (D-023).
 - **server / mobile:** v0.2.0 (pin defs v0.8.0). moto-mobile has no `ios/` project (Android only).
 - **Vehicle bus:** one read-only tester (D-037). `tester_policy` and the golden D-020 copy unchanged.
@@ -23,8 +25,11 @@
 
 1. Hardware with GPS (**user**, hardware-integration.md §7.3): steps 1-4 at the desk, then Claude folds GPS into conn's main tester env (step 5, needs the confirmed pins), then the D-058 step gap on the bike (step 6).
 2. On the bike, flash conn `esp32-s3-devkitc-1-probe`; keep `[SCAN]` output local (D-033); findings → `/signal-change` with `verified: false` (D-059 item 4). Follow-ups ISSUES E-15.
-3. rt-core next feature: EKF lean (0x020). Before 0x020 is registered, the EKF-alive input must join heartbeat DEGRADED (E-16 (1), `/feature-module` + `safety-reviewer`).
-4. Small follow-ups (E-16): defs docs note for D-059 (rt-core implements the check); rt-core host test for the cap firing during a reception; optionally an rt-core release (D-036) and its `manifest.yaml` pin.
+3. EKF lean per D-065, one PR per session, each with `safety-reviewer` + `vss-schema-guardian`, E-17 items applied:
+   (0) defs `/signal-change`: provisional `cornering.lean_angle_clamp_max_deg` (value + rationale asked from the user), MINOR release, manifest pin;
+   (1) rt-core `/feature-module`: `services/snapshot` + `services/alive` + heartbeat `ekf_stalled` input (+ hal atomics, host stress test);
+   (2) pure lean core + tests; (3) `services/imu`, 0x020 glue (defs bump), SIL IMU feed, "never ran → DEGRADED" test.
+4. Optional: an rt-core release (D-036, v0.8.0 → v0.9.0) and its `manifest.yaml` pin. Remaining E-16: (2) H7 FDCAN port (Q-019), NITs, (4) HIL scenarios (Q-009).
 
 ## Blockers / pending decisions
 
@@ -34,8 +39,8 @@
 
 ## Recent sessions
 
+- 2026-10-09 (local, EKF plan): EKF judged too big for one PR, so plan only: docs-researcher + architecture-guard (2 BLOCKERs → E-17); user chose **D-065** (defs#51). Small E-16 items done: defs#50, rt-core#26. All merged by Claude.
 - 2026-10-09 (local, heartbeat + D-059 check): rt-core#24 (com extraction + heartbeat 0x081, D-064), defs#49 (D-064), rt-core#25 (defs v0.8.0 + FC link-state check); safety-reviewer/architecture-guard findings applied; ISSUES E-16. User now lets Claude merge (merge order had slipped: rt-core#24 before defs#49).
 - 2026-10-09 (local, ideas review): conn#14 merged; workspace#47 (STATUS/ISSUES E-15); pruned conn `discovery-probe`. Reviewed `docs/ideas/*` → defs#48; user chose open Q-027/Q-028 (no new D-xxx) and removal of commercial text.
 - 2026-10-09 (local, D-059 probe): worktree isolation blocked git/edits in the conn worktree, so conn was cloned into this session's workspace worktree (ignored `moto-*/`) and pushed from there. Opened conn#14 (probe env); ISSUES E-15 added.
 - 2026-10-08 (local, GPS procedure): opened defs#47 (§7.3 GPS bring-up + step-gap procedure, merged since); found moto-mobile has no iOS project. No new decisions.
-- 2026-10-08 (local, releases + D-063): user decided **D-063** (mobile blocks GPS-session upload to a non-local server) → mobile#10, defs#46; released moto-server + moto-mobile v0.2.0, pinned in manifest (workspace#45).

@@ -2,13 +2,13 @@
 
 > Keep it short (≤60 lines). Updated by the `/handoff` skill. "Recent sessions" keeps at most 5 one-line entries; drop the oldest.
 
-**Phase:** 0 hardware build + measurement tools (D-058..D-062) · 1 data pipeline done in code · 2 rt-core without hardware: republisher, heartbeat, D-059 FC link-state check (rt-core pins defs v0.8.0); EKF lean designed (D-065), not coded · defs v0.8.0
+**Phase:** 0 hardware build + measurement tools (D-058..D-062) · 1 data pipeline done in code · 2 rt-core without hardware: republisher, heartbeat, D-059 FC link-state check (rt-core pins defs v0.8.0); EKF lean designed (D-065), not coded · defs v0.9.0
 **Last updated:** 2026-10-09
 
 ## Where we are
 
-- 11 platform repos + `moto-workspace`, public (D-033), MIT (D-036). Decisions D-001..D-065; **D-057 intentionally unused**. Since 2026-10-09 Claude merges PRs itself, in dependency order, after green CI.
-- **defs:** v0.8.0 is the latest tag (`manifest.yaml` pins it). `[Unreleased]`: defs#44 `gpsBlock.sequenceRule` wording (PATCH with the next release). Merged 2026-10-09: defs#48 (ideas review), defs#49 (**D-064** heartbeat 0x081), defs#50 (D-059 note: rt-core implements the link-state check), defs#51 (**D-065** EKF lean design).
+- 11 platform repos + `moto-workspace`, public (D-033), MIT (D-036). Decisions D-001..D-065 (open Q up to Q-029); **D-057 intentionally unused**. Since 2026-10-09 Claude merges PRs itself, in dependency order, after green CI.
+- **defs:** **v0.9.0** is the latest tag (`manifest.yaml` pins it): defs#52 `lean_angle_clamp_max_deg` = 55 deg (D-065 item 3; codegen: tan(clamp) > k_red·µ_max so CLAMPED reads RED, > atan(µ_max), < 90) + the `gpsBlock.sequenceRule` wording. Merged 2026-10-09: defs#48 (ideas review), defs#49 (**D-064** heartbeat 0x081), defs#50 (D-059 note: rt-core implements the link-state check), defs#51 (**D-065** EKF lean design).
 - **rt-core main** (no release tag since the bootstrap; not in `manifest.yaml`):
   - rt-core#24: `services/com` + `com_core` extracted from the republisher (behaviour-identical), `features/heartbeat` sends 0x081 every 100 ms (E2E, dedicated buffer). NODE_MODE INIT/DEGRADED/NORMAL from the DTC monitors and their unmonitored conditions, ERROR_COUNT = DTC failure onsets (0x14 does not touch it), UPTIME never decreases; NORMAL does not attest the EKF.
   - rt-core#25: defs v0.5.0 → v0.8.0 + the D-059 link-state check. The vehicle link sends the gen/ FC.CTS only when the client armed it for its own session/read request, once, FF_DL ≤ 64, matching response SID; every other FC is withheld (reception cancelled, 2 s hold). `can_if` guard passes the FC byte-exact. A segmented answer to a table read is "unavailable".
@@ -26,7 +26,7 @@
 1. Hardware with GPS (**user**, hardware-integration.md §7.3): steps 1-4 at the desk, then Claude folds GPS into conn's main tester env (step 5, needs the confirmed pins), then the D-058 step gap on the bike (step 6).
 2. On the bike, flash conn `esp32-s3-devkitc-1-probe`; keep `[SCAN]` output local (D-033); findings → `/signal-change` with `verified: false` (D-059 item 4). Follow-ups ISSUES E-15.
 3. EKF lean per D-065, one PR per session, each with `safety-reviewer` + `vss-schema-guardian`, E-17 items applied:
-   (0) defs `/signal-change`: provisional `cornering.lean_angle_clamp_max_deg` (value + rationale asked from the user), MINOR release, manifest pin;
+   (0) ~~defs lean clamp limit + v0.9.0~~ done (defs#52, manifest pin);
    (1) rt-core `/feature-module`: `services/snapshot` + `services/alive` + heartbeat `ekf_stalled` input (+ hal atomics, host stress test);
    (2) pure lean core + tests; (3) `services/imu`, 0x020 glue (defs bump), SIL IMU feed, "never ran → DEGRADED" test.
 4. Optional: an rt-core release (D-036, v0.8.0 → v0.9.0) and its `manifest.yaml` pin. Remaining E-16: (2) H7 FDCAN port (Q-019), NITs, (4) HIL scenarios (Q-009).
@@ -34,13 +34,13 @@
 ## Blockers / pending decisions
 
 - Q-019 (board) blocks CubeMX, Renode, Ç6 and the H7 FDCAN port (E-16 (2)). Q-009 blocks the hil-bench host (E-15/E-16 HIL scenarios). Q-001 waits for the listen-only capture on the bike.
-- Before safety-node Layer 1 code: Q-023 (incl. (4) return hysteresis after DEGRADED), Q-026 (Group 7 hardware); Q-022 after fallback validation (k_red ≤ 0.8).
+- Before safety-node Layer 1 code: Q-029 (plausibility check on the lean clamp), Q-023 (incl. (4) return hysteresis after DEGRADED), Q-026 (Group 7 hardware); Q-022 after fallback validation (k_red ≤ 0.8).
 - **User:** C-4 (turn off the old `can-dbc-conventions` skill on claude.ai). Q-024, Q-025; D-030 awaits confirmation. Q-027/Q-028 wait until moto-mcp / voice work starts. Optional: scrub the pricing text of `docs/ideas/mcp-scenarios.md` §5 from the defs history (public since 2026-10-07).
 
 ## Recent sessions
 
+- 2026-10-09 (local, lean clamp): `/signal-change` D-065 PR (0): user chose 55 deg; safety-reviewer no blocker (Q-029 opened, MAJOR-1 → E-17); defs#52 merged, **v0.9.0** released and pinned.
 - 2026-10-09 (local, EKF plan): EKF judged too big for one PR, so plan only: docs-researcher + architecture-guard (2 BLOCKERs → E-17); user chose **D-065** (defs#51). Small E-16 items done: defs#50, rt-core#26. All merged by Claude.
 - 2026-10-09 (local, heartbeat + D-059 check): rt-core#24 (com extraction + heartbeat 0x081, D-064), defs#49 (D-064), rt-core#25 (defs v0.8.0 + FC link-state check); safety-reviewer/architecture-guard findings applied; ISSUES E-16. User now lets Claude merge (merge order had slipped: rt-core#24 before defs#49).
 - 2026-10-09 (local, ideas review): conn#14 merged; workspace#47 (STATUS/ISSUES E-15); pruned conn `discovery-probe`. Reviewed `docs/ideas/*` → defs#48; user chose open Q-027/Q-028 (no new D-xxx) and removal of commercial text.
 - 2026-10-09 (local, D-059 probe): worktree isolation blocked git/edits in the conn worktree, so conn was cloned into this session's workspace worktree (ignored `moto-*/`) and pushed from there. Opened conn#14 (probe env); ISSUES E-15 added.
-- 2026-10-08 (local, GPS procedure): opened defs#47 (§7.3 GPS bring-up + step-gap procedure, merged since); found moto-mobile has no iOS project. No new decisions.

@@ -6,7 +6,7 @@
 repos:
   - name: moto-vehicle-defs
     url: https://github.com/moto-platform/moto-vehicle-defs.git
-    ref: v0.8.0           # commit 8e2de7e (D-060 GPS BLE block); v0.7.0 = 9ac216a (D-059: one byte-exact FC.CTS in the frame gate, discovery_scan); v0.6.0 = c9d85e1 (D-061 BLE schema in defs, telemetry v4). conn main pins v0.6.0 (unreleased); rt-core v0.8.0 pins v0.5.0 and needs the D-059 link-state check before it takes v0.7.0+
+    ref: v0.9.0           # commit 976d33e (D-065 lean_angle_clamp_max_deg 55 deg); v0.8.0 = 8e2de7e (D-060 GPS BLE block); v0.7.0 = 9ac216a (D-059: one byte-exact FC.CTS in the frame gate, discovery_scan); v0.6.0 = c9d85e1 (D-061 BLE schema in defs, telemetry v4). conn main pins v0.6.0 (unreleased); rt-core v0.8.0 pins v0.5.0; rt-core main pins v0.8.0 (D-059 check done, rt-core#25) and takes v0.9.0 with D-065 PR 3
 
   - name: moto-rt-core
     url: https://github.com/moto-platform/moto-rt-core.git

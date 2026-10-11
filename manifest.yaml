@@ -6,7 +6,7 @@
 repos:
   - name: moto-vehicle-defs
     url: https://github.com/moto-platform/moto-vehicle-defs.git
-    ref: v0.9.0           # commit 976d33e (D-065 lean_angle_clamp_max_deg 55 deg); v0.8.0 = 8e2de7e (D-060 GPS BLE block); v0.7.0 = 9ac216a (D-059: one byte-exact FC.CTS in the frame gate, discovery_scan); v0.6.0 = c9d85e1 (D-061 BLE schema in defs, telemetry v4). conn main pins v0.6.0 (unreleased); rt-core v0.8.0 pins v0.5.0; rt-core main pins v0.8.0 (D-059 check done, rt-core#25) and takes v0.9.0 with D-065 PR 3
+    ref: v0.10.0          # commit 76682f3 (D-066 host-only signal catalog: 35 unpolled J1979 candidates, Python + Dart; gen/c unchanged); v0.9.0 = 976d33e (D-065 lean_angle_clamp_max_deg 55 deg); v0.8.0 = 8e2de7e (D-060 GPS BLE block); v0.7.0 = 9ac216a (D-059: one byte-exact FC.CTS in the frame gate, discovery_scan); v0.6.0 = c9d85e1 (D-061 BLE schema in defs, telemetry v4). conn main pins v0.6.0 (unreleased); rt-core v0.8.0 pins v0.5.0; rt-core main pins v0.8.0 (D-059 check done, rt-core#25) and takes v0.9.0 with D-065 PR 3
 
   - name: moto-rt-core
     url: https://github.com/moto-platform/moto-rt-core.git
@@ -42,7 +42,7 @@ repos:
 
   - name: moto-mobile
     url: https://github.com/moto-platform/moto-mobile.git
-    ref: v0.2.0           # commit e02e978 (D-036; GPS recording + D-063 local-only upload, pins defs v0.8.0)
+    ref: v0.3.0           # commit 3b9e161 (dark redesign, Signals screen from the D-066 catalog; pins defs v0.10.0); v0.2.0 = e02e978 (GPS recording + D-063 local-only upload)
 
   - name: moto-mcp
     url: https://github.com/moto-platform/moto-mcp.git

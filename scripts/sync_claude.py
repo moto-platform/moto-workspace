@@ -12,6 +12,8 @@ PLATFORM-RULES.md, into the workspace root and every repo.
 Usage:
     python3 scripts/sync_claude.py            # write copies
     python3 scripts/sync_claude.py --check    # exit 1 if any copy is missing/stale
+    python3 scripts/sync_claude.py --workspace                 # AGENTS.md/GEMINI.md at the root only
+    python3 scripts/sync_claude.py moto-server --into <worktree>  # one repo, into its worktree
 """
 
 from __future__ import annotations
@@ -124,8 +126,8 @@ def claude_md_with_import(text: str) -> str:
     return lines[0] + "\n" + IMPORT_LINE + "\n" + "".join(lines[1:])
 
 
-def sync_repo(repo: str, check: bool) -> list[str]:
-    repo_dir = ROOT / repo
+def sync_repo(repo: str, check: bool, repo_dir: Path | None = None) -> list[str]:
+    repo_dir = repo_dir or ROOT / repo
     if not repo_dir.is_dir():
         return [f"{repo}: not cloned (run ./setup.sh)"]
     problems: list[str] = []
@@ -180,8 +182,11 @@ def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     parser.add_argument("--check", action="store_true", help="report drift, write nothing")
     parser.add_argument("--workspace", action="store_true", help="only AGENTS.md/GEMINI.md at the workspace root")
+    parser.add_argument("--into", type=Path, help="write the one named repo's copies into this directory (e.g. its worktree)")
     parser.add_argument("repos", nargs="*", help="limit to these repos (default: all)")
     args = parser.parse_args()
+    if args.into and len(args.repos) != 1:
+        parser.error("--into needs exactly one repo")
 
     unknown = set(args.repos) - set(REPO_ASSETS)
     if unknown:
@@ -189,7 +194,7 @@ def main() -> int:
 
     problems: list[str] = [] if args.repos else sync_workspace(args.check)
     for repo in [] if args.workspace else (args.repos or REPO_ASSETS):
-        problems += sync_repo(repo, args.check)
+        problems += sync_repo(repo, args.check, args.into.resolve() if args.into else None)
 
     for p in problems:
         print(("DRIFT " if args.check else "synced ") + p)

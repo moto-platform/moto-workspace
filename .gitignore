@@ -8,3 +8,4 @@ WORKTREES.md
 docs-presentation/references/*.pdf
 # Local APK builds (also matched by /moto-*/; listed so it stays ignored if that rule changes)
 /moto-apk/
+__pycache__/

@@ -10,6 +10,8 @@ It holds the cross-repo tooling. The 11 platform repos are independent and are c
 | `CLAUDE.md` | Platform-wide instructions for Claude Code |
 | `STATUS.md` | Session handoff: where we are, what's next |
 | `.claude/agents/`, `.claude/skills/` | Shared Claude Code agents and skills |
+| `AGENTS.md`, `GEMINI.md` | Rules for AI tools other than Claude Code (generated, D-071) |
+| `external-ai/` | Their edit zones, session logs and how-to (`external-ai/README.md`) |
 
 Architecture and decisions live in [`moto-vehicle-defs/docs`](https://github.com/moto-platform/moto-vehicle-defs/tree/main/docs) (`ARCHITECTURE.md`, `DECISIONS.md`).
 

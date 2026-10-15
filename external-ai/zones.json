@@ -1,0 +1,80 @@
+{
+  "_comment": "Edit zones for non-Claude AI tools (D-071). Rules are checked in order; the first whose repo and glob match a changed path wins. Globs use fnmatch on repo-relative POSIX paths ('*' also matches '/'). red = Claude only: do not edit, log a request instead. yellow = may edit, the PR needs a Claude review before the user merges. green = free; still log it. scripts/check_zones.py reads this file; scripts/sync_claude.py renders it into AGENTS.md.",
+  "zones": {
+    "red": "Claude only. Do not edit. Write the request into your log entry (section 'For Claude') and stop.",
+    "yellow": "Allowed. Open the PR with the 'needs-claude-review' note; Claude runs the listed reviews before the user merges.",
+    "green": "Allowed. Log it; Claude may look at it later."
+  },
+  "rules": [
+    {"repo": "*", "glob": ".claude/*", "zone": "red", "why": "Claude agents, skills and synced rules; edited only in moto-workspace by Claude"},
+    {"repo": "*", "glob": "AGENTS.md", "zone": "red", "why": "generated from moto-workspace by scripts/sync_claude.py"},
+    {"repo": "*", "glob": "GEMINI.md", "zone": "red", "why": "generated from moto-workspace by scripts/sync_claude.py"},
+    {"repo": "*", "glob": "CLAUDE.md", "zone": "red", "why": "Claude Code instructions"},
+    {"repo": "*", "glob": ".github/*", "zone": "red", "why": "CI gates (D-046, D-049) protect every contributor; weakening them hides mistakes"},
+    {"repo": "*", "glob": "external/moto-vehicle-defs", "zone": "red", "why": "defs submodule pin: version bumps follow releases and manifest.yaml (D-036)"},
+    {"repo": "*", "glob": "external/*", "zone": "red", "why": "submodules and vendored code"},
+    {"repo": "*", "glob": "gen/*", "zone": "red", "why": "generated code: change the source in moto-vehicle-defs, never gen/ (invariant 2)"},
+    {"repo": "*", "glob": "*/gen/*", "zone": "red", "why": "generated code: change the source in moto-vehicle-defs, never gen/ (invariant 2)"},
+    {"repo": "*", "glob": "misra/*", "zone": "red", "why": "MISRA deviation register (D-046)"},
+
+    {"repo": "moto-workspace", "glob": "external-ai/log/TEMPLATE.md", "zone": "red", "why": "copy it, do not edit it"},
+    {"repo": "moto-workspace", "glob": "external-ai/log/*", "zone": "green", "why": "your session log"},
+    {"repo": "moto-workspace", "glob": "external-ai/*", "zone": "red", "why": "zones and rules for external tools"},
+    {"repo": "moto-workspace", "glob": "PLATFORM-RULES.md", "zone": "red", "why": "platform invariants"},
+    {"repo": "moto-workspace", "glob": "manifest.yaml", "zone": "red", "why": "known-good version set (D-036)"},
+    {"repo": "moto-workspace", "glob": "scripts/*", "zone": "red", "why": "sync, worktree and zone tooling"},
+    {"repo": "moto-workspace", "glob": "setup.sh", "zone": "red", "why": "clone/update tooling"},
+    {"repo": "moto-workspace", "glob": "STATUS.md", "zone": "yellow", "why": "session handoff; keep its format (<= 60 lines, sections unchanged)"},
+    {"repo": "moto-workspace", "glob": "ISSUES.md", "zone": "yellow", "why": "issue table; add rows, do not close Claude's"},
+    {"repo": "moto-workspace", "glob": "*", "zone": "yellow", "why": "workspace files"},
+
+    {"repo": "moto-vehicle-defs", "glob": "docs/ideas/*", "zone": "green", "why": "idea notes, not decisions"},
+    {"repo": "moto-vehicle-defs", "glob": "docs/DECISIONS.md", "zone": "red", "why": "decision record; new decisions need the user and Claude"},
+    {"repo": "moto-vehicle-defs", "glob": "docs/ARCHITECTURE.md", "zone": "red", "why": "authoritative architecture summary"},
+    {"repo": "moto-vehicle-defs", "glob": "docs/*", "zone": "yellow", "why": "platform docs; facts must match DECISIONS.md"},
+    {"repo": "moto-vehicle-defs", "glob": "*", "zone": "red", "why": "single source of truth for signals, UDS, BLE, limits and codegen (invariant 2, /signal-change)"},
+
+    {"repo": "moto-safety-node", "glob": "*", "zone": "red", "why": "cornering safety decision (invariants 3, 8)"},
+    {"repo": "moto-io-node", "glob": "*", "zone": "red", "why": "immobilizer and blind spot (invariants 3, 6, 8)"},
+
+    {"repo": "moto-rt-core", "glob": "src/features/cornering/*", "zone": "red", "why": "EKF lean and cornering (invariant 8)"},
+    {"repo": "moto-rt-core", "glob": "src/features/uds/*", "zone": "red", "why": "vehicle-bus tester and UDS server (invariant 1)"},
+    {"repo": "moto-rt-core", "glob": "src/features/heartbeat/*", "zone": "red", "why": "heartbeat (invariant 8)"},
+    {"repo": "moto-rt-core", "glob": "src/features/vehicle_republish/*", "zone": "red", "why": "E2E-protected safety frames (invariant 8)"},
+    {"repo": "moto-rt-core", "glob": "src/features/*anomaly*", "zone": "red", "why": "anomaly safety net (invariant 8)"},
+    {"repo": "moto-rt-core", "glob": "src/features/*boot*", "zone": "red", "why": "bootloader (invariant 8)"},
+    {"repo": "moto-rt-core", "glob": "src/services/alive*", "zone": "red", "why": "alive supervision / watchdog (invariant 8)"},
+    {"repo": "moto-rt-core", "glob": "src/services/snapshot*", "zone": "red", "why": "cross-task lean exchange (D-065, D-067)"},
+    {"repo": "moto-rt-core", "glob": "src/services/can_*", "zone": "red", "why": "CAN guard and error state machine (D-039, D-054)"},
+    {"repo": "moto-rt-core", "glob": "*", "zone": "yellow", "why": "MCU firmware: static memory only, MISRA, host tests (invariant 5)"},
+
+    {"repo": "moto-connectivity-node", "glob": "src/HondaCANModule*", "zone": "red", "why": "sole vehicle-bus tester today (invariant 1, D-023, D-068)"},
+    {"repo": "moto-connectivity-node", "glob": "src/DiscoveryScan*", "zone": "red", "why": "vehicle-bus probe (D-059)"},
+    {"repo": "moto-connectivity-node", "glob": "src/IsoTp*", "zone": "red", "why": "vehicle-bus transport (D-059)"},
+    {"repo": "moto-connectivity-node", "glob": "src/TesterLatch*", "zone": "red", "why": "tester fail-closed latch (D-039)"},
+    {"repo": "moto-connectivity-node", "glob": "src/CanCapture*", "zone": "red", "why": "listen-only capture must never transmit (D-058)"},
+    {"repo": "moto-connectivity-node", "glob": "src/hal/Twai*", "zone": "red", "why": "vehicle CAN driver"},
+    {"repo": "moto-connectivity-node", "glob": "src/hal/RtcTesterLatchStore*", "zone": "red", "why": "tester latch persistence (D-039)"},
+    {"repo": "moto-connectivity-node", "glob": "platformio.ini", "zone": "red", "why": "build envs decide whether the tester or the capture is compiled in"},
+    {"repo": "moto-connectivity-node", "glob": "src/Gps*", "zone": "yellow", "why": "position must never leave conn (invariant 7, D-060)"},
+    {"repo": "moto-connectivity-node", "glob": "*", "zone": "yellow", "why": "MCU firmware: no heap after init, loop step bound (D-053)"},
+
+    {"repo": "moto-hil-bench", "glob": "*fault*", "zone": "red", "why": "fault injection (invariant 8)"},
+    {"repo": "moto-hil-bench", "glob": "*", "zone": "yellow", "why": "bench firmware and scenarios"},
+
+    {"repo": "moto-linux-node", "glob": "*ota*", "zone": "red", "why": "OTA (invariant 8, ISSUES C-3)"},
+    {"repo": "moto-linux-node", "glob": "*", "zone": "yellow", "why": "VSS, CV, HMI; no safety decisions on the Raspi (invariant 3)"},
+
+    {"repo": "moto-server", "glob": "*ota*", "zone": "red", "why": "OTA packages (invariant 8)"},
+    {"repo": "moto-server", "glob": "*", "zone": "green", "why": "ingestion, storage, reports; raw position never stored (invariant 7)"},
+
+    {"repo": "moto-mobile", "glob": "lib/services/session_upload*", "zone": "yellow", "why": "local-only upload of GPS sessions (D-063)"},
+    {"repo": "moto-mobile", "glob": "lib/services/upload_client*", "zone": "yellow", "why": "local-only upload of GPS sessions (D-063)"},
+    {"repo": "moto-mobile", "glob": "*", "zone": "green", "why": "companion app UI"},
+
+    {"repo": "moto-mcp", "glob": "*", "zone": "yellow", "why": "read-only tools; the LLM never does its own math (invariant 7)"},
+    {"repo": "moto-ml", "glob": "*", "zone": "green", "why": "offline training; real ride data is never committed (D-033)"},
+
+    {"repo": "*", "glob": "*", "zone": "yellow", "why": "unlisted repo or path"}
+  ]
+}

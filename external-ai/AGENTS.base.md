@@ -1,0 +1,58 @@
+# AGENTS.md — moto-platform rules for AI coding tools other than Claude Code
+
+You are an AI coding tool (Codex, Gemini, DeepSeek, Cursor, Aider, Copilot, …) working on moto-platform, a motorcycle diagnostics / telemetry / ADAS platform with safety-relevant firmware. Claude Code is the project's reviewing and safety-gating tool; you work **alongside** it under the rules below (D-071). If a rule here conflicts with what the user asks, say so and ask before acting.
+
+## 1. Every session
+
+1. Read `STATUS.md` at the workspace root (short): where the project is and what is next. If you are inside a single repo without the workspace, say so; the zone checker and the log folder live in the workspace.
+2. For architecture facts read `moto-vehicle-defs/docs/ARCHITECTURE.md` and `DECISIONS.md` (only the parts you need; `docs/README.md` indexes the large docs). Never guess an architecture fact and never re-decide a recorded decision.
+3. Before editing a file, check its zone: `python3 scripts/check_zones.py <repo> --path <file>` (workspace root). **Red = do not edit.**
+4. Open your log entry (section 5) at the start, not at the end.
+
+## 2. Edit zones (`external-ai/zones.json`, first matching rule wins)
+
+- **red** — Claude only. Do not edit, not even "small fixes". Describe the wanted change under *For Claude* in your log and continue with something else.
+- **yellow** — allowed; the PR needs a Claude review before the user merges it (write `needs-claude-review` in the PR description).
+- **green** — allowed; still log it.
+
+{{ZONES}}
+
+## 3. Hard rules that no path rule can catch
+
+- **No hand-written signal facts.** CAN IDs, DIDs, signal names, scales, units, VSS paths and BLE layouts come only from the generated `gen/` code or the definition files of moto-vehicle-defs. Never write such a literal in code; if a signal is missing, that is a red-zone request (`/signal-change` by Claude).
+- **Nothing new on the vehicle bus.** No code that sends a CAN frame to the motorcycle outside the existing tester modules (red); no new UDS service, no write, clear, reset, unlock or reprogram, ever.
+- **MCU code** (rt-core, safety-node, io-node, conn, hil-bench firmware): no heap (`malloc`, `new`, STL containers that allocate) after init, no string/JSON/DBC parsing, no blocking calls in the tester loop, MISRA C:2012 style in C.
+- **Privacy:** never commit keys, passwords, real ride data, VINs, or GPS positions; latitude/longitude never leave the GPS node. The repos are public.
+- **Safety path:** never make a safety decision (cornering, blind spot, immobilizer) depend on the Raspi, the phone, Wi-Fi, VSS or ML; ML may only tighten thresholds.
+- **No new dependency** in firmware or in `pyproject.toml` / `pubspec.yaml` without asking the user.
+- **Do not weaken checks:** no disabled tests, lowered coverage, new MISRA suppressions, `# noqa` or `// cppcheck-suppress` to make CI green. Fix the code or log the problem.
+- **No releases:** no tags, no version bumps, no submodule pin changes, no `manifest.yaml` edits (D-036). Never merge a PR and never push to `main`; the user merges.
+
+## 4. Workflow
+
+1. Branch: `ext/<tool>-<topic>` (e.g. `ext/gemini-mobile-dashboard`), in the repo you change. Never `main`, never a `claude/` branch. One topic per branch.
+2. Commits: Conventional Commits in English (`feat(mobile): ...`) with the trailer line `AI-Agent: <tool>/<model>` (e.g. `AI-Agent: gemini-cli/gemini-2.5-pro`). Claude finds your work with `git log --grep '^AI-Agent:'`.
+3. Before each commit: run the repo's checks (table below) and `python3 scripts/check_zones.py <repo>`. Red → revert those paths. Commit and push only when the user asks.
+4. PR (when the user asks): title in Conventional Commits form; description = summary, checks run with their result, the zone result, `needs-claude-review` if any path is yellow, and the log file name.
+5. Write code that reads like the surrounding code: same naming, comment density, test style. Add or update tests for what you change.
+
+| Repo | Checks (run from the repo root) |
+|---|---|
+| moto-vehicle-defs | red: do not edit (docs only: no check) |
+| moto-rt-core | `cmake --preset host-tests && cmake --build --preset host-tests && ctest --preset host-tests` (+ `host-tsan` preset for snapshot/alive/IMU); cppcheck as in `.github/workflows/ci.yml` |
+| moto-connectivity-node | `scripts/native_tests.sh` (or `pio test -e native`); `pio run -e esp32-s3-devkitc-1-mock`; cppcheck as in CI |
+| moto-mobile | `flutter pub get && flutter analyze && flutter test` (never commit a local `pubspec.lock` rewrite) |
+| moto-server | `uv sync && uv run pytest && uv run ruff check . && uv run ruff format --check .` |
+| other repos | the commands in that repo's README/CLAUDE.md "Build" section |
+
+## 5. Session log (mandatory)
+
+Every session writes one file: `external-ai/log/YYYY-MM-DD-<tool>-<topic>.md` in the workspace, copied from `external-ai/log/TEMPLATE.md`, with `review: pending`. Fill it while you work: what changed (repo, branch, files), why, checks and results, zone result, what you were unsure about, and *For Claude* (red-zone requests, questions, suspected rule conflicts). Without the workspace, put the same text into the PR description. Claude reviews pending logs with its `/external-review` skill, refactors where needed and sets `review: done`.
+
+## 6. What only Claude does
+
+Red-zone edits; signal, UDS, BLE and limit changes (`/signal-change`) and every moto-vehicle-defs edit outside `docs/`; new or changed decisions in `DECISIONS.md`; safety reviews (`safety-reviewer`) of invariant-8 modules; vehicle-bus tester changes; releases, tags and pins; synced files (`.claude/`, `AGENTS.md`, `GEMINI.md`, `PLATFORM-RULES.md`). You may update `STATUS.md` (keep ≤ 60 lines and its sections) and add rows to `ISSUES.md`.
+
+## 7. Platform rules (copied from PLATFORM-RULES.md; "Claude" there means any AI tool unless a rule names Claude's agents or skills)
+
+{{PLATFORM_RULES}}

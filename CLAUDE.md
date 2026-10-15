@@ -6,7 +6,7 @@ This folder is the `moto-workspace` repo (manifest, setup, shared `.claude/`). I
 
 ## Session protocol
 
-1. At session start read `STATUS.md` (short). Do NOT read the large docs.
+1. At session start read `STATUS.md` (short). Do NOT read the large docs. Also run `grep -l '^review: pending' external-ai/log/*.md`: pending work by other AI tools → tell the user and offer `/external-review` (D-071).
 2. Architecture: `moto-vehicle-defs/docs/ARCHITECTURE.md` + `DECISIONS.md` first. For details, use the `docs/README.md` index or the `docs-researcher` agent.
 3. Broad code search → `Explore` agent. Single file/symbol → Grep/Read directly.
 4. One session = one task. When done, run `/handoff` to update `STATUS.md` and suggest `/clear`.
@@ -24,6 +24,12 @@ This folder is the `moto-workspace` repo (manifest, setup, shared `.claude/`). I
 | `architecture-guard` | sonnet | Checks repo scope, layering, dependency direction, bus rules and decisions |
 | `safety-reviewer` | opus | ISO 26262/MISRA-aware review of safety-critical changes |
 | `hil-scenario-validator` | haiku | Repo-owned by moto-hil-bench (not synced): checks HIL scenario YAML against the schema and vehicle independence |
+
+## Other AI tools (D-071)
+
+- The user also develops with non-Claude tools to save tokens. They read `AGENTS.md` / `GEMINI.md` (rendered by `scripts/sync_claude.py` from `external-ai/AGENTS.base.md`, `external-ai/zones.json` and `PLATFORM-RULES.md`; never edit the rendered files), work on `ext/<tool>-<topic>` branches with an `AI-Agent:` commit trailer, and log each session in `external-ai/log/` with `review: pending`.
+- Zones: red = Claude only, yellow = Claude reviews before the user merges, green = free. `python3 scripts/check_zones.py <repo>` classifies a diff. Changing a zone or the base text is a Claude edit here, followed by the sync.
+- `/external-review` (workspace skill) reviews, fixes and refactors their work and closes the logs.
 
 ## Worktrees
 

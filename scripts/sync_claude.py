@@ -5,6 +5,10 @@ Single-repo cloud sessions only see the repo they clone, so every repo carries
 copies of PLATFORM-RULES.md and the agents/skills relevant to it. The source of
 truth is this workspace; copies are overwritten and must not be edited in place.
 
+It also renders AGENTS.md and GEMINI.md (rules for AI tools other than Claude
+Code, D-071) from external-ai/AGENTS.base.md, external-ai/zones.json and
+PLATFORM-RULES.md, into the workspace root and every repo.
+
 Usage:
     python3 scripts/sync_claude.py            # write copies
     python3 scripts/sync_claude.py --check    # exit 1 if any copy is missing/stale
@@ -13,6 +17,7 @@ Usage:
 from __future__ import annotations
 
 import argparse
+import json
 import sys
 from pathlib import Path
 
@@ -52,9 +57,53 @@ def with_marker(text: str, src: str) -> str:
     return marker + "\n\n" + text
 
 
+def zones_summary() -> str:
+    """One line per repo: its red/yellow/green globs, in rule order (first match wins)."""
+    rules = json.loads((ROOT / "external-ai" / "zones.json").read_text())["rules"]
+    order: list[str] = []
+    groups: dict[str, dict[str, list[str]]] = {}
+    default: dict[str, str] = {}
+    for rule in rules:
+        repo = rule["repo"]
+        if repo == "*" and rule["glob"] == "*":
+            continue  # the catch-all, stated in the last line
+        if repo not in groups:
+            order.append(repo)
+            groups[repo] = {"red": [], "yellow": [], "green": []}
+        if rule["glob"] == "*":
+            default[repo] = rule["zone"]
+        else:
+            groups[repo][rule["zone"]].append(f"`{rule['glob']}`")
+    lines = []
+    for repo in order:
+        label = "All repos (checked first)" if repo == "*" else repo
+        parts = [f"{zone}: {', '.join(globs)}" for zone, globs in groups[repo].items() if globs]
+        if repo in default:
+            parts.append(f"{'everything else' if parts else 'everything'}: **{default[repo]}**")
+        lines.append(f"- **{label}** — " + "; ".join(parts))
+    lines.append("- Unlisted repos and paths: yellow. Where two globs match, the more specific one listed first in")
+    lines.append("  `external-ai/zones.json` wins (e.g. `docs/ideas/*` before `docs/*`); the file also gives each rule's reason.")
+    return "\n".join(lines)
+
+
+def agents_md() -> str:
+    """AGENTS.md for non-Claude AI tools: base text + zone summary + PLATFORM-RULES.md."""
+    base = (ROOT / "external-ai" / "AGENTS.base.md").read_text()
+    rules = (ROOT / "PLATFORM-RULES.md").read_text().splitlines()
+    body = [("#" + line) if line.startswith("## ") else line for line in rules[1:]]  # drop title, demote
+    text = base.replace("{{ZONES}}", zones_summary())
+    return text.replace("{{PLATFORM_RULES}}", "\n".join(body).strip() + "\n")
+
+
+def agent_files() -> dict[str, str]:
+    src = "external-ai/AGENTS.base.md"
+    content = with_marker(agents_md(), src)
+    return {"AGENTS.md": content, "GEMINI.md": content}
+
+
 def planned_files(repo: str) -> dict[str, str]:
     """Map repo-relative destination path -> file content."""
-    files: dict[str, str] = {}
+    files: dict[str, str] = dict(agent_files())
     rules = (ROOT / "PLATFORM-RULES.md").read_text()
     files[".claude/PLATFORM-RULES.md"] = with_marker(rules, "PLATFORM-RULES.md")
     assets = REPO_ASSETS[repo]
@@ -114,9 +163,23 @@ def sync_repo(repo: str, check: bool) -> list[str]:
     return problems
 
 
+def sync_workspace(check: bool) -> list[str]:
+    """AGENTS.md / GEMINI.md at the workspace root (committed in moto-workspace)."""
+    problems: list[str] = []
+    for rel, content in agent_files().items():
+        dest = ROOT / rel
+        if dest.exists() and dest.read_text() == content:
+            continue
+        problems.append(f"moto-workspace: {rel} {'stale' if dest.exists() else 'missing'}")
+        if not check:
+            dest.write_text(content)
+    return problems
+
+
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     parser.add_argument("--check", action="store_true", help="report drift, write nothing")
+    parser.add_argument("--workspace", action="store_true", help="only AGENTS.md/GEMINI.md at the workspace root")
     parser.add_argument("repos", nargs="*", help="limit to these repos (default: all)")
     args = parser.parse_args()
 
@@ -124,8 +187,8 @@ def main() -> int:
     if unknown:
         parser.error(f"unknown repo(s): {', '.join(sorted(unknown))}")
 
-    problems: list[str] = []
-    for repo in args.repos or REPO_ASSETS:
+    problems: list[str] = [] if args.repos else sync_workspace(args.check)
+    for repo in [] if args.workspace else (args.repos or REPO_ASSETS):
         problems += sync_repo(repo, args.check)
 
     for p in problems:

@@ -40,8 +40,8 @@
 
 ## Recent sessions
 
+- 2026-10-17 (autonomous, tasks 2+6): server#12 merged (derived part 2: 15 more class-A signals + `stop_event` event kind, defs v0.14.0 pin; 187 tests; architecture-guard 4 MINOR, 2 fixed); mobile#15 merged (defs v0.11.0 → v0.14.0, E-19 (4); tests moved off catalog candidates, 217 passed).
 - 2026-10-17 (autonomous, task 1): defs **v0.14.0** released (defs#70, d65ab9a): 0xFD03 `LEAN_HEALTH` (5-byte record, fail-safe UNKNOWN; safety-reviewer MAJOR-1/-2 fixed, vss-schema-guardian clean) + codegen rule derived `stale_after_ms` ≥ slowest input period (34 signals; D-070 part 3 note); manifest pin.
 - 2026-10-16 (local, D-070 item 2 part 1): moto-server#11 derived reference (19 class-A signals, derived.parquet, report block, `derive` CLI); defs v0.13.0 released (defs#69), manifest pin (workspace#65).
 - 2026-10-15 (local, Phase 0 desk B0): perfboard/power/enclosure plan (powerbank first, IMU rigid on the unit, GPS sky view); ESP32-S3 identified + conn mock flashed (native tests 200 passed); moto-server on `~/moto-data`; found + fixed upload hang and stuck "uploading" (moto-mobile#14, merged); IMU bring-up with I2C scanners → MPU-6500 on SDA7/SCL6 (conn#19, defs#68, merged); two sessions imported OK.
 - 2026-10-15 (local, D-070 part 2): explained which code is generated (tables, gates, constants) vs hand-written (logic); defs#67 `derived/cl250_derived.yaml` (126 signals, 18 sensors, 10 records; entries drafted by a sonnet subagent, reviewed: data-quality mask reads DID ages from the tester table, `window_ms` 16-bit check) + `derived.py` checks + rt-core C table + Python module + 24 tests (make check 504 passed, drift, misra, gcc -pedantic green). Merged by the user.
-- 2026-10-15 (local, D-070 part 1): defs#66 CL250 vehicle constants YAML + rt-core header + Python module + checks, DID block 0xFD40–0xFD5F, D-070 implementation note (make check/misra/drift green). Merged by the user.

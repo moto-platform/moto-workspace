@@ -16,11 +16,11 @@ repos:
     url: https://github.com/moto-platform/moto-connectivity-node.git
     ref: v0.2.0           # commit 55f5e2c (telemetry v4, IMU/GPS/vehicle-signal blocks, D-059 probe env, D-068 40 DIDs + stop rule, D-069 engine-start re-ask + conn#20 follow-ups; PROJECT_VER in the image; pins defs v0.12.0); v0.1.0 = 8be145a (D-036)
 
-  - name: moto-safety-node
+  - name: moto-safety-node   # the Cortex-M4 image of the STM32H755 (D-072)
     url: https://github.com/moto-platform/moto-safety-node.git
     ref: main
 
-  - name: moto-io-node
+  - name: moto-io-node       # retired by D-072 (no code); kept until the user archives it
     url: https://github.com/moto-platform/moto-io-node.git
     ref: main
 

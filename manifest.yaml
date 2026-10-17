@@ -14,7 +14,7 @@ repos:
 
   - name: moto-connectivity-node
     url: https://github.com/moto-platform/moto-connectivity-node.git
-    ref: v0.1.0           # commit 8be145a (D-036)
+    ref: v0.2.0           # commit 55f5e2c (telemetry v4, IMU/GPS/vehicle-signal blocks, D-059 probe env, D-068 40 DIDs + stop rule, D-069 engine-start re-ask + conn#20 follow-ups; PROJECT_VER in the image; pins defs v0.12.0); v0.1.0 = 8be145a (D-036)
 
   - name: moto-safety-node
     url: https://github.com/moto-platform/moto-safety-node.git
@@ -34,7 +34,7 @@ repos:
 
   - name: moto-server
     url: https://github.com/moto-platform/moto-server.git
-    ref: v0.2.0           # commit 5734ec8 (D-036; GPS sessions, pins defs v0.8.0)
+    ref: v0.3.0           # commit 3b2fa67 (vehicle-signal block ingest, derived-signal Python reference parts 1-3, golden vectors for rt-core; pins defs v0.14.0); v0.2.0 = 5734ec8 (D-036; GPS sessions, pins defs v0.8.0)
 
   - name: moto-ml
     url: https://github.com/moto-platform/moto-ml.git
@@ -42,7 +42,7 @@ repos:
 
   - name: moto-mobile
     url: https://github.com/moto-platform/moto-mobile.git
-    ref: v0.3.0           # commit 3b9e161 (dark redesign, Signals screen from the D-066 catalog; pins defs v0.10.0); v0.2.0 = e02e978 (GPS recording + D-063 local-only upload)
+    ref: v0.4.0           # commit b0fff1c (vehicle-signal block on the Signals screen, upload timeouts, pins defs v0.14.0); v0.3.0 = 3b9e161 (dark redesign, Signals screen from the D-066 catalog; pins defs v0.10.0); v0.2.0 = e02e978 (GPS recording + D-063 local-only upload)
 
   - name: moto-mcp
     url: https://github.com/moto-platform/moto-mcp.git

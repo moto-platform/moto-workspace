@@ -40,8 +40,8 @@
 
 ## Recent sessions
 
+- 2026-10-17 (autonomous, tasks 4+7): server#14 merged (synthetic golden vectors generator for rt-core, `moto-server golden`, 28 signals, 4 scenarios; vectors need the defs v0.14.0 derived table); releases conn **v0.2.0**, mobile **v0.4.0**, server **v0.3.0** + manifest pins.
 - 2026-10-17 (autonomous, tasks 3+5): server#13 merged (class-B ride summaries, 19/46, `derived_summary.parquet` + report block; 214 tests; architecture-guard 3 MINOR documented); conn#20 merged (timeout warning rate limit, long-gap re-arm test = conn#18 MINOR-3; 202 native tests; safety-reviewer 2 rounds, MINOR-1..4 fixed).
 - 2026-10-17 (autonomous, tasks 2+6): server#12 merged (derived part 2: 15 more class-A signals + `stop_event` event kind, defs v0.14.0 pin; 187 tests; architecture-guard 4 MINOR, 2 fixed); mobile#15 merged (defs v0.11.0 → v0.14.0, E-19 (4); tests moved off catalog candidates, 217 passed).
 - 2026-10-17 (autonomous, task 1): defs **v0.14.0** released (defs#70, d65ab9a): 0xFD03 `LEAN_HEALTH` (5-byte record, fail-safe UNKNOWN; safety-reviewer MAJOR-1/-2 fixed, vss-schema-guardian clean) + codegen rule derived `stale_after_ms` ≥ slowest input period (34 signals; D-070 part 3 note); manifest pin.
 - 2026-10-16 (local, D-070 item 2 part 1): moto-server#11 derived reference (19 class-A signals, derived.parquet, report block, `derive` CLI); defs v0.13.0 released (defs#69), manifest pin (workspace#65).
-- 2026-10-15 (local, Phase 0 desk B0): perfboard/power/enclosure plan (powerbank first, IMU rigid on the unit, GPS sky view); ESP32-S3 identified + conn mock flashed (native tests 200 passed); moto-server on `~/moto-data`; found + fixed upload hang and stuck "uploading" (moto-mobile#14, merged); IMU bring-up with I2C scanners → MPU-6500 on SDA7/SCL6 (conn#19, defs#68, merged); two sessions imported OK.

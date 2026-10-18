@@ -2,46 +2,50 @@
 
 > Keep it short (≤60 lines). Updated by the `/handoff` skill. "Recent sessions" keeps at most 5 one-line entries; drop the oldest.
 
-**Phase:** 0 hardware build (user, ESP32-only data-collection prototype) + measurement tools (D-058..D-062) · 1 data pipeline done in code; D-068/D-069 in conn (rt-core in draft #33) · D-070 derived signals: defs definitions + server Python reference parts 1-3 + golden vectors done, rt-core `features/derived` next · 2 rt-core without hardware: republisher, heartbeat, D-059 FC check, EKF lean (D-065) · defs v0.15.0 merged (STM32H755 platform bus), tag pending (user)
+**Phase:** 0 hardware build (user, ESP32-only data-collection prototype; enclosure placement Q-034) · 1 data pipeline done in code; D-068/D-069 + D-075 stop epoch in conn and rt-core · D-070 derived: defs + server reference + golden vectors in rt-core, rt-core `features/derived` next · 2 rt-core without hardware: republisher, heartbeat, FC check, EKF lean, 0xFD03 `LEAN_HEALTH` (D-067) · defs v0.16.0
 **Last updated:** 2026-10-18
 
 ## Where we are
 
-- 11 platform repos + `moto-workspace`, public (D-033), MIT (D-036). Decisions D-001..D-074 (open Q up to Q-033, Q-033 in defs#75); **D-057 intentionally unused**. Normally **the user merges PRs**; Claude merged only on the user's explicit instruction (2026-10-17 autonomous, 2026-10-18 "merge et").
-- **Architecture (D-072, D-073, 2026-10-17, user chose option B):** one **STM32H755** (NUCLEO-H755ZI-Q, ~2,904 TL at SAMM): Cortex-M7 = rt-core, Cortex-M4 = safety partition (cornering + own IMU, blind spot, immobilizer, LED ring/mirror LEDs; E2E mailbox, rules in D-072 item 4-5); io-node retired (repo not archived yet, user); bike ESP32 + helmet ESP32 (visor HUD informational, mic, voice; stages H0-H3, Q-032). Resolved Q-019, Q-026, Q-003. Docs: defs#71, rules workspace#72 + sync PRs in all 11 repos. Shopping list: `moto-vehicle-defs/docs/hardware-procurement-list.md` v2.0 (6 purchase waves with Turkish store links).
-- **Platform bus (defs#74, merged b678efb, version 0.15.0, D-072 item 7):** node IO + 0x083 removed; new **0x023 `SafetyWarningStatus`** (SAFETY → RT_CORE/CONN/LINUX, E2E 0x1023, 20 ms) and **0x120 `SafetyRequest`** (RT_CORE → SAFETY, QM for the immobilizer only, E2E 0x1120, 100 ms, LOCK = 3). Raw 0 = no information, enforced by codegen for every SAFETY E2E message; lock acceptance rule and 0x120 usage contract in D-072 item 7. `gen/python/moto_defs/e2e.py` import fixed. safety-reviewer OK, architecture-guard no MAJOR.
-- **D-074 (defs#73, merged):** vehicle bus stays classic CAN 500 kbps; more data via Q-001 listen-only, then multi-DID reads (probe-env support test + own decision + safety-reviewer first), then D-068 tier tuning.
-- **Phase 0 build (user):** desk B0 passed 2026-10-15. ESP32-S3 (FT232R `/dev/cu.usbserial-A5069RR4`), IMU MPU-6500 on SDA GPIO7 / SCL GPIO6 (header unsoldered), CAN GPIO4/5, GPS GPIO15/16. Not wired yet: SN65HVD230 (check its 120 Ω), DLC adapter, NEO-M8N. Data path by zip → `moto-server import` into `~/moto-data` (never in a repo). Mac has Java 8: APKs from CI.
-- **Releases (all in `manifest.yaml`):** defs **v0.14.0** (d65ab9a: 0xFD03 `LEAN_HEALTH` definition, derived `stale_after_ms` ≥ slowest input period + codegen check, D-070 implementation part 3); conn **v0.2.0** (55f5e2c, defs v0.12.0, `PROJECT_VER` in the image); server **v0.3.0** (3b2fa67, defs v0.14.0); mobile **v0.4.0** (b0fff1c, 0.4.0+5, defs v0.14.0). rt-core v0.8.0 (pins defs v0.5.0; main pins v0.9.0).
-- **moto-server derived reference (D-070 item 2):** 34 class-A signals (`derived.parquet`, event kind with `stop_event`), 19/46 class-B ride summaries (`derived_summary.parquet`, one session = one ride), `moto-server derive`; `moto-server golden --out <rt-core>/tests/host/vectors` writes synthetic C-header vectors (28 signals, 4 scenarios, drift manifest `tests/golden/MANIFEST.sha256`; the expected values need the defs **v0.14.0** derived table). Unimplemented signals carry a `not_implemented` reason (missing threshold/definition).
-- **conn main:** D-068 stop rule, D-069 re-ask, conn#20 timeout-log rate limit + long-gap test (202 native tests).
-- **rt-core open drafts:** **#33** D-068 rule + D-069 re-ask, defs v0.13.0 (E-19 (1)+(5)); safety-reviewer no BLOCKER, MAJOR-1 + MINORs fixed, CI green; **open:** MAJOR-2 (NRC 0x7E/0x7F loop re-arms all unverified DIDs; also in conn), ENGINE_SPEED 280 ms vs the 260 ms D-068 bound with VEHICLE_SPEED faulty, N_Bs hold repeated per failed unverified reception (verified DIDs STALE ~35 s). **#34** golden vectors + shape test, stacked on #33.
-- **Vehicle bus:** one read-only tester (D-037); `tester_policy` and the gates unchanged all session. Local: Flutter 3.44.8 vs CI 3.47.5 (never commit a local `pubspec.lock` rewrite); local MISRA needs `--addon-python=/usr/bin/python3`.
+- 11 platform repos + `moto-workspace`, public (D-033), MIT (D-036). Decisions D-001..D-075 (open Q up to Q-034); **D-057 intentionally unused**. The user merges PRs; on 2026-10-18 they allowed Claude to merge its own PRs for that session only.
+- **Architecture (D-072, D-073):** one STM32H755 (NUCLEO-H755ZI-Q, not ordered yet): M7 = rt-core, M4 = safety partition (cornering + own IMU, blind spot, immobilizer, LED ring/mirror LEDs); io-node retired; bike ESP32 + helmet ESP32. Platform bus v0.15.0: 0x023 `SafetyWarningStatus`, 0x120 `SafetyRequest`. Procurement list v2.0 (6 waves).
+- **D-075 (provisional, user: "use changeable, standard-accepted values for now"; defs#77-80):**
+  - Item 1: a stop epoch for the D-068 stop rule and the D-069 re-ask. Amendments (a)-(f): the fast session re-request on a counted 0x7E/0x7F; the "valid 0 seen" state belongs to the epoch; quiet-window bound; per-DID stop reason; conn's 2000 ms First-Frame hold; answered unverified DIDs stop after two 0x7E/0x7F refusals.
+  - Item 2: single-fault-class bounds.
+  - Item 3: the N_Bs hold is kept.
+  - Items 4-6: provisional answers to Q-033 (own M4 indicator input, 1.5 s hold), Q-029 (yes) and Q-023 items 1-4. Q-022 and Q-023 (5)-(6) are still open.
+- **Q-034 (open):** enclosure placement on the CL250. There is no room under the seat. Claude recommends a rigid rear-subframe tray on the left side with the IMUs on the frame; analysis in `hardware-integration.md` §4.1, which also lists the measurements to take.
+- **rt-core main:**
+  - defs **v0.15.0** (#40). Golden vectors and 0xFD03 landed via **#39**: #34 and #37 had been merged into stacked branches and never reached main.
+  - D-075 (a)-(d) via #38 + #41, (f) + MINORs via **#42**. #42 merged before its 3rd safety-review round finished (rate limit): **re-run `safety-reviewer` on #42**.
+- **conn main:** D-075 via #24 + #25. The MINORs of #25's review landed via conn#26. conn still pins defs v0.12.0.
+- **Releases:** defs **v0.16.0** re-created on 9310893 (the first tag sat on f7847a7, without its content); `manifest.yaml` pins v0.16.0. rt-core v0.8.0 and conn v0.2.0 are the last releases; both mains are well ahead.
+- Phase 0 build, data path and Mac setup are unchanged: see memory and `hardware-integration.md` §1-3.
 
 ## Next up (in order)
 
-0. **User:** run `gh release create v0.15.0 -R moto-platform/moto-vehicle-defs --target main --title v0.15.0 --generate-notes` (Claude's attempt was blocked by the permission classifier); then Claude pins it in `manifest.yaml` (workspace PR). Merge defs#75 (Q-033, docs). Answer Q-033 (turn-signal source; Claude recommends own M4 GPIO).
-0b. **User:** order Wave 1 of the procurement list v2.0 (NUCLEO-H755ZI-Q first); tell Claude when the board arrives. Optional: archive `moto-io-node` on GitHub.
-1. **User:** decide the three open items of rt-core#33 (comment on the PR: MAJOR-2 option (a) or (b), the 260 ms bound, the N_Bs hold); then Claude applies it in rt-core **and conn**, records the decision (D-072), re-runs `safety-reviewer`, merges #33, retargets #34 to main and merges it.
-2. **User + Claude, vehicle data path:** solder the IMU header; wire SN65HVD230 + adapter; B2 on the desk with conn v0.2.0; on the bike §7.1 listen-only capture (**Q-001**) before V0/V1, probe env at key-on and warm idle (D-069 item 2), GPS §7.3 steps 1-4. Read the HDS data list (CL250 service manual, PGM-FI) before §3.1 discovery.
-3. **User:** threshold/definition proposals for the not-implemented derived signals (list in the 2026-10-17 report: clutch/neutral, shift/launch/braking/pitch/refuel events, wheel slip, road roughness band, VE/intake models, heat soak, charging, cold-abuse/over-rev/lugging, idle quality, fuel cut, fuel-level filter, data-quality mask, warm-up/thermal cycles/fan, final drive, speedometer, aggressiveness weights) → `/signal-change` (defs) then server formulas.
-4. Claude, without hardware: E-17 (a) in rt-core (0xFD03 handler per defs v0.14.0, `/feature-module`, `safety-reviewer`), then rt-core defs v0.14.0 and the `features/derived` module against the golden vectors (`architecture-guard`).
-5. Claude, after 2: tune the D-068 tiers (`/signal-change`, budget ≤ 0.8); define 0x01, 0x03, the O2 PID, §2.1 PIDs; then Q-031 (broadcast frames, probe-mode decision) and GPS into conn's main env.
-6. Claude, D-072 follow-ups after the v0.15.0 tag: hil-bench restbus drops 0x083 and adds 0x023/0x120; rt-core heartbeat comments still list IO (`src/features/heartbeat/heartbeat.h:7`, `tests/host/test_heartbeat.c:3`); conn reads 0x023 for the HUD/phone when it bumps defs; codegen checked pack for enum signals (until then senders call `*_is_in_range()`; safety-node host tests pack 4, 5, 255); confirm the RM0399 reset coupling (D-072 item 4e) on the board; Renode H755 support check before L1/Ç6.
-7. Small: server ingest evaluates class A twice (derived + summary); store `can_bus_off_count`; export DID `stale_after_ms` in `moto_defs` Python (server uses 3 × period for events); E-18; HIL scenarios of E-19 (2).
+1. Claude: re-run `safety-reviewer` on rt-core#42 (merged at its head). Fix any finding in a **new** branch → PR to main (never stacked, memory `pr-merge-pitfalls`).
+2. Claude: conn test gap 2 from the conn#25 review. The quiet-window and tester-present tests must tell the fast session request from the 2000 ms retry; the quiet-window scenario needs a refusal less than 2000 ms after the last session request.
+3. User: Q-034 measurements on the bike (§4.1 list, photos never committed); order Wave 1 (NUCLEO-H755ZI-Q first); confirm or change the D-075 provisional values whenever convenient.
+4. Claude: safety-node Layer 1. Steps: `/repo-bootstrap moto-safety-node`, then `/feature-module` cornering decision on the D-075 items 4-6 defaults, using `pack_checked` (defs v0.16.0), then `safety-reviewer`.
+5. Claude: rt-core `features/derived` against the golden vectors (`/feature-module`, `architecture-guard`).
+6. Claude, D-072 follow-ups: rt-core sends 0x120 and consumes 0x023; conn bumps defs (v0.12.0 → v0.16.0) and reads 0x023 for the HUD/phone; hil-bench restbus drops 0x083 and adds 0x023/0x120 when it exists.
+7. Claude: expose the per-DID stop reason in the D-069 item 2 record (BLE vehicle-signal block / rt-core 0xFD02); needs a defs change (`/signal-change`).
+8. User + Claude, vehicle data path: IMU header, SN65HVD230 (check its 120 Ω), DLC adapter; B2 on the desk; on the bike Q-001 listen-only capture, then V0/V1, GPS. **Also record the user's intermittent stall under load** (ride sessions + DTC read afterwards; the server's `stop_event` marks it) as a case study.
+9. User: threshold proposals for the not-implemented derived signals (list in the 2026-10-17 report) → `/signal-change`.
+10. Small: server ingest evaluates class A twice; HIL scenarios of E-19 and the D-075 reviews (0x7F ECU, short reset at crank, disagreeing response IDs).
 
 ## Blockers / pending decisions
 
-- rt-core#33 open items (above, user). Derived-signal thresholds (above, user).
-- **Q-032** (helmet HUD budget/content) waits for HUD stages H0/H1. **Q-031** waits for Q-001; Q-001 waits for the listen-only capture.
-- The NUCLEO-H755ZI-Q (not yet ordered) blocks CubeMX, Renode, Ç6, the FDCAN port and on-target D-070 budgets. Q-009 blocks the hil-bench host.
-- Before safety-node Layer 1 code: Q-029, Q-023, Q-026; Q-022 after fallback validation.
-- **User:** C-4 (old `can-dbc-conventions` skill on claude.ai); Q-024, Q-025; D-030 confirmation; Q-027/Q-028 later.
+- **Q-034** (placement) waits for the measurements. **Q-032** waits for HUD stages H0/H1. **Q-031** waits for Q-001; Q-001 waits for the listen-only capture.
+- The NUCLEO-H755ZI-Q (not ordered) blocks CubeMX, Renode, Ç6, the FDCAN port and on-target budgets. Q-009 blocks the hil-bench host.
+- Before safety-node Layer 1: Q-022 after fallback validation; Q-023 (5)-(6) in its design.
+- **User:** C-4 (old `can-dbc-conventions` skill on claude.ai); Q-024, Q-025; D-030 confirmation; Q-027/Q-028 later; untracked workspace files `CAN-DISCOVERY-AND-POLLING-STRATEGY.md`, `docs-presentation/`, `learning/` (commit or keep local?).
 
 ## Recent sessions
 
-- 2026-10-18 (local): D-074 data paths (defs#73), platform bus v0.15.0 with 0x023/0x120 (defs#74, safety-reviewer + architecture-guard), signal-change skill node list (workspace#74); all merged by the user's instruction; Q-033 opened (defs#75); tag v0.15.0 left to the user.
-- 2026-10-17 (local, architecture): D-072 one STM32H755 (M7 rt-core, M4 safety partition, io-node retired), D-073 helmet unit; safety-reviewer M1-M6 + architecture-guard MAJOR 1-2 applied; procurement list v2.0; rules synced to all repos.
-- 2026-10-17 (autonomous, task 8 + handoff): rt-core#33 draft (D-068/D-069 tester rule, defs v0.13.0, 113 client-core tests, local MISRA/pedantic/TSan/coverage green; 3 items need the user), rt-core#34 draft (golden vectors, stacked).
+- 2026-10-18 (local, long): D-075 provisional defaults (defs#77-80), Q-034 placement analysis, rt-core#38-42 (stop epoch, (f), orphaned #34/#37 recovered, defs v0.15.0), conn#24-26, v0.16.0 tag fixed; three safety-reviewer rounds on rt-core, two on conn.
+- 2026-10-18 (local): D-074 data paths (defs#73), platform bus v0.15.0 with 0x023/0x120 (defs#74), signal-change skill node list (workspace#74); Q-033 opened (defs#75).
+- 2026-10-17 (local, architecture): D-072 one STM32H755, D-073 helmet unit; procurement list v2.0; rules synced to all repos.
+- 2026-10-17 (autonomous, task 8 + handoff): rt-core#33 draft (D-068/D-069 tester rule), rt-core#34 draft (golden vectors, stacked).
 - 2026-10-17 (autonomous, tasks 4+7): server#14 golden vectors generator; releases conn v0.2.0, mobile v0.4.0, server v0.3.0 + manifest pins (workspace#70).
-- 2026-10-17 (autonomous, tasks 2, 3, 5, 6): server#12 (part 2, 15 class-A + `stop_event`), server#13 (class-B summaries 19/46), conn#20 (log rate limit, long-gap test), mobile#15 (defs v0.14.0); all merged after reviewers.

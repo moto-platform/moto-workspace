@@ -70,10 +70,12 @@
     {"repo": "moto-linux-node", "glob": "*", "zone": "yellow", "why": "VSS, CV, HMI; no safety decisions on the Raspi (invariant 3)"},
 
     {"repo": "moto-server", "glob": "*ota*", "zone": "red", "why": "OTA packages (invariant 8)"},
-    {"repo": "moto-server", "glob": "*", "zone": "green", "why": "ingestion, storage, reports; raw position never stored (invariant 7)"},
+    {"repo": "moto-server", "glob": "*gps*", "zone": "yellow", "why": "position storage and access (D-076, provisional): Claude reviews"},
+    {"repo": "moto-server", "glob": "*position*", "zone": "yellow", "why": "position storage and access (D-076, provisional): Claude reviews"},
+    {"repo": "moto-server", "glob": "*", "zone": "green", "why": "ingestion, storage, reports; position paths are yellow (D-076)"},
 
-    {"repo": "moto-mobile", "glob": "lib/services/session_upload*", "zone": "yellow", "why": "local-only upload of GPS sessions (D-063)"},
-    {"repo": "moto-mobile", "glob": "lib/services/upload_client*", "zone": "yellow", "why": "local-only upload of GPS sessions (D-063)"},
+    {"repo": "moto-mobile", "glob": "lib/services/session_upload*", "zone": "yellow", "why": "upload of GPS sessions (D-063; widened by D-076/D-077 to the user's own HTTPS server)"},
+    {"repo": "moto-mobile", "glob": "lib/services/upload_client*", "zone": "yellow", "why": "upload of GPS sessions (D-063; widened by D-076/D-077 to the user's own HTTPS server)"},
     {"repo": "moto-mobile", "glob": "*", "zone": "green", "why": "companion app UI"},
 
     {"repo": "moto-mcp", "glob": "*", "zone": "yellow", "why": "read-only tools; the LLM never does its own math (invariant 7)"},

@@ -22,7 +22,7 @@ You are an AI coding tool (Codex, Gemini, DeepSeek, Cursor, Aider, Copilot, …)
 - **No hand-written signal facts.** CAN IDs, DIDs, signal names, scales, units, VSS paths and BLE layouts come only from the generated `gen/` code or the definition files of moto-vehicle-defs. Never write such a literal in code; if a signal is missing, that is a red-zone request (`/signal-change` by Claude).
 - **Nothing new on the vehicle bus.** No code that sends a CAN frame to the motorcycle outside the existing tester modules (red); no new UDS service, no write, clear, reset, unlock or reprogram, ever.
 - **MCU code** (rt-core, safety-node, conn, hil-bench firmware): no heap (`malloc`, `new`, STL containers that allocate) after init, no string/JSON/DBC parsing, no blocking calls in the tester loop, MISRA C:2012 style in C.
-- **Privacy:** never commit keys, passwords, real ride data, VINs, or GPS positions; latitude/longitude never leave the GPS node. The repos are public.
+- **Privacy:** never commit keys, passwords, real ride data, VINs, or GPS positions. Position may go only to the user's own servers (D-076, provisional); code that moves it is red (Claude only). The repos are public.
 - **Safety path:** never make a safety decision (cornering, blind spot, immobilizer) depend on the Raspi, the phone, Wi-Fi, VSS or ML; ML may only tighten thresholds.
 - **No new dependency** in firmware or in `pyproject.toml` / `pubspec.yaml` without asking the user.
 - **Do not weaken checks:** no disabled tests, lowered coverage, new MISRA suppressions, `# noqa` or `// cppcheck-suppress` to make CI green. Fix the code or log the problem.

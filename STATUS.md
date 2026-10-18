@@ -2,7 +2,7 @@
 
 > Keep it short (≤60 lines). Updated by the `/handoff` skill. "Recent sessions" keeps at most 5 one-line entries; drop the oldest.
 
-**Phase:** 0 hardware build (user, ESP32-only data-collection prototype; enclosure placement Q-034) · 1 data pipeline done in code; D-068/D-069 + D-075 stop epoch in conn and rt-core · D-070 derived: defs + server reference + golden vectors in rt-core, rt-core `features/derived` next · 2 rt-core without hardware: republisher, heartbeat, FC check, EKF lean, 0xFD03 `LEAN_HEALTH` (D-067) · defs v0.16.0
+**Phase:** 0 hardware build (user, ESP32-only data-collection prototype; enclosure placement Q-034) · 1 data pipeline done in code; D-068/D-069 + D-075 stop epoch in conn and rt-core · D-070 derived: defs + server reference + golden vectors in rt-core, rt-core `features/derived` next · 2 rt-core without hardware: republisher, heartbeat, FC check, EKF lean, 0xFD03 `LEAN_HEALTH` (D-067) · defs v0.17.0
 **Last updated:** 2026-10-19
 
 ## Where we are
@@ -26,7 +26,7 @@
 ## Next up (in order)
 
 1. User: Q-034 measurements on the bike (§4.1 list, photos never committed); order Wave 1 (NUCLEO-H755ZI-Q first); confirm or change the D-075 provisional values whenever convenient. Open point for that: a never-answered unverified DID gets one engine-start re-ask per epoch, then stays stopped until key-off (no later recovery).
-2. **User merges defs#83, #84, #85 and workspace#81** (independent; #84/#85 conflict only on one CHANGELOG line, the second gets rebased). #84 = D-079 windows (29 window signals, records 0xFD4A-0xFD4E), #85 = `uds/obd_catalog.yaml` (catalog split, scalar + multi-value PIDs with `decode_fields`, identification DIDs, D-080 `dtc_snapshot` + `VEHICLE_CL250_DTC_*` macros). Then Claude: release defs v0.17.0 (pyproject bump PR, tag, manifest pin) → testers implement D-080 with `safety-reviewer` → group B on the CL250 poll list after the V0/V1 bitmap, group C after Q-001 → group F with Wave 2 sensors. Open from #84: the W2 peak-current field needs a > 50 A sensor (ACS758 50 A saturates on the starter).
+2. Claude: testers implement D-080 (conn first, rt-core after; `safety-reviewer`) on defs **v0.17.0** (released 2026-10-19, manifest pinned) → group B on the CL250 poll list after the V0/V1 bitmap, group C after Q-001 → group F with Wave 2 sensors. Open: the W2 peak-current field needs a > 50 A sensor (ACS758 50 A saturates on the starter).
 2a. Claude, D-076/D-077 implementation when the server work starts: `/signal-change` BLE GPS position fields + codegen guard (then conn, mobile, server together, `vss-schema-guardian`); moto-server packaging (compose, TLS proxy, per-device token), live ingest protocol, moto-mcp HTTP transport (`architecture-guard`).
 3. Claude: safety-node Layer 1. Steps: `/repo-bootstrap moto-safety-node`, then `/feature-module` cornering decision on the D-075 items 4-6 defaults, using `pack_checked` (defs v0.16.0), then `safety-reviewer`.
 4. Claude: rt-core `features/derived` against the golden vectors (`/feature-module`, `architecture-guard`).
@@ -45,7 +45,7 @@
 
 ## Recent sessions
 
-- 2026-10-19 (local): Gemini contributor-plan log reviewed (analysis only, plan not saved → TEMPLATE Result section); logs + strategy note committed, `docs-presentation/` and `learning/` kept local (workspace#81); anomaly stage 1: D-079 windows W1-W5 (no burst), D-080 0x19 freeze frames, G/I taxonomy, procurement 2.1 (defs#83, architecture-guard fixed); v0.17.0 content in defs#84 (windows) + #85 (OBD catalog, D-080 constants), sonnet-built, Claude-reviewed; 14 worktrees pruned; merges blocked by auto mode, left to the user.
+- 2026-10-19 (local): Gemini contributor-plan log reviewed (analysis only, plan not saved → TEMPLATE Result section); logs + strategy note committed, `docs-presentation/` and `learning/` kept local (workspace#81); anomaly stage 1: D-079 windows W1-W5 (no burst), D-080 0x19 freeze frames, G/I taxonomy, procurement 2.1 (defs#83, architecture-guard fixed); v0.17.0 content in defs#84 (windows) + #85 (OBD catalog, D-080 constants), sonnet-built, Claude-reviewed; 14 worktrees pruned; the user merged everything and tagged **defs v0.17.0** (#86, 86f8f3e); manifest pin in workspace#82.
 - 2026-10-18 (local, external review): Antigravity anomaly-sensor log reviewed (design only; verdicts in its Claude review); user decisions D-076 position relaxed + Q-035, D-077 two servers, D-078 scope (defs#82), invariant 7 + zones (workspace#79), 10 sync PRs; all merged on the user's instruction.
 - 2026-10-18 (local, follow-up): rt-core#42 round-3 safety review → rt-core#43 + conn#28 (re-ask clears all unverified counts; reviewed, no BLOCKER/MAJOR), conn#27 test gap 2, D-075 (f) precedence recorded (defs#81); all merged on the user's instruction.
 - 2026-10-18 (local, long): D-075 provisional defaults (defs#77-80), Q-034 placement analysis, rt-core#38-42 (stop epoch, (f), orphaned #34/#37 recovered, defs v0.15.0), conn#24-26, v0.16.0 tag fixed; three safety-reviewer rounds on rt-core, two on conn.

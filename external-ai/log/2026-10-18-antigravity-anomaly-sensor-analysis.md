@@ -1,0 +1,139 @@
+---
+date: 2026-10-18
+tool: antigravity/gemini-4-argon
+topic: anomaly-sensor-analysis
+repos: [moto-workspace]
+branches: []
+prs: []
+zone: green
+review: done 2026-10-18 (design-only, no code/PR; items 1, 4-6, 8, 10 accepted as direction with corrections; K3 confirmed by the user in Claude -> D-076 (provisional, Q-035), K1/K2 -> D-077, scope -> D-078 (defs#82, workspace#79 + 10 sync PRs); Groups G/I to an ideas doc, not defs; next defs version is v0.17.0)
+---
+
+# anomaly-sensor-analysis
+
+## Goal
+Establish the complete, unabridged sensor, CAN/UDS DID, external "Master Mechanic" hardware, vision/radar, and derived-signal inventory (~360 distinct channels / 750+ features with 2D maps) for `moto-platform` as a **universal multi-vehicle product** (with Honda CL250 as Vehicle #1), resolve architectural decisions K1–K6 for the server + MCP + LLM anomaly pipeline, and verify Raspberry Pi 5 (8 GB) compute/memory capacity under combined telemetry, acoustic, anomaly ML, and camera/CV safety workloads.
+
+## Changes
+- `moto-workspace/external-ai/log/2026-10-18-antigravity-anomaly-sensor-analysis.md`: recorded the user-approved universal product policy, full 360-signal inventory, external sensor additions, K1–K6 decisions, and Raspberry Pi 5 (8 GB) capacity analysis for Claude (`/external-review`, `/signal-change`, and `DECISIONS.md`).
+
+## Checks
+- `python3 scripts/check_zones.py . --path external-ai/log/2026-10-18-antigravity-anomaly-sensor-analysis.md`: GREEN
+
+## Unsure about
+- Which of the 35 unverified D-068 DIDs the CL250 Keihin PGM-FI ECM serves in hardware (to be settled by the first 15-minute V0/V1 on-bike test and D-059 bitmap probe).
+- Whether the CL250 ABS modulator and LCD instrument cluster broadcast wheel speeds and gear position passively on the DLC CAN bus (`Q-001` listen-only capture).
+- Whether the CL250 ECM supports multi-DID `0x22` reads (`D-074` item 3).
+
+## For Claude
+
+The user reviewed and **approved** the complete ~360-signal inventory, external "Master Mechanic" sensor suite, universal product policy, and K1–K6 architectural decisions. Below are the concrete requests for Claude to apply via `/signal-change` and `DECISIONS.md` updates:
+
+### 1. Universal Multi-Vehicle Product Rule (No DID Pruning from Catalog — `DECISIONS.md` & `uds/`)
+- **User directive:** `moto-platform` is designed to become a general multi-vehicle product across motorcycles, with the Honda CL250 as the first target vehicle (Vehicle #1).
+- **Do NOT delete any DIDs** from `uds/vehicle_cl250.yaml` or the catalog, even those whose physical sensors do not exist on the CL250 (`MAF_RATE F410`, `FUEL_PRESSURE F40A`, `RAIL_PRESSURE F422/F423`, Ride-by-Wire throttle/grip channels `F447/F449/F44C/F45A`, `ETHANOL F452`, `AMBIENT_AIR_TEMP F446`, `ENGINE_OIL_TEMP F45C`).
+- Keep the existing 40 polled DIDs intact for CL250 (where `D-068` item 2's runtime stop rule automatically silences unsupported `NRC 0x31` DIDs per session without manual deletion) and **expand** the universal catalog with the remaining 42+ standard OBD/UDS/Mode-06/ISO-14229 DIDs so multi-cylinder, ride-by-wire, MAF, and Euro 5/5+ motorcycles are supported out of the box.
+
+### 2. New Architectural Decisions / Amendments (`moto-vehicle-defs/docs/DECISIONS.md` — RED)
+1. **K1 & K2 — Dual-path telemetry (Live + Post-Ride) & Server-hosted `moto-mcp`:**
+   - **Live telemetry path (during ride):** The vehicle (`linux-node` / `moto-mobile`) streams live telemetry and anomaly/health summaries over the internet to `moto-server` while riding, in addition to the end-of-ride lossless batch upload (`POST /sessions` Parquet/MDF4).
+   - **Server-side `moto-mcp` deployment:** `moto-mcp` runs on `moto-server` (remote authenticated access) so the user and an LLM can query both the live telemetry stream (hot path) and the historical multi-ride Parquet/MDF4 archive + trend/residual engines (cold path) from anywhere. The local `moto-mcp` on Raspi 5 remains as the offline rural fallback.
+2. **K3 — User Decision Override on GPS Position & Time-Series Slices (`D-060` item 3 & Invariant 7):**
+   - **Explicitly confirmed by user after rule conflict notification:** Because the system is for the user's personal use, **GPS coordinates (`latitude, longitude, altitude`) and raw time-series slices SHOULD be recorded and sent to `moto-server` and accessible to the LLM via `moto-mcp`** (still strictly never committed to public GitHub repos per `D-033`, stored only in `~/moto-data` / server DB).
+   - **Action for Claude:** Amend `D-060` item 3, `Q-028` item 2, and Invariant 7 wording to allow GPS position logging to `moto-server` and exposing both pre-computed statistical/spectral summaries AND windowed raw time-series slices (e.g. `get_timeseries_slice(session_id, start_ms, end_ms, signals)`) through `moto-mcp`.
+3. **K4 — Standardized Health-Snapshot Windows & Burst Polling Tier:**
+   - Define 5 condition-controlled measurement windows on `rt-core` / `moto-server` to eliminate operating-condition variance across rides:
+     - **W1 Key-On Cold-Soak Window:** battery rest voltage, fuel-pump prime current profile (~2 s), cold-soak temperature cross-check (`ECT ≈ IAT ≈ Ambient_BME280`), `MAP ≈ Baro`.
+     - **W2 Cranking Window (`RPM 0 → >0`):** 1 kHz battery voltage & current (`V_min`, `I_peak`, internal resistance `dV/dI`, crank duration, starter health, compression regularity).
+     - **W3 Warm Idle Window (`ECT > 80°C`, `speed = 0`, 20–30 s):** idle RPM std/drift, MAP stability, O2 voltage switching frequency & STFT oscillation (via temporary burst polling of O2/STFT at 5–10 Hz within the 0.8 budget), 0.5×/1× order vibration RMS.
+     - **W4 Steady Cruise Window (gears 4–6, steady speed ±2 km/h, 10 s):** RPM/speed final-drive ratio, VE residual, swingarm & engine vibration spectrum.
+     - **W5 Post-Stop Cool-Down Window:** thermal decay time constant.
+4. **K5 — UDS `0x19` Freeze-Frame & Extended Data Policy:**
+   - When `DTC count > 0` at key-on or engine start, read UDS `0x19 0x04` (DTC Snapshot / Freeze Frame) and `0x19 0x06` (Extended Data) once per ignition cycle.
+
+### 3. Signal, Catalog & Derived Additions (`/signal-change` in `moto-vehicle-defs` — RED)
+1. **42 Extended Standard OBD / UDS / Mode-06 / ISO-14229 DIDs to add to the catalog (Group B):**
+   - Core single/multi-cylinder & status PIDs: `0xF401` (Monitor/MIL/readiness), `0xF403` (Fuel system status open/closed loop), `0xF408/0xF409` (Bank 2 trims), `0xF412` (Secondary air), `0xF413` (O2 locations), `0xF414` (`O2_B1S1` voltage + STFT), `0xF415` (`O2_B1S2`), `0xF424/0xF434` (Wideband O2 lambda/voltage/current), `0xF41C` (OBD standard), `0xF41E` (Aux input), `0xF42C/0xF42D` (EGR), `0xF432` (EVAP vapor pressure), `0xF43E` (Catalyst B1S2), `0xF448/0xF44A/0xF44B` (Throttle C, Grip E/F), `0xF451` (Fuel type), `0xF459` (Rail abs pressure), `0xF45B` (Hybrid battery), `0xF45F` (Emission req), `0xF464` (Percent torque points), `0xF465` (Aux I/O neutral/gear bit), `0xF47F` (Total engine run time hours), `0xF48E` (Engine friction torque %), `0xF4A2` (Cylinder fuel rate mg/stroke), `0xF4A4` (Actual gear), `0xF4A6` (ECU odometer km).
+   - Mode `0x06` OBD-on-UDS monitors (`0xF601` O2, `0xF621` Catalyst, `0xF641` O2 Heater, `0xF6A2` Cylinder 1 Misfire EWMA/count).
+   - ISO 14229 identification & Mode `0x09` (`0xF181, 0xF188, 0xF189, 0xF804 CalID, 0xF806 CVN`) and `0x19_02` / `0x19_04` Freeze Frame.
+2. **26 Proprietary / Switch / ABS Broadcast Signals (Group C):**
+   - `CLUTCH_SWITCH`, `NEUTRAL_SWITCH`, `SIDESTAND_SWITCH`, `GEAR_POSITION_RAW`, `FRONT_BRAKE_SWITCH`, `REAR_BRAKE_SWITCH`, `WHEEL_SPEED_FRONT`, `WHEEL_SPEED_REAR`, `ABS_ACTIVE_FLAG`, `ABS_WARNING_LAMP`, `KILL_SWITCH_STATE`, `STARTER_SWITCH_STATE`, `TURN_SIGNAL_LEFT`, `TURN_SIGNAL_RIGHT`, `HIGH_BEAM_STATE`, `HORN_STATE`, `BANK_ANGLE_SENSOR_STATE`, `RAW_TPS_VOLTAGE`, `RAW_ECT_VOLTAGE`, `RAW_IAT_VOLTAGE`, `RAW_MAP_VOLTAGE`, `O2_HEATER_STATE`, `FUEL_PUMP_RELAY_STATE`, `COOLING_FAN_RELAY_STATE`, `INJECTOR_PULSE_WIDTH_MS`, `IACV_STEP_POSITION`.
+3. **68 External "Master Mechanic", Acoustic, Radar & Vision Channels (Group E) & `hardware-procurement-list.md` Wave 2 Update:**
+   - Wave 2 + "Mechanic+" hardware: `ADXL345 ×2` (3.2 kHz engine block + swingarm/chain), `ACS758 50A` + **`1 kHz` Battery Voltage ADC divider on `rt-core`**, `INA226 ×2` (MCU & Raspi power rails), `MAX31856 + K-type EGT`, **Sump Oil Temperature NTC (M12×1.5 drain plug or crankcase NTC)**, `BME280` (ambient temp/humidity/baro), `MLX90614` IR brake/tyre temp, **Inductive Spark-Plug Lead Clip (`rt-core` Timer Input Capture for $\mu\text{s}$ firing period)**, **3 Opto-Isolated Parallel Harness Taps (Clutch, Brake-light 12V, Cooling-fan 12V)**, `BLE TPMS`, `LJ12A3 ×2` wheel speed (if `Q-001` has no ABS broadcast), **GPS `PPS` sync line**, `INMP441 ×2` (engine acoustic mic + helmet voice mic), `HLK-LD2451 ×2` 24 GHz blind-spot radars, and `Sony IMX462` camera CV outputs.
+4. **20 New Derived Health Indicators (`derived/cl250_derived.yaml` addition to the existing 94 signals = 114–120 derived signals, Group F):**
+   - `battery_internal_resistance_mohm`, `starter_crank_duration_ms`, `fuel_pump_prime_current_mean_a`, `fuel_pump_commutator_ripple`, `alternator_charge_balance_ah`, `spark_period_jitter_pct`, `egt_afr_residual_c`, `cold_soak_sensor_spread_c`, `oil_coolant_thermal_lag_s`, `wet_clutch_thermal_load_j`, `chain_stiff_link_index`, `valve_clearance_acoustic_index`, `cam_chain_tension_acoustic_index`, `o2_switching_freq_hz`, `tpms_leak_rate_bar_per_day`, `tpms_rapid_deflation_alert`, `kamm_circle_utilization_pct`, `speed_wobble_6_9hz_energy`, `rider_fatigue_jitter_index`, `brake_efficiency_decel_per_bar`.
+5. **Raspberry Pi 5 (8 GB) Capacity & Optional AI HAT+ (Hailo NPU) Note (`hardware-architecture.md` §5b.8 / `hardware-procurement-list.md` Wave 5):**
+   - 8 GB RAM is more than sufficient (~1.4 GB without camera, ~2.8–3.5 GB with full camera + CV + Kuksa + DuckDB + anomaly ML + audio).
+   - Bare Raspi 5 CPU handles all 360+ telemetry/derived signals + audio MFCC + unified anomaly ML + 1080p hardware H.264 dashcam + classic OpenCV lane tracking at ~32% total CPU load.
+   - If Phase 2 adds simultaneous 30 FPS multi-model deep learning vision (YOLOv8 object/sign/intersection/night-vision), add **Raspberry Pi AI HAT+ (Hailo-8L 13 TOPS / Hailo-8 26 TOPS PCIe NPU)** to Wave 5 / Phase 2 so deep vision runs at 30–60 FPS (<2 W) without loading the Cortex-A76 CPU cores.
+6. **Cross-Vehicle Cold-Start Generalization Architecture (`moto-ml` & `moto-server`):**
+   - To allow a model developed/validated on Honda CL250 (1-cyl, 250cc, chain drive) to generalize on Day 1 to unseen motorcycles/vehicles (e.g., BMW R1200GS 2-cyl Boxer, shaft drive) without prior vehicle-specific training datasets, implement a 4-layer anomaly architecture:
+     - **Layer 1 (Day-1 Physics & OBD Rules):** Vehicle-agnostic thermodynamic/electrochemical invariants (12V cranking dip $V_{\text{min}}$ & $R_{\text{int}}$, rectifier AC ripple $V_{\text{pp}}$, dimensionless STFT/LTFT %, cold-soak $\Delta T$, and Bank 1 vs Bank 2 inter-cylinder symmetry on multi-cylinder bikes).
+     - **Layer 2 (Order-Domain & Dimensionless Features):** Normalize vibration/acoustic FFT frequencies by crankshaft rotation speed ($\text{Order} = f_{\text{Hz}} / (\text{RPM}/60)$: `0.5x` valvetrain/camshaft, `1.0x` crank imbalance, $\frac{N_{\text{cyl}}}{2}\times$ firing order) and use amplitude-invariant shape metrics (**Kurtosis** and **Crest Factor**) parameterized by vehicle metadata (`cylinders`, `stroke`, `final_drive_type`, `cooling_type`).
+     - **Layer 3 (60-Minute Self-Supervised Baseline Warm-Up):** During the first 30–60 minutes (first 2–3 standardized health windows) on a newly connected vehicle, automatically calibrate vehicle-specific Mahalanobis / IsolationForest / Autoencoder reference distributions (`vehicle_baseline_profile`).
+     - **Layer 4 (Crowdsourced Fleet Baseline on `moto-server`):** Pool anonymized baseline distributions by `(make, model, year)` on `moto-server` so subsequent vehicles of the same model get instant Day-1 peer comparison.
+7. **Group G — Physical Ceiling Catalog: 18 Advanced Master Mechanic, Inspection & Motorsport Packages (+52 Channels → Total 410 Distinct Signals / ~800+ Features):**
+   - `G1` Suspension travel (`VL53L1X` ToF / linear pot ×2: `fork_travel_mm`, `rear_shock_travel_mm`, compression/rebound velocity, bottoming count, `dynamic_sag_mm`).
+   - `G2` Crankcase blow-by differential pressure (`MPXV7002DP` / `BMP280` on breather T-line: `crankcase_pressure_kpa`, `crankcase_blowby_pulse_amp_kpa`, `piston_ring_leak_index`).
+   - `G3` Fuel line pressure transducer (`0–5 bar` on injector hose T-adapter: `fuel_line_pressure_bar`, `fuel_pressure_drop_on_inject_bar`, `fuel_regulator_leak_decay_bar_min`).
+   - `G4` Radiator outlet hose NTC (`radiator_outlet_temp_c`, `radiator_delta_t_c`, `thermostat_opening_verify_flag`, `radiator_clog_efficiency_index`).
+   - `G5` Helmet rider biometrics (`MAX30102` HR/HRV/SpO2 + `SCD40` `helmet_co2_ppm`, `helmet_interior_temp_c`).
+   - `G6` Optical/ToF chain slack & whip sensor (`VL53L0X`: `chain_slack_mm`, `chain_whip_amplitude_mm`, `chain_stretch_wear_pct`).
+   - `G7` Smart magnetic drain plug ferrous chip detector (`oil_ferrous_debris_index`, `oil_chip_bridge_ohm`, `metal_shaving_alert_flag`).
+   - `G8` Capacitive/ultrasonic oil level & dielectric quality sensor (`oil_level_mm`, `oil_low_level_warning`, `oil_dielectric_contamination_index`).
+   - `G9` Analog oil pressure transducer (`0–10 bar` Y-adapter on oil switch port: `oil_pressure_bar`, `oil_pressure_per_1000rpm_bar`, `hot_idle_oil_pressure_bar`).
+   - `G10` Injector low-side pulse width & pintle delay tap (`injector_pulse_width_us`, `injector_duty_cycle_pct`, `injector_pintle_delay_us`).
+   - `G11` Brake fluid moisture (% water) & reservoir level sensor (`brake_fluid_water_pct`, `brake_fluid_level_mm`, `estimated_fluid_boiling_point_c`).
+   - `G12` Steering head angle encoder (`AS5600`: `steering_angle_deg`, `steering_rate_deg_s`, `front_tyre_slip_angle_deg`).
+   - `G13` Continuous clutch lever Hall position sensor (`AS5600`: `clutch_lever_pos_pct`, `clutch_bite_point_pct`).
+   - `G14` Battery terminal temperature NTC (`battery_temp_c`, `temp_compensated_r_int_mohm`, `battery_thermal_runaway_flag`).
+   - `G15` Rectifier heatsink NTC & stator 3-phase ripple harmonic imbalance (`rectifier_heatsink_temp_c`, `stator_3phase_imbalance_pct`).
+   - `G16` Wheel bearing (`BPFO/BPFI`) & warped brake disc (`1x wheel order`) vibration envelopes (`wheel_bearing_fault_energy`, `warped_brake_disc_1x_amp`).
+   - `G17` Exhaust backpressure / catalyst differential pressure (`exhaust_backpressure_kpa`, `catalyst_dpf_clog_index`).
+   - `G18` Shift rod force & engagement duration sensor (`shift_force_n`, `shift_duration_ms`, `false_neutral_count`).
+8. **Group H — Multi-Horizon & Advanced DSP Feature Store (~2,400+ Features) + 8 Specialized Sub-System Anomaly Models (`moto-ml` & `moto-mcp`):**
+   - **Avoid Curse of Dimensionality / Signal Dilution:** Feeding all 410+ signals (or 2,400+ features) into a single monolithic `Mahalanobis` / `IsolationForest` / `Autoencoder` model causes covariance matrix singularity ($D \times D$), dilutes localized 2–3 signal faults across 400+ healthy channels, and inflates false-positive rates ($1 - 0.99^{500} = 99.3\%$).
+   - **2-Stage Hierarchical Architecture:**
+     - **Stage 1 (8 Specialized Sub-Models in `moto-ml`):** Split anomaly detection into 8 orthogonal domain sub-models, each taking only its 10–15 independent core physical features (~100 core features total): (1) Combustion & Fuel, (2) Cooling & Lubrication, (3) Electrical, Battery & Charging, (4) Valvetrain & Cam Acoustic, (5) Crank, Clutch & Transmission, (6) Chain, Wheel Bearing & Drivetrain, (7) Suspension, Chassis & Tyres, (8) Braking & Hydraulics.
+     - **Stage 2 (Group H ~2,400+ Feature Store for `moto-mcp` & LLM Root-Cause Drill-Down):** Compute and persist multi-horizon rolling statistics (`1s, 10s, 60s, session, 10-session EWMA` → +1,200 features), Hilbert Envelope Demodulation spectra (`BPFO/BPFI/BSF/FTF` → +64 features), Cepstrum / Quefrency rahmonics (+32 features), Cross-Spectral Coherence & Phase Lag (`TPS→MAP`, `RPM→Alternator Ripple`, `Block→Swingarm transfer function` → +48 features), Remaining Useful Life (RUL) degradation slopes (`days_to_threshold` → +40 features), and CAN physical-layer health counters (`rx/tx errors, bus load, NRC rate, RTT jitter` → +12 features) so the LLM can drill into the exact triggered subsystem.
+9. **Group I — Universal All-Vehicle Ecosystem & Non-Destructive Testing (NDT) Expansion (+202 Distinct Signals → Total 612 Distinct Signals / ~3,500+ Features):**
+   - `I1` External NDT & Master-Mechanic Sensors (+24): Coolant pressure transducer (`0–2.5 bar` for instant cold-start head-gasket CO2/compression leak detection), Ultrasonic Acoustic Emission piezo sensor (`20–100 kHz` for pre-audible oil-film breakdown, dry friction, water-pump cavitation, and bearing micro-cracks), Wideband Lambda controller (`Bosch LSU 4.9 + CJ125` for open-loop AFR), Stator stray-flux coil (external per-pole winding short detection), Capacitive fuel water/octane/vapor-lock sensor, and 4-gas exhaust analyzer (`HC, CO, CO2, O2` for inspection kit).
+   - `I2` Variable Valve Timing (`VVT / VTEC / ShiftCam / VANOS`, +18): Intake/exhaust cam target vs actual angles & phase error (0.1° cam-chain stretch detection), OCV solenoid duty/current, high-lift cam state, cylinder deactivation mask.
+   - `I3` Multi-Cylinder Smooth-Running Balance, Turbo & Diesel/GDI (+48): Per-cylinder injection balance correction (`mg/stroke`, cylinders 1–8), per-cylinder crank angular acceleration (`rad/s²`), per-cylinder knock retard (`deg`), per-cylinder misfire counters (`0xF6A3–0xF6A9`), turbo boost target/actual/deviation, VGT/wastegate position, intercooler temps, DPF differential pressure/soot/ash, multi-point EGT, NOx upstream/downstream, AdBlue/SCR & glow plugs.
+   - `I4` Automatic / DCT (Honda Dual-Clutch) / DSG / CVT Transmission TCM (+30): TCM oil temp, main line & mechatronic accumulator pressure, Clutch K1/K2 target/actual pressure, slip RPM, kiss/touch point (`mm`) & friction energy, shift drum angle/current, solenoids 1–8 current, torque converter slip, CVT belt slip, AWD Haldex pump current.
+   - `I5` EV / Hybrid BMS & Traction Inverter (+34): HV pack voltage/current/SOC/SOH/$R_{\text{int}}$, min/max/delta cell voltage & weakest cell ID, cell thermal spread, HV isolation resistance (`kΩ`), traction stator/rotor/IGBT temps, DC-link ripple, phase U/V/W balance, resolver error, DC-DC/OBC efficiency, bearing EDM fluting index.
+   - `I6` 4-Wheel ABS / MSC / Electronic Suspension (Dynamic ESA) & EPS (+26): 4-wheel speeds (`FL/FR/RL/RR`), ABS pump voltage & valve activation times, TCS/Wheelie/Slide intervention %, electronic damper compression/rebound valve currents & preload position, EPS steering column torque & motor current.
+   - `I7` Smart Alternator (LIN), Electric Water Pump & HVAC/Accessory Load Context (+22): Smart alternator target voltage & DFM load % (prevents false charging alarms on Euro-5/6 vehicles), IBS battery sensor, electric coolant pump target/actual RPM/current, active grille shutter, mapped thermostat heater duty, AC compressor clutch/pressure/torque, heated grips/seat/aux light currents, parasitic sleep current (`mA`).
+10. **Scale 1A / Scale 1B / Scale 2 Modular Tiering & Trunk-and-Branch Architecture (`moto-vehicle-defs`, `moto-ml`, `moto-server`, `moto-mcp`):**
+    - The full platform trunk (CAN/UDS + External Sensors + Anomaly ML + Safety/ADAS + `moto-server` + `moto-mcp` + HUD) is developed in parallel on the Honda CL250 without removing any module, while structuring the 612-signal schema into 3 modular scales so each subsystem can later branch out as a standalone product (including a zero-wiring CAN/single-plug tier):
+      - **Scale 1A — CL250 Zero-External-Wire / Single-OBD-Plug + Onboard PCB Core (235 Signals):** Active CL250 UDS DIDs (45) + passive CAN broadcasts (8) + **OBD Pin-16 `1 kHz` voltage ADC** (`crank_v_min`, relative compression ripple, rectifier AC ripple — 8) + onboard PCB sensors (6-axis IMU + `3.2 kHz` frame accelerometer + waterproof `INMP441` mic + `BME280` + GPS + wireless `BLE TPMS` — 60) + 114 derived signals. Enables a future CAN/single-plug downgrade tier with zero external harness installation.
+      - **Scale 1B — CL250 Physical External "Master Mechanic" Sensors + Safety/ADAS + HUD Expansion (+65 Signals → 300 Total Active CL250 Signals):** External engine-block & swingarm `ADXL345 ×2` (+16), `ACS758 50A` + `INA226 ×2` (+9), `M12×1.5` sump oil NTC plug (+3), inductive spark-plug clip (+3), `MAX31856` K-type EGT (+3), 3× opto-isolated Y-taps for clutch/brake/fan (+5), radiator outlet NTC & `VL53L1X` fork travel ToF (+8), and `HLK-LD2451 ×2` blind-spot radars + `IMX462` camera CV + cornering lights + immobilizer + HUD (+18).
+      - **Scale 2 — Universal Multi-Vehicle & Inspection Station Catalog (312 Signals):** Dormant on CL250 (`D-068` auto-silenced), automatically activated when connected to multi-cylinder, VVT, Turbo/Diesel, DCT/DSG, EV/BMS, ESA vehicles or B2B inspection rigs.
+      - **4 Plug-and-Play Decoupling Rules for Zero-Effort Branching:**
+        1. **Dual-Profile / Mask-Aware Sub-Models (`moto-ml`):** Export each of the 8 specialized sub-models with both `Profile_1A_CAN_Only` (Scale 1A feature subset) and `Profile_1B_Full_External` (Scale 1A + 1B feature subset) weights so unplugging external sensors never causes `NaN` failures.
+        2. **Single Physical Expansion Connector (`Expansion Port`):** Route all Scale 1B external wired sensors through one waterproof multi-pin connector on the enclosure so hardware switches between Scale 1B (full CL250 / Pro / Inspection) and Scale 1A (single-plug OBD) simply by unplugging the expansion harness.
+        3. **Strict `DBC` & `Kuksa VSS` Contract Coupling:** Modules (`moto-safety-node`, HUD, Camera CV, Anomaly ML, Telemetry) must never call each other's internal state directly; all communication stays on `moto_platform.dbc` and `Kuksa VSS`.
+        4. **Nullable / Graceful Schema on `moto-server` & `moto-mcp`:** All 612 columns in Parquet/DuckDB and MCP tools remain nullable/optional so `moto-mcp` diagnoses using whichever tier (Scale 1A, 1B, or 2) is populated.
+
+## Claude review
+Design-only session: no branch, no commit, zone green. Nothing merged or changed in a repo.
+
+Factual corrections:
+- defs v0.16.0 is already released and pinned; the next defs version is **v0.17.0**.
+- `derived/cl250_derived.yaml` holds **126** signals, not 94; `cranking_dip`, `charging_ripple`, `battery_rest_voltage`, `friction_torque` already cover part of Group F.
+- Most of Group E is already in `hardware-procurement-list.md` v2.0 (ADXL345 x2, ACS758, INA226 x2, MAX31856 + EGT, BME280, INMP441 x2, LJ12A3 x2, BLE TPMS, HLK-LD2451 x2). New: sump NTC drain plug, inductive spark pickup, MLX90614, PC817 taps (Q-031 (c)), GPS PPS wire, Hailo (Phase 2 note).
+- "OBD pin 16": the CL250 DLC pinout is a CONFIRM item (hardware-integration.md §1); Honda motorcycle DLCs are not J1962. The 1 kHz battery-voltage ADC works on the unit's own supply input wherever it is taken.
+- Scale 1A counts 45 ECU DIDs and 8 passive broadcasts as active; only 5 DIDs are verified and Q-001 is open.
+- `brake_efficiency_decel_per_bar` needs a brake-pressure sensor that no list contains.
+
+Verdicts per For-Claude item:
+1. Accepted; already true under D-068/D-069 (no DID was ever deleted). Refinement: split a vehicle-independent OBD/UDS catalog from the per-vehicle poll list, so never-served PIDs (bank 2, EGR, diesel, hybrid) are defined but not polled on the CL250 (each costs sweep and re-ask reads per D-075 epoch and HIL bound work).
+2. K1/K2 direction acceptable (self-hosted server, read-only tools, TLS + auth) but changes ARCHITECTURE (moto-mcp on the Raspi, localhost), D-060 item 5 and D-063: needs a new decision. **K3 conflicts with invariant 7 on both halves**: raw position off the GPS node, and raw time-series slices handed to an LLM (the LLM would do its own math). Non-negotiable invariant: the user must confirm in a Claude session; Claude's proposal is position stored only on the self-hosted server, LLM receives tool-computed results, slices only downsampled for display. K4 accepted as class-B derived windows (D-070); W3 burst polling is D-068 "Not chosen" and needs its own decision + safety-reviewer. K5 accepted: 0x19 is in tester_policy; needs decode definitions and multi-frame handling + safety-reviewer in the testers.
+3-4. Group B: add to the catalog; poll on the CL250 only after the D-059 bitmap (V0/V1); multi-value PIDs need the decode definition D-068 left open. Group C: never invented (invariant 2); comes from Q-001 / Q-031. Group F: define only when the input sensor exists in defs.
+5. Accepted as a Wave 5 / Phase 2 note; CPU numbers are estimates to measure. YOLO is not decided (lane keeping is classic CV).
+6. Sound (order tracking, kurtosis/crest are standard). Caveats: day 1 holds for layer 1 only; mounting/transfer-path domain shift; layer 3 can learn an already-faulty baseline (gate with layer 1); layer 4 needs multi-user consent, out of thesis scope.
+7, 9. Groups G and I stay out of defs (no vehicle, no source, no test; MCU table cost). Kept as a taxonomy in `docs/ideas/`. G3 (fuel-line T), G9 (oil-pressure Y), G10 (injector tap) and G11 (brake reservoir) modify fuel, oil, ECU-output or brake circuits: not on the CL250 without a safety decision.
+8. Accepted (matches D-068 "there is not one model"). The 1 - 0.99^500 figure applies to independent per-feature thresholds; the real arguments are covariance rank and fault dilution. Feature store lives in moto-server/moto-ml code, computed per window from raw (D-069 item 6), not in defs.
+10. Accepted as direction; rules 3-4 already hold (VSS contract, nullable columns). Rule 2 (expansion connector) belongs to the Q-034 enclosure design.
+
+User answers (same day, Claude session): K3 relaxed for now with an open question -> D-076 + Q-035 (the LLM still does no math); two servers, Raspi edge + remote VPS-ready -> D-077; scope rule "CL250 prototype now, commercial product later" -> D-078 and PLATFORM-RULES. PRs: moto-vehicle-defs#82, moto-workspace#79, sync PRs rt-core#44, safety-node#5, io-node#5, hil-bench#5, conn#29, linux-node#6, mcp#5, server#20, ml#5, mobile#19. Remaining: STATUS Next up item 2 (phased plan).

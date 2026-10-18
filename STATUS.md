@@ -7,13 +7,14 @@
 
 ## Where we are
 
-- 11 platform repos + `moto-workspace`, public (D-033), MIT (D-036). Decisions D-001..D-075 (open Q up to Q-034); **D-057 intentionally unused**. The user merges PRs; on 2026-10-18 they allowed Claude to merge its own PRs (both sessions that day, explicit instruction each time).
+- 11 platform repos + `moto-workspace`, public (D-033), MIT (D-036). Decisions D-001..D-078 (open Q up to Q-035); **D-057 intentionally unused**. The user merges PRs; on 2026-10-18 they allowed Claude to merge its own PRs (both sessions that day, explicit instruction each time).
 - **Architecture (D-072, D-073):** one STM32H755 (NUCLEO-H755ZI-Q, not ordered yet): M7 = rt-core, M4 = safety partition (cornering + own IMU, blind spot, immobilizer, LED ring/mirror LEDs); io-node retired; bike ESP32 + helmet ESP32. Platform bus v0.15.0: 0x023 `SafetyWarningStatus`, 0x120 `SafetyRequest`. Procurement list v2.0 (6 waves).
 - **D-075 (provisional, user: "use changeable, standard-accepted values for now"; defs#77-80):**
   - Item 1: a stop epoch for the D-068 stop rule and the D-069 re-ask. Amendments (a)-(f): the fast session re-request on a counted 0x7E/0x7F; the "valid 0 seen" state belongs to the epoch; quiet-window bound; per-DID stop reason; conn's 2000 ms First-Frame hold; answered unverified DIDs stop after two 0x7E/0x7F refusals. (f) amended (user, defs#81): the D-069 re-ask clears the NRC counts and the 0x31 mark of **every** unverified DID, so the 0x31-before-0x7E/0x7F precedence holds per run of the stop rule; timeout counts are kept.
   - Item 2: single-fault-class bounds.
   - Item 3: the N_Bs hold is kept.
   - Items 4-6: provisional answers to Q-033 (own M4 indicator input, 1.5 s hold), Q-029 (yes) and Q-023 items 1-4. Q-022 and Q-023 (5)-(6) are still open.
+- **2026-10-18 decisions (defs#82, rules in workspace#79, synced to all repos):** D-076 (provisional) position may go to the user's own servers and the LLM via moto-mcp, never committed, the LLM still does no math; Q-035 tracks the revisit. Not implemented: BLE GPS block + codegen guard, conn, mobile D-063 guard, server, mcp. D-077 moto-server on the Raspi (edge) + remote (user's machine now, VPS-ready), moto-mcp on both. D-078 CL250 prototype now, commercial multi-vehicle product later (PLATFORM-RULES scope note). zones: moto-server `*gps*`/`*position*` yellow.
 - **Q-034 (open):** enclosure placement on the CL250. There is no room under the seat. Claude recommends a rigid rear-subframe tray on the left side with the IMUs on the frame; analysis in `hardware-integration.md` §4.1, which also lists the measurements to take.
 - **rt-core main:**
   - defs **v0.15.0** (#40). Golden vectors and 0xFD03 landed via **#39**: #34 and #37 had been merged into stacked branches and never reached main.
@@ -25,7 +26,8 @@
 ## Next up (in order)
 
 1. User: Q-034 measurements on the bike (§4.1 list, photos never committed); order Wave 1 (NUCLEO-H755ZI-Q first); confirm or change the D-075 provisional values whenever convenient. Open point for that: a never-answered unverified DID gets one engine-start re-ask per epoch, then stays stopped until key-off (no later recovery).
-2. User/Claude: the two pending external-AI logs (`external-ai/log/2026-10-18-*`) → `/external-review`.
+2. Claude: `/external-review` the pending log `2026-10-18-gemini-contributor-task-plan`. Then the anomaly-sensor plan (log reviewed, Claude review section has the verdicts): docs PR (`docs/ideas/` taxonomy for groups G/I + scale tiers, procurement additions: sump NTC plug, spark pickup, MLX90614, PC817 taps, Hailo Wave 5 note; decisions for K4 windows W1-W5 and K5 0x19 freeze frame; catalog vs per-vehicle poll list) → defs v0.17.0 (`/signal-change`: OBD catalog split, 0x19 + multi-value PID decode, identification DIDs, window schema) → group B on the CL250 poll list after the V0/V1 bitmap, group C after Q-001 → group F with Wave 2 sensors.
+2a. Claude, D-076/D-077 implementation when the server work starts: `/signal-change` BLE GPS position fields + codegen guard (then conn, mobile, server together, `vss-schema-guardian`); moto-server packaging (compose, TLS proxy, per-device token), live ingest protocol, moto-mcp HTTP transport (`architecture-guard`).
 3. Claude: safety-node Layer 1. Steps: `/repo-bootstrap moto-safety-node`, then `/feature-module` cornering decision on the D-075 items 4-6 defaults, using `pack_checked` (defs v0.16.0), then `safety-reviewer`.
 4. Claude: rt-core `features/derived` against the golden vectors (`/feature-module`, `architecture-guard`).
 5. Claude, D-072 follow-ups: rt-core sends 0x120 and consumes 0x023; conn bumps defs (v0.12.0 → v0.16.0) and reads 0x023 for the HUD/phone; hil-bench restbus drops 0x083 and adds 0x023/0x120 when it exists.
@@ -36,15 +38,15 @@
 
 ## Blockers / pending decisions
 
-- **Q-034** (placement) waits for the measurements. **Q-032** waits for HUD stages H0/H1. **Q-031** waits for Q-001; Q-001 waits for the listen-only capture.
+- **Q-035** (when D-076 is revisited) waits for its first trigger (second user, foreign hosting, commercial use, published data). **Q-034** (placement) waits for the measurements. **Q-032** waits for HUD stages H0/H1. **Q-031** waits for Q-001; Q-001 waits for the listen-only capture.
 - The NUCLEO-H755ZI-Q (not ordered) blocks CubeMX, Renode, Ç6, the FDCAN port and on-target budgets. Q-009 blocks the hil-bench host.
 - Before safety-node Layer 1: Q-022 after fallback validation; Q-023 (5)-(6) in its design.
-- **User:** C-4 (old `can-dbc-conventions` skill on claude.ai); Q-024, Q-025; D-030 confirmation; Q-027/Q-028 later; untracked workspace files `CAN-DISCOVERY-AND-POLLING-STRATEGY.md`, `docs-presentation/`, `learning/` and the two external-AI logs (commit or keep local?).
+- **User:** C-4 (old `can-dbc-conventions` skill on claude.ai); Q-024, Q-025; D-030 confirmation; Q-027/Q-028 later; untracked workspace files `CAN-DISCOVERY-AND-POLLING-STRATEGY.md`, `docs-presentation/`, `learning/` and the two external-AI logs (commit or keep local?; the anomaly-sensor one is reviewed).
 
 ## Recent sessions
 
+- 2026-10-18 (local, external review): Antigravity anomaly-sensor log reviewed (design only; verdicts in its Claude review); user decisions D-076 position relaxed + Q-035, D-077 two servers, D-078 scope (defs#82), invariant 7 + zones (workspace#79), 10 sync PRs; all merged on the user's instruction.
 - 2026-10-18 (local, follow-up): rt-core#42 round-3 safety review → rt-core#43 + conn#28 (re-ask clears all unverified counts; reviewed, no BLOCKER/MAJOR), conn#27 test gap 2, D-075 (f) precedence recorded (defs#81); all merged on the user's instruction.
 - 2026-10-18 (local, long): D-075 provisional defaults (defs#77-80), Q-034 placement analysis, rt-core#38-42 (stop epoch, (f), orphaned #34/#37 recovered, defs v0.15.0), conn#24-26, v0.16.0 tag fixed; three safety-reviewer rounds on rt-core, two on conn.
 - 2026-10-18 (local): D-074 data paths (defs#73), platform bus v0.15.0 with 0x023/0x120 (defs#74), signal-change skill node list (workspace#74); Q-033 opened (defs#75).
 - 2026-10-17 (local, architecture): D-072 one STM32H755, D-073 helmet unit; procurement list v2.0; rules synced to all repos.
-- 2026-10-17 (autonomous, task 8 + handoff): rt-core#33 draft (D-068/D-069 tester rule), rt-core#34 draft (golden vectors, stacked).

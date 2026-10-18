@@ -17,6 +17,9 @@ What the user asked for, in one or two sentences.
 ## Changes
 - `<repo>/<path>`: what changed and why.
 
+## Result
+Analysis or planning sessions that change no file: the plan, findings or answer itself (or the path where it was saved). The chat output is lost after the session; Claude can only review what is written here.
+
 ## Checks
 - `<command>`: pass / fail (paste the failing part).
 - `python3 scripts/check_zones.py <repo>`: <result>

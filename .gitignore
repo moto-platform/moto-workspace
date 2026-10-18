@@ -6,6 +6,9 @@
 WORKTREES.md
 # Copyrighted ISO standard PDFs: never commit
 docs-presentation/references/*.pdf
+# The user's local thesis-presentation drafts and study notes (personal, not platform docs)
+/docs-presentation/
+/learning/
 # Local APK builds (also matched by /moto-*/; listed so it stays ignored if that rule changes)
 /moto-apk/
 __pycache__/

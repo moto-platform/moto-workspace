@@ -77,6 +77,11 @@
     {"repo": "moto-mobile", "glob": "lib/services/session_upload*", "zone": "yellow", "why": "upload of GPS sessions (D-063; widened by D-076/D-077 to the user's own HTTPS server)"},
     {"repo": "moto-mobile", "glob": "lib/services/upload_client*", "zone": "yellow", "why": "upload of GPS sessions (D-063; widened by D-076/D-077 to the user's own HTTPS server)"},
     {"repo": "moto-mobile", "glob": "*", "zone": "green", "why": "companion app UI"},
+    {"repo": "moto-analyzer", "glob": "src/services/webSerialCan*", "zone": "red", "why": "USB CAN adapter: opens listen-only, never transmits on a vehicle bus (D-081, invariant 1)"},
+    {"repo": "moto-analyzer", "glob": "src/services/udsComposer*", "zone": "red", "why": "UDS request composer: reaches only the simulated ECU (D-081, invariant 1)"},
+    {"repo": "moto-analyzer", "glob": "src-tauri/*", "zone": "red", "why": "desktop HAL for real CAN hardware: listen-only refusal (D-081, invariant 1)"},
+    {"repo": "moto-analyzer", "glob": "src/defs/*", "zone": "yellow", "why": "loads the pinned defs; no built-in signal catalog (D-081, invariant 2)"},
+    {"repo": "moto-analyzer", "glob": "*", "zone": "green", "why": "analyzer UI, views and exports; adapter, HAL and composer paths are red (D-081)"},
 
     {"repo": "moto-mcp", "glob": "*", "zone": "yellow", "why": "read-only tools; the LLM never does its own math (invariant 7)"},
     {"repo": "moto-ml", "glob": "*", "zone": "green", "why": "offline training; real ride data is never committed (D-033)"},

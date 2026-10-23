@@ -47,6 +47,7 @@ REPO_ASSETS: dict[str, dict[str, list[str]]] = {
     "moto-server": SAFETY_SOFTWARE,
     "moto-ml": SOFTWARE,
     "moto-mobile": SOFTWARE,
+    "moto-analyzer": SAFETY_SOFTWARE,  # listen-only adapters and HAL (D-081)
 }
 
 

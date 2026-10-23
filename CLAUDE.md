@@ -2,7 +2,7 @@
 
 @PLATFORM-RULES.md
 
-This folder is the `moto-workspace` repo (manifest, setup, shared `.claude/`). It ignores the 11 independent platform repos cloned inside it (D-015). Locally, **always start Claude from this root** so every repo and the shared agents/skills are available. Each repo also carries synced copies of its relevant agents/skills and of `PLATFORM-RULES.md` for single-repo cloud sessions.
+This folder is the `moto-workspace` repo (manifest, setup, shared `.claude/`). It ignores the 12 independent platform repos cloned inside it (D-015). Locally, **always start Claude from this root** so every repo and the shared agents/skills are available. Each repo also carries synced copies of its relevant agents/skills and of `PLATFORM-RULES.md` for single-repo cloud sessions.
 
 ## Session protocol
 
@@ -34,5 +34,5 @@ This folder is the `moto-workspace` repo (manifest, setup, shared `.claude/`). I
 ## Worktrees
 
 - Code changes happen in `<repo>/.claude/worktrees/<topic>` on branch `claude/<topic>` (one worktree per PR). `.claude/worktrees/` is ignored (workspace `.gitignore`; each repo's `.git/info/exclude`, added by the script below).
-- `python3 scripts/worktrees.py` writes `WORKTREES.md` (generated, gitignored): every worktree of the workspace and the 11 repos with its PR state and a verdict. **remove** = merged, clean (submodules included) and nothing unpushed.
+- `python3 scripts/worktrees.py` writes `WORKTREES.md` (generated, gitignored): every worktree of the workspace and the 12 repos with its PR state and a verdict. **remove** = merged, clean (submodules included) and nothing unpushed.
 - After a PR is merged: `python3 scripts/worktrees.py --prune` removes the **remove** rows and their local branches. `/handoff` runs the report and asks before pruning.

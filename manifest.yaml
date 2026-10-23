@@ -47,3 +47,7 @@ repos:
   - name: moto-mcp
     url: https://github.com/moto-platform/moto-mcp.git
     ref: main
+
+  - name: moto-analyzer      # CAN analyzer, web host then Tauri desktop (D-081); no release yet, main pins defs v0.18.0
+    url: https://github.com/moto-platform/moto-analyzer.git
+    ref: main

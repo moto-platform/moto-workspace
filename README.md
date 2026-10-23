@@ -1,7 +1,7 @@
 # moto-workspace
 
 Workspace for the [moto-platform](https://github.com/moto-platform) motorcycle SDV / ADAS project.
-It holds the cross-repo tooling. The 11 platform repos are independent and are cloned next to this file by `setup.sh`.
+It holds the cross-repo tooling. The 12 platform repos are independent and are cloned next to this file by `setup.sh`.
 
 | Path | Purpose |
 |---|---|

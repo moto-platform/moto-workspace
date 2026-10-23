@@ -43,6 +43,7 @@ You are an AI coding tool (Codex, Gemini, DeepSeek, Cursor, Aider, Copilot, …)
 | moto-connectivity-node | `scripts/native_tests.sh` (or `pio test -e native`); `pio run -e esp32-s3-devkitc-1-mock`; cppcheck as in CI |
 | moto-mobile | `flutter pub get && flutter analyze && flutter test` (never commit a local `pubspec.lock` rewrite) |
 | moto-server | `uv sync && uv run pytest && uv run ruff check . && uv run ruff format --check .` |
+| moto-analyzer | `git submodule update --init && npm ci && npm test && npm run build` |
 | other repos | the commands in that repo's README/CLAUDE.md "Build" section |
 
 ## 5. Session log (mandatory)

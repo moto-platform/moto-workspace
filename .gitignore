@@ -1,4 +1,4 @@
-# The 11 platform repos are independent git repos, cloned by setup.sh
+# The 12 platform repos are independent git repos, cloned by setup.sh
 /moto-*/
 .DS_Store
 .claude/settings.local.json
@@ -12,3 +12,5 @@ docs-presentation/references/*.pdf
 # Local APK builds (also matched by /moto-*/; listed so it stays ignored if that rule changes)
 /moto-apk/
 __pycache__/
+# Manufacturer studio photos used as CAD references: copyrighted, never commit (D-033)
+/models/hardware-integration/reference-images/

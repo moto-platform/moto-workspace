@@ -2,23 +2,33 @@
 date: 2026-10-18
 tool: antigravity/gemini-4-argon
 topic: anomaly-sensor-analysis
-repos: [moto-workspace]
-branches: []
+repos: [moto-workspace, moto-vehicle-defs]
+branches: [ext/antigravity-procurement-list]
 prs: []
-zone: green
-review: done 2026-10-18 (design-only, no code/PR; items 1, 4-6, 8, 10 accepted as direction with corrections; K3 confirmed by the user in Claude -> D-076 (provisional, Q-035), K1/K2 -> D-077, scope -> D-078 (defs#82, workspace#79 + 10 sync PRs); Groups G/I to an ideas doc, not defs; next defs version is v0.17.0)
+zone: yellow
+review: done 2026-10-23 (2026-10-19..21 follow-up on ext/antigravity-procurement-list: procurement v2.6 + hardware-integration §3.4/§4.1 reviewed; 3 BLOCKER fixed in v2.7, D-082 board split A/B/C1/C2, Q-036; defs#93)
 ---
 
 # anomaly-sensor-analysis
 
 ## Goal
-Establish the complete, unabridged sensor, CAN/UDS DID, external "Master Mechanic" hardware, vision/radar, and derived-signal inventory (~360 distinct channels / 750+ features with 2D maps) for `moto-platform` as a **universal multi-vehicle product** (with Honda CL250 as Vehicle #1), resolve architectural decisions K1–K6 for the server + MCP + LLM anomaly pipeline, and verify Raspberry Pi 5 (8 GB) compute/memory capacity under combined telemetry, acoustic, anomaly ML, and camera/CV safety workloads.
+Establish the complete, unabridged sensor, CAN/UDS DID, external "Master Mechanic" hardware, vision/radar, and derived-signal inventory (~360 distinct channels / 750+ features with 2D maps, expanded to 612 signals across Scale 1A / 1B / 2) for `moto-platform` as a **universal multi-vehicle product** (with Honda CL250 as Vehicle #1), resolve architectural decisions K1–K6 for the server + MCP + LLM anomaly pipeline, verify Raspberry Pi 5 (8 GB) compute/memory capacity, update `moto-vehicle-defs/docs/hardware-procurement-list.md` (Version 2.5) with verified Turkish store prices, alternative purchase links, modular subsystem separation, 3-board split-mezzanine epoxy perfboards (`Board A 5×7 cm / Board B 7×9 cm / Board C 4×6 cm`), 2-story standoffs, shielded `LiYCY` cable + `Tesa` cloth tape + ferrite cores, and dedicated IP67 enclosures, and expand `moto-vehicle-defs/docs/hardware-integration.md` (§3.4 & §4.1) with chassis harness EMI/twisting rules and `Q-034` CL250 mounting alternatives `(a)..(h)`.
 
 ## Changes
-- `moto-workspace/external-ai/log/2026-10-18-antigravity-anomaly-sensor-analysis.md`: recorded the user-approved universal product policy, full 360-signal inventory, external sensor additions, K1–K6 decisions, and Raspberry Pi 5 (8 GB) capacity analysis for Claude (`/external-review`, `/signal-change`, and `DECISIONS.md`).
+- `moto-workspace/external-ai/log/2026-10-18-antigravity-anomaly-sensor-analysis.md`: recorded the user-approved universal product policy, full 612-signal inventory (Scale 1A/1B/2), external sensor additions, K1–K6 decisions, Raspberry Pi 5 (8 GB) capacity analysis, `hardware-procurement-list.md` v2.5 market research & mechanical packaging update, and `hardware-integration.md` §3.4 & §4.1 EMI/harness and `Q-034` CL250 placement expansion.
+- `moto-vehicle-defs/docs/hardware-procurement-list.md` (branch `ext/antigravity-procurement-list`): updated to Version 2.5:
+  - Reorganized into dedicated standalone subsystem modules (**Part 1: Core Domain Controller, Power & Wiring**, **Part 2: Anomaly & Master-Mechanic Sensors [2A Onboard Scale 1A / 2B External Scale 1B / 2C Contactless Suspension / 2D Sized Perfboards, Standoffs & Chassis IP67 Enclosures]**, **Part 3: Safety System [3A M4 Safety Partition, Cornering, Blind-Spot Radar & NFC Immobilizer / 3B Vision Lane-Keeping Camera & AI HAT+ / 3C Sized Perfboards, Standoffs & Chassis IP67 Enclosures]**, **Part 4: Helmet HUD & Voice Unit**, **Part 5: Raspberry Pi 5 On-Bike Base & HIL Bench**, plus a **Master Dimension → Perfboard → 2-Story Standoff → IP67 Enclosure Reference Table** and **Summary Budget**).
+  - Defined the **3-Board Modular Split-Mezzanine Architecture (`Board A: 5×7 cm Power/CAN`, `Board B: 7×9 cm Scale 1B Anomaly Conditioners`, `Board C: 4×6 cm M4 Safety & Rigid Dual-IMU`)** in Part 1 and added `LiYCY 4×0.22 mm²` tinned-copper braided shielded cable (`5–10 m`), `Tesa 51608` automotive fleece/cloth harness tape (`19mm × 15m`), `5–7 mm` snap-on ferrite cores (`5–10 pcs`), and `2.2–4.7 kΩ` external I2C pull-ups.
+  - Added dimension-matched double-sided epoxy perfboards (`2×8`, `3×7`, `4×6`, `5×7`, `6×8`, `7×9 cm`), 2.54 mm female/long-leg stacking headers + PCB screw terminals, two-story `M3` & `M2.5` brass/polyamide standoff sets (`6–10 mm` Layer 1 + `15–25 mm` Layer 2), and dedicated `IP65/IP67` gasketed boxes (`170×120×55 mm` for `NUCLEO-H755ZI-Q` and `Raspberry Pi 5` 2-story stacks; `DT-0508` / `83×58×33 mm` and `DT-0505` / `65×38×22 mm` for `ESP32-S3`, `Board C` Rigid CG IMU, `ADXL345 ×2`, `ACS758`, `MLX90614`, `BME280/INMP441`, `VL53L1X/AS5600`, `HLK-LD2451 ×2`, `PN532`, `Immobilizer Relay`, `Clear-Lid Cornering Rings ×2`, and `Pi Camera Module 3`).
+  - Corrected the `## On hand` inventory per user feedback: removed `STM32F103` (user has **no STM32 board** on hand), added `Arduino Uno, Arduino Nano`, updated IMU label to `MPU-6590 / MPU-6500`, kept `Raspberry Pi 5 8 GB, Raspberry Pi 3B+`, and added an optional `STM32F103C8T6 Blue Pill` row under `Part 5B — HIL Bench`.
+- `moto-vehicle-defs/docs/hardware-integration.md` (branch `ext/antigravity-procurement-list`):
+  - Added **§3.4 (Chassis sensor harness: twisted-pair rules, shield grounding, insulation & modular split-mezzanine layout)** covering differential vs. single-ended (`Signal + GND`) twisting, single-ended `LiYCY` shield grounding at the `H755` side only, `2.2–4.7 kΩ` I2C pull-ups, `Tesa 51608` flexible harness taping + `3–4 cm` joint-only heat-shrink, snap-on ferrite cores, and the `Board A / B / C` split-mezzanine layout.
+  - Expanded **§4.1 (`Q-034` Placement on the CL250 for the H755 + Pi 5 build)** with the OEM/motorsport IMU-vs-controller separation rule (`Board C` in a rigid `DT-0505` box on the main frame spine near CG) and 5 new mounting candidates beyond `(a)..(c)`: **`(d)` Left-side pannier carrier plate (`SW-Motech SLC` / `Longride` factory `M8` fender bosses, `~127 mm` pitch)**, **`(e)` Pillion seat / `23×23 cm` rear luggage rack plate**, **`(f)` Left tubular crash-bar (`koruma demiri`) for `Pi 5` / Front Hub**, **`(g)` Behind headlight / scrambler number-plate cowl (`DT-0508` Front Hub)**, and **`(h)` Behind left side number-plate cover (document-pouch cavity for `Board C` CG IMU / `ACS758` / `Immobilizer Relay`)**.
 
 ## Checks
 - `python3 scripts/check_zones.py . --path external-ai/log/2026-10-18-antigravity-anomaly-sensor-analysis.md`: GREEN
+- `python3 scripts/check_zones.py moto-vehicle-defs --path docs/hardware-procurement-list.md`: YELLOW (`platform docs; facts must match DECISIONS.md`)
+- `python3 scripts/check_zones.py moto-vehicle-defs --path docs/hardware-integration.md`: YELLOW (`platform docs; facts must match DECISIONS.md`)
 
 ## Unsure about
 - Which of the 35 unverified D-068 DIDs the CL250 Keihin PGM-FI ECM serves in hardware (to be settled by the first 15-minute V0/V1 on-bike test and D-059 bitmap probe).
@@ -137,3 +147,8 @@ Verdicts per For-Claude item:
 10. Accepted as direction; rules 3-4 already hold (VSS contract, nullable columns). Rule 2 (expansion connector) belongs to the Q-034 enclosure design.
 
 User answers (same day, Claude session): K3 relaxed for now with an open question -> D-076 + Q-035 (the LLM still does no math); two servers, Raspi edge + remote VPS-ready -> D-077; scope rule "CL250 prototype now, commercial product later" -> D-078 and PLATFORM-RULES. PRs: moto-vehicle-defs#82, moto-workspace#79, sync PRs rt-core#44, safety-node#5, io-node#5, hil-bench#5, conn#29, linux-node#6, mcp#5, server#20, ml#5, mobile#19. Remaining: STATUS Next up item 2 (phased plan).
+
+Follow-up review 2026-10-23 (`architecture-guard`, then `safety-reviewer` on the fix; defs#93). The work was found uncommitted in the defs working tree, committed as-is with the `AI-Agent:` trailer (55b0e3f) and fixed on top:
+- BLOCKER: one Board C carried both IMUs, the radars, the immobilizer driver and the LED buffer in one remote box (common cause, undoes D-042) → user: split into C1 (M4 safety board) and C2 (M7 chassis IMU), D-082. BLOCKER: the Q-033 indicator inputs sat on the detachable Board B → moved to C1. BLOCKER: the two docs disagreed on Board A/B/C parts → made consistent (choices without a source marked CONFIRM).
+- MAJOR: "MPU-6590" is not a known part; the user has one board with that marking (WHO_AM_I CONFIRM). The "On hand" rewrite was right about the STM32F103 (none on hand) per the user. Q-034 candidates (d)-(h) were ranked "Top Recommendation" → neutral candidates, Q-034 stays open, unverified facts CONFIRM; rules dropped from the old §4.1 restored.
+- safety-reviewer: no BLOCKER; separation wording made honest (no DFA), C1 supply and SPI back-powering, latching-relay fail state and the C1-IMU / C1-IO split left open for the user, dead-man and Q-033 input behaviour, 6-8 core SPI cable, HIL checks in D-082.

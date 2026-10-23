@@ -26,6 +26,8 @@ You are an AI coding tool (Codex, Gemini, DeepSeek, Cursor, Aider, Copilot, …)
 - **Safety path:** never make a safety decision (cornering, blind spot, immobilizer) depend on the Raspi, the phone, Wi-Fi, VSS or ML; ML may only tighten thresholds.
 - **No new dependency** in firmware or in `pyproject.toml` / `pubspec.yaml` without asking the user.
 - **Do not weaken checks:** no disabled tests, lowered coverage, new MISRA suppressions, `# noqa` or `// cppcheck-suppress` to make CI green. Fix the code or log the problem.
+- **No new repositories.** Never create a repo in the org or a new top-level project; propose it under "For Claude" in your log (a new repo needs a D-xxx, its zones and the shared assets first, D-081).
+- **Hardware facts need a source.** Part numbers, pinouts, dimensions and prices you could not verify are marked **CONFIRM**; never rank an open question's candidates (Q-xxx) as decided, and never move a safety input (M4 board, D-082) onto a QM or detachable board.
 - **No releases:** no tags, no version bumps, no submodule pin changes, no `manifest.yaml` edits (D-036). Never merge a PR and never push to `main`; the user merges.
 
 ## 4. Workflow

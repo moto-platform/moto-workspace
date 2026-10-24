@@ -16,7 +16,7 @@
 
 ## Open PRs (merge order)
 
-1. defs#95 (D-085 three layers: analyzer / moto-mcp / rider layer; Q-037 rider-layer home; master plan marked superseded) → 2. analyzer#12 (`docs/ROADMAP.md` A1-A9, D-085 boundary in CLAUDE.md) → 3. analyzer#13 (A1 instrument cluster, key F; vss-schema-guardian clean, 74 tests). Earlier set merged 2026-10-24 (defs#92-94, workspace#84-86, analyzer#10-11, server#22-23, all sync PRs).
+1. defs#95 (D-085 three layers: analyzer / moto-mcp / rider layer; Q-037 rider-layer home; master plan marked superseded) → 2. analyzer#12 (`docs/ROADMAP.md` A1-A9, D-085 boundary in CLAUDE.md) → 3. analyzer#13 (A1 instrument cluster, key F; vss-schema-guardian clean, 74 tests) → 4. server#24 (A2/C4 `/ws/live`, `MOTO_LIVE_SOURCE=mock`) and analyzer#14 (hello + token field + source display), any order. Earlier set merged 2026-10-24 (defs#92-94, workspace#84-86, analyzer#10-11, server#22-23, all sync PRs).
 
 ## Roadmap (parallel tracks; G = gate)
 
@@ -27,7 +27,7 @@
 ## Next up (in order)
 
 1. User: decide D-082 item 6 (latching relay stays locked when the M4 loses power; bypass needed) and the C1-IMU / C1-IO split (safety-reviewer recommends C1-IO in the main box); run the fault-catalog deep research with the brief in `ideas/physics-informed-anomaly.md` §3.
-2. Claude: **left off at analyzer A1** (analyzer#13 open; check the cluster in the browser, tach uses the DBC range 0-16383 rpm, a sourced rev limit needs `/signal-change`). Then A2 + C4 (server `/ws/live`, series endpoint) or track C from C1. Smaller: E-20 (ISSUES).
+2. Claude: **left off after A2** (server#24 + analyzer#14 open, checked end to end against `serve` with the mock source). Next: A3 (server `/sessions/{id}/series` + analyzer session source) or track C from C1. Cluster tach uses the DBC range 0-16383 rpm; a sourced rev limit needs `/signal-change`. Smaller: E-20 (ISSUES).
 3. User: Q-034 measurements (§4.1 list, photos never committed); Wave 1 order; D-075 values when convenient.
 4. User + Claude: vehicle data path (IMU header, SN65HVD230 120 Ω, DLC adapter; Q-001 capture, V0/V1, GPS; record the intermittent stall under load as a case study).
 5. User: threshold proposals for the not-implemented derived signals → `/signal-change`.
@@ -41,7 +41,7 @@
 
 ## Recent sessions
 
-- 2026-10-24 (local, cont.): server + analyzer run locally (ports 8000, 5173); D-085 layer split + Q-037 (defs#95); analyzer roadmap A1-A9 (analyzer#12); A1 cluster built by sonnet, Claude fixed the stale-on-silent-source gap, guardian clean (analyzer#13).
+- 2026-10-24 (local, cont.): server + analyzer run locally (ports 8000, 5173); D-085 layer split + Q-037 (defs#95); analyzer roadmap A1-A9 (analyzer#12); A1 cluster built by sonnet, Claude fixed the stale-on-silent-source gap, guardian clean (analyzer#13); A2 `/ws/live` + analyzer hello (server#24, analyzer#14).
 - 2026-10-24 (local): merged the 2026-10-23 PR set on the user's instruction (defs#92 updated with main, CI green), synced rules + analyzer assets to all 12 repos.
 - 2026-10-23/24 (local, external review): 4 Antigravity logs closed (CAN analyzer, anomaly sensors, CAD, procurement v2.6); D-081 analyzer repo, D-082 board split, D-083 physics-informed model, D-084 fault catalog, Q-036 (defs#93); charging_ripple pending (defs#92); workspace#84 analyzer registration; analyzer#10 CI; server#22 mock stream from defs; architecture-guard + safety-reviewer on the hardware docs; two AGENTS.base rules (no new repos, sourced hardware facts).
 - 2026-10-19 (local): Gemini contributor-plan log reviewed (analysis only, plan not saved → TEMPLATE Result section); logs + strategy note committed, `docs-presentation/` and `learning/` kept local (workspace#81); anomaly stage 1: D-079 windows W1-W5 (no burst), D-080 0x19 freeze frames, G/I taxonomy, procurement 2.1 (defs#83, architecture-guard fixed); v0.17.0 content in defs#84 (windows) + #85 (OBD catalog, D-080 constants), sonnet-built, Claude-reviewed; 14 worktrees pruned; the user merged everything and tagged **defs v0.17.0** (#86, 86f8f3e); manifest pin in workspace#82.

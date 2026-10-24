@@ -7,27 +7,27 @@
 
 ## Where we are
 
-- **12 platform repos** + `moto-workspace` (D-081 adds moto-analyzer), public (D-033), MIT (D-036). Decisions D-001..D-085 (open Q up to Q-037; D-085/Q-037 in defs#95, open); **D-057 intentionally unused**. The user merges PRs (or tells Claude to).
+- **12 platform repos** + `moto-workspace` (D-081 adds moto-analyzer), public (D-033), MIT (D-036). Decisions D-001..D-085 (open Q up to Q-037); **D-057 intentionally unused**. The user merges PRs (or tells Claude to).
 - **Architecture (D-072, D-073):** one STM32H755 (NUCLEO-H755ZI-Q, not ordered): M7 = rt-core, M4 = safety partition; bike ESP32 + helmet ESP32. **Boards (D-082):** A power/CAN, B detachable Scale 1B (no safety input), C1 M4 safety board, C2 M7 chassis IMU; ACS758LCB-200B; 1 kHz ADC only (burst = Q-036). Procurement v2.7.
 - **On hand (user, 2026-10-23):** Pi 5 8 GB, Pi 3B+, Arduino Uno/Nano, ONE IMU board marked "MPU-6590" (likely the WHO_AM_I 0x70 MPU-6500 of 2026-10-15, CONFIRM). No STM32 board.
 - **Anomaly direction:** D-083 physics-informed, staged, compared with a model without physics; D-084 sourced fault catalog in defs, moto-mcp matches, the LLM only explains. Stage-0 note + deep-research brief: `ideas/physics-informed-anomaly.md`.
-- **moto-analyzer** (web host; Tauri later): main = analyzer#8/#9 (defs-only, listen-only SLCAN, sim-only composer), pins defs v0.18.0. Antigravity's cluster panel + Tauri commits on `ext/antigravity-cluster-tauri` (both to redo).
+- **moto-analyzer** (web host; Tauri later; tasks in `docs/ROADMAP.md`): defs-only, listen-only SLCAN, sim-only composer, pins defs v0.18.0; **A1** cluster (key F) and **A2** live source (server `/ws/live`, hello with token, `MOTO_LIVE_SOURCE=mock`; real source open under D-077) on main. Antigravity's Tauri commits on `ext/antigravity-cluster-tauri` stay as the A6 reference (its cluster part is replaced by A1).
 - **D-075** provisional values (stop epoch etc.) and Q-022/Q-023 (5)-(6) unchanged. conn has D-080 (conn#31) and pins defs v0.17.0; rt-core main pins v0.15.0, no D-080 yet. Releases: defs v0.18.0 (manifest pinned), rt-core v0.8.0, conn v0.2.0, server v0.3.0, mobile v0.4.0.
 
 ## Open PRs (merge order)
 
-1. defs#95 (D-085 three layers: analyzer / moto-mcp / rider layer; Q-037 rider-layer home; master plan marked superseded) → 2. analyzer#12 (`docs/ROADMAP.md` A1-A9, D-085 boundary in CLAUDE.md) → 3. analyzer#13 (A1 instrument cluster, key F; vss-schema-guardian clean, 74 tests) → 4. server#24 (A2/C4 `/ws/live`, `MOTO_LIVE_SOURCE=mock`) and analyzer#14 (hello + token field + source display), any order. Earlier set merged 2026-10-24 (defs#92-94, workspace#84-86, analyzer#10-11, server#22-23, all sync PRs).
+None. Merged 2026-10-24 on the user's instruction: defs#95 (D-085, Q-037), #96 (ARCHITECTURE §7 `/ws/live`); analyzer#12, #13, #14, #15 (ROADMAP A1/A2 built, A1.1 open; README); server#24; workspace#87.
 
 ## Roadmap (parallel tracks; G = gate)
 
 - **S, schematics/CAD (user, now):** S0 done (procurement v2.7 on defs main) → S1 `moto-bike-p0` schematic (ESP32 Phase 0) before soldering → S2 CubeMX pin plan for the H755 (no board needed; fixes the CONFIRM/TBD pins) → S3 `moto-bike` sheets: power, M7, Board B, C1/C2 → S4 Fusion: bike mesh, boxes, brackets once Q-034 is chosen. fusion-lib needs a v2.7 regeneration, English translation and git-lfs (`brew install git-lfs`) before its commit.
-- **C, code without hardware (Claude):** C1 rt-core D-080 (`safety-reviewer`) → C2 safety-node Layer 1 → C3 rt-core `features/derived` + D-072 follow-ups → C4 server `/ws/live` + series endpoint (analyzer live source) and D-076/D-077 packaging → C5 fault-catalog schema in defs once the user's deep research lands (D-084) → C6 analyzer (task list now `moto-analyzer/docs/ROADMAP.md`; A1 cluster in analyzer#13, next A2 = server `/ws/live` with C4): cluster redo, Tauri shell + listen-only HAL tests (needs rustup).
+- **C, code without hardware (Claude):** C1 rt-core D-080 (`safety-reviewer`) → C2 safety-node Layer 1 → C3 rt-core `features/derived` + D-072 follow-ups → C4 server series endpoint (`/ws/live` done, server#24) and D-076/D-077 packaging → C5 fault-catalog schema in defs once the user's deep research lands (D-084) → C6 analyzer (task list `moto-analyzer/docs/ROADMAP.md`; A1, A2 done; next A3, later A6 Tauri shell + listen-only HAL tests, needs rustup).
 - **H, hardware (user):** H0 Q-034 measurements + Wave 1 order (NUCLEO-H755ZI-Q, MPU-6500 for C1) → H1 Phase 0 ESP32 build → **G1** bike listen-only capture (Q-001), V0/V1 → H2 NUCLEO arrives: flash, Renode, FDCAN → H3 Wave 2 sensors (ACS758-200B, NTCs) → D-083 stage 1 data.
 
 ## Next up (in order)
 
 1. User: decide D-082 item 6 (latching relay stays locked when the M4 loses power; bypass needed) and the C1-IMU / C1-IO split (safety-reviewer recommends C1-IO in the main box); run the fault-catalog deep research with the brief in `ideas/physics-informed-anomaly.md` §3.
-2. Claude: **left off after A2** (server#24 + analyzer#14 open, checked end to end against `serve` with the mock source). Next: A3 (server `/sessions/{id}/series` + analyzer session source) or track C from C1. Cluster tach uses the DBC range 0-16383 rpm; a sourced rev limit needs `/signal-change`. Smaller: E-20 (ISSUES).
+2. Claude: **A3** = server `/sessions/{id}/series` (downsampled) + analyzer recorded-session source (scope + replay, token out of the URL); **or C1** = rt-core D-080 freeze frames (`safety-reviewer`). Smaller: analyzer A1.1 (tach rev limit needs a sourced defs constant via `/signal-change`; today the DBC range 0-16383 rpm), E-20 (ISSUES).
 3. User: Q-034 measurements (§4.1 list, photos never committed); Wave 1 order; D-075 values when convenient.
 4. User + Claude: vehicle data path (IMU header, SN65HVD230 120 Ω, DLC adapter; Q-001 capture, V0/V1, GPS; record the intermittent stall under load as a case study).
 5. User: threshold proposals for the not-implemented derived signals → `/signal-change`.

@@ -2,7 +2,7 @@
 
 > Keep it short (≤60 lines). Updated by the `/handoff` skill. "Recent sessions" keeps at most 5 one-line entries; drop the oldest.
 
-**Phase:** 0 hardware build (user, ESP32-only data-collection prototype; enclosure placement Q-034) · 1 data pipeline done in code; D-068/D-069 + D-075 stop epoch and **D-080 freeze frames in conn and rt-core** · D-070 derived: defs + server reference + **rt-core `features/derived` part 1 (28 class-A signals, rt-core#51)** · analyzer A3 + A4 done (recorded sessions, session comparison) · 2 rt-core without hardware: republisher, heartbeat, FC check, EKF lean, 0xFD03 `LEAN_HEALTH` (D-067, D-086) · defs main = v0.19.0 prepared (0x19 gate narrowed, tag pending), pins v0.18.1 · roadmap: three parallel tracks (S schematics/CAD, C code, H hardware) below
+**Phase:** 0 hardware build (user, ESP32-only data-collection prototype; enclosure placement Q-034) · 1 data pipeline done in code; D-068/D-069 + D-075 stop epoch and **D-080 freeze frames in conn and rt-core** · D-070 derived: defs + server reference + **rt-core `features/derived` part 1 (28 class-A signals, rt-core#51)** · analyzer A3 + A4 done (recorded sessions, session comparison) · 2 rt-core without hardware: republisher, heartbeat, FC check, EKF lean, 0xFD03 `LEAN_HEALTH` (D-067, D-086) · defs main = v0.19.0 prepared (0x19 gate narrowed, per-signal tables in `moto_defs.platform`; tag pending), pins v0.18.1 · roadmap: three parallel tracks (S schematics/CAD, C code, H hardware) below
 **Last updated:** 2026-10-25
 
 ## Where we are
@@ -18,7 +18,7 @@
 
 ## Open PRs (merge order)
 
-None. Merged 2026-10-25 on the user's instruction: workspace#94, defs#102 (E-23), server#30 (reference stale rule), rt-core#51 (C3 part 1) and this handoff PR.
+None. Merged 2026-10-25 on the user's instruction: workspace#95, server#31 (E-20 (2)), defs#103 (E-20 (1)) and this handoff PR.
 
 ## Roadmap (parallel tracks; G = gate)
 
@@ -28,7 +28,7 @@ None. Merged 2026-10-25 on the user's instruction: workspace#94, defs#102 (E-23)
 
 ## Next up (in order)
 
-1. User: `gh release create v0.19.0 -R moto-platform/moto-vehicle-defs --target main --title v0.19.0 --generate-notes` (**first**), then the same for `v0.10.0` moto-rt-core, `v0.5.0` moto-server, `v0.2.0` moto-analyzer (or allow Claude to). Note: rt-core v0.10.0 does not contain #51 (derived) — tag it at its merge commit `23d5491` or release v0.11.0 instead. Then Claude: defs v0.19.0 bumps in rt-core and conn (no behaviour change), manifest pins (workspace PR).
+1. User: `gh release create v0.19.0 -R moto-platform/moto-vehicle-defs --target main --title v0.19.0 --generate-notes` (**first**), then the same for `v0.10.0` moto-rt-core, `v0.5.0` moto-server, `v0.2.0` moto-analyzer (or allow Claude to). Note: rt-core v0.10.0 does not contain #51 (derived) — tag it at its merge commit `23d5491` or release v0.11.0 instead. Then Claude: defs v0.19.0 bumps in rt-core, conn (no behaviour change) and server (drop the `can_codec.py` DBC reader for `moto_defs.platform.SIGNALS`, E-20 (1)), manifest pins (workspace PR).
 1b. User: decide D-082 item 6 (latching relay stays locked when the M4 loses power; bypass needed); pick the small IP65/67 IMU box (C1-IMU, C2) and check that C1-IO fits beside A/B on the 2nd story (Q-034); run the fault-catalog deep research with the brief in `ideas/physics-informed-anomaly.md` §3.
 2. Claude (in order): ISSUES **E-24 (1)** (event-input stale rule: needs a small defs decision, ask the user); **C3 part 2** (E-24 (2), `/feature-module`); **A5** analyzer decoded freeze frames (needs a snapshot record layout in defs first, `/signal-change`); **C3** rt-core D-072 follow-ups. Smaller: analyzer A1.1 (tach rev limit needs a sourced defs constant via `/signal-change`), E-20. Optional: user clicks through A3 (key E) and A4 Compare (key A, CSV on V) in the browser against a local server; neither was clicked through by Claude.
 3. User: Q-034 measurements (§4.1 list, photos never committed); Wave 1 order; D-075 values when convenient.
@@ -44,8 +44,8 @@ None. Merged 2026-10-25 on the user's instruction: workspace#94, defs#102 (E-23)
 
 ## Recent sessions
 
+- 2026-10-25 (local, E-20 (1)/(2), autonomous): server#31 drops the `_load_e2e()` workaround; defs#103 generates per-signal tables (`Signal`, `SIGNALS`) in `moto_defs.platform`, folded into the untagged v0.19.0. Loop stopped here: the remaining items need the user (tags, E-24 (1), ride boundary for C3 part 2, A1.1 constant) or hardware.
 - 2026-10-25 (local, E-23 + C3 part 1, autonomous): defs#102 (0x19 gate narrowed + golden copy, conn client subset; safety-reviewer no BLOCKER/MAJOR, MINOR-1/2 applied; v0.19.0 prepared); architecture-guard on the C3 plan (BLOCKER single-task vehicle_signals → services/derived_inputs snapshot); sonnet wrote rt-core#51, safety-reviewer found the reference's DID stale-limit bug (MAJOR) → server#30 + regenerated vectors; one CI fix (gcc -Wtype-limits); a sonnet run hit the session limit and resumed.
 - 2026-10-25 (local, E-21 + A4, autonomous): conn#35 (E-21: unlocked 0x19 run ignores NRC 0x78, defensive halt, 6 tests; safety-reviewer no BLOCKER/MAJOR, M1/N1 applied) and analyzer#18 (A4 Compare: pure resample/diff/CSV service, key A, 116 tests; UI not clicked through) by two sonnet agents in parallel; workspace#93 handoff; all worktrees pruned and merged branches deleted.
 - 2026-10-24/25 (local, C1 + E-22, autonomous on the user's instruction "merge, then the next task"): architecture-guard on the plan; sonnet wrote rt-core D-080 (rt-core#49) and E-22 (rt-core#48), Claude reviewed; user chose D-086 (defs#100); safety-reviewer three rounds on D-080 (MAJOR late 0x59 FF charged to a DID, cap cancel + presence refresh, remaining-CF hold, OVFLW byte) and one on E-22; guardian clean; D-080 rt-core note (defs#101); server defs v0.18.1 (server#28); version PRs rt-core#50, server#29, analyzer#17 merged, tags left to the user (permission).
 - 2026-10-24 (local, A3): workspace#91 (previous handoff); A3 built by two sonnet agents in parallel against a fixed contract: server#26 `GET /sessions/{id}/series` (SessionInputs reuse, derived.parquet, shared t0, min/max buckets, header-only token, opt-in CORS) + analyzer#16 (Session source/tab, ReplayItem replay, `did.X` → defs DID channel); Claude fixed recorded labels lost on backward seek, curl end-to-end on fixtures, guardian CLEAN, CI green, merged; worktrees pruned; server#27 CLAUDE.md.
-- 2026-10-24 (local, hardware cross-check): Argon's 8 findings checked (6 right, item 4's reasoning and item 5 wrong); found the DT box sizes unsourced (store: 126×136 mm, no IP) and the 35 V input cap under-rated; defs#98 (procurement v2.8, hardware-integration §3.4/§9/§10, docs index); user approved the C1-IO / C1-IMU split → D-082 item 2 decided (defs#99, v2.9); local SCHEMATIC-README v1.2, fusion-lib README/modules.py, moto-core.lbr regenerated.

@@ -1,6 +1,6 @@
 ---
 name: external-review
-description: Review, fix and refactor work done on moto-platform by AI tools other than Claude Code (D-071), using their session logs in external-ai/log and their `AI-Agent:` commits. Use when the user says "review what Gemini/DeepSeek/Codex did", "external review", "check the ext/ branches", or when STATUS.md or a session start shows pending external logs.
+description: Review, fix and refactor work done on vehicle-platform by AI tools other than Claude Code (D-071), using their session logs in external-ai/log and their `AI-Agent:` commits. Use when the user says "review what Gemini/DeepSeek/Codex did", "external review", "check the ext/ branches", or when STATUS.md or a session start shows pending external logs.
 ---
 
 # External review (D-071)
@@ -11,7 +11,7 @@ Goal: other models write code cheaply; Claude spends its tokens on judgment — 
 
 1. **Collect** (cheap, no large reads):
    - `grep -l '^review: pending' external-ai/log/*.md` → the pending logs. Read their front matter and *For Claude* sections first.
-   - Per repo named in them (or, if no log exists, per repo with activity): `git -C <repo> fetch -q`, then `git -C <repo> log origin/main --grep '^AI-Agent:' --since=<last review>` and `gh pr list -R moto-platform/<repo> --search 'head:ext/'`. Unlogged `AI-Agent:` commits or `ext/` PRs are findings too (missing log).
+   - Per repo named in them (or, if no log exists, per repo with activity): `git -C <repo> fetch -q`, then `git -C <repo> log origin/main --grep '^AI-Agent:' --since=<last review>` and `gh pr list -R vehicle-platform/<repo> --search 'head:ext/'`. Unlogged `AI-Agent:` commits or `ext/` PRs are findings too (missing log).
 2. **Zones:** for each branch, `python3 scripts/check_zones.py <repo-or-worktree> --base origin/main`. Any red path → BLOCKER: the PR must not merge as is; Claude redoes that part on a `claude/` branch with the normal process (`/signal-change`, `/feature-module`, `safety-reviewer`).
 3. **Review**, delegated to keep the main context small:
    - always `architecture-guard` (sonnet) on the diff: scope, layering, dependency direction, recorded decisions, the hard rules of `external-ai/AGENTS.base.md` §3;

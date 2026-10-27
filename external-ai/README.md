@@ -1,4 +1,4 @@
-# external-ai — working on moto-platform with AI tools other than Claude Code
+# external-ai — working on vehicle-platform with AI tools other than Claude Code
 
 D-071. Other models write code in the safe zones, log what they did, and Claude reviews and refactors it later, so the token budget goes to review and safety work instead of typing.
 
@@ -12,7 +12,7 @@ D-071. Other models write code in the safe zones, log what they did, and Claude 
 
 ## Starting a tool
 
-Always start it at the workspace root (`moto-platform/`), like Claude Code, so it sees `AGENTS.md`, `STATUS.md`, the log folder and every repo. A tool started inside one repo only sees that repo's synced `AGENTS.md` and cannot write the log; then the log text goes into the PR description.
+Always start it at the workspace root (`vehicle-platform/`), like Claude Code, so it sees `AGENTS.md`, `STATUS.md`, the log folder and every repo. A tool started inside one repo only sees that repo's synced `AGENTS.md` and cannot write the log; then the log text goes into the PR description.
 
 | Tool | How it gets the rules |
 |---|---|
@@ -23,7 +23,7 @@ Always start it at the workspace root (`moto-platform/`), like Claude Code, so i
 
 Check your tool's own documentation if it does not pick the file up.
 
-**Pitfall:** the workspace `.gitignore` ignores the 11 repos (`/moto-*/`), and some tools hide gitignored files from their search and indexing. If the tool says it cannot find a repo's files, either turn off its gitignore filtering for this folder, or start it inside that repo (each repo carries a synced `AGENTS.md`) and write the log text into the PR description.
+**Pitfall:** the workspace `.gitignore` ignores the 11 repos (`/vehicle-*/`), and some tools hide gitignored files from their search and indexing. If the tool says it cannot find a repo's files, either turn off its gitignore filtering for this folder, or start it inside that repo (each repo carries a synced `AGENTS.md`) and write the log text into the PR description.
 
 First prompt that works with any tool:
 
@@ -31,11 +31,11 @@ First prompt that works with any tool:
 
 ## Good tasks for other models
 
-Green/yellow work with tests: moto-mobile screens, moto-server ingestion/reports, the D-070 Python reference of derived signals in moto-server, tests, scripts, docs drafts (`moto-vehicle-defs/docs/ideas/`).
+Green/yellow work with tests: vehicle-mobile screens, vehicle-server ingestion/reports, the D-070 Python reference of derived signals in vehicle-server, tests, scripts, docs drafts (`vehicle-defs/docs/ideas/`).
 
 ## Keep for Claude
 
-Everything red in `zones.json`: moto-vehicle-defs (signals, codegen), `DECISIONS.md`, safety-node, io-node, rt-core cornering/UDS/heartbeat/E2E/watchdog, conn's vehicle-bus tester, releases and pins.
+Everything red in `zones.json`: vehicle-defs (signals, codegen), `DECISIONS.md`, safety-node, io-node, rt-core cornering/UDS/heartbeat/E2E/watchdog, conn's vehicle-bus tester, releases and pins.
 
 ## Afterwards, in Claude Code
 

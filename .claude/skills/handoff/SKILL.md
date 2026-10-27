@@ -1,6 +1,6 @@
 ---
 name: handoff
-description: End-of-session handoff for moto-platform. Updates STATUS.md (and DECISIONS.md if decisions were made) so the next chat can resume with minimal context. Use when the user says "handoff", "wrap up", "save progress", "let's continue in a new chat", or when a task is finished and the context is getting large.
+description: End-of-session handoff for vehicle-platform. Updates STATUS.md (and DECISIONS.md if decisions were made) so the next chat can resume with minimal context. Use when the user says "handoff", "wrap up", "save progress", "let's continue in a new chat", or when a task is finished and the context is getting large.
 ---
 
 # Session handoff
@@ -14,7 +14,7 @@ Goal: the next session should resume by reading only `STATUS.md` (≤60 lines), 
    - what is uncommitted: run `git -C <repo> status --short` for each repo touched this session,
    - decisions made with the user, open questions raised or resolved,
    - the next concrete step and any blockers.
-2. **Decisions:** for every decision the user made (or approved), append a `D-0NN` entry to `moto-vehicle-defs/docs/DECISIONS.md` (next free number, date, who decided, what, why). For a resolved `Q-0NN`, move it into a decision and remove the row from the open-questions table. New open questions get a new `Q-0NN` row.
+2. **Decisions:** for every decision the user made (or approved), append a `D-0NN` entry to `vehicle-defs/docs/DECISIONS.md` (next free number, date, who decided, what, why). For a resolved `Q-0NN`, move it into a decision and remove the row from the open-questions table. New open questions get a new `Q-0NN` row.
 3. **Rewrite `STATUS.md`** at the workspace root, keeping its sections:
    - header: phase + last updated date (absolute, e.g. 2026-09-25),
    - `Where we are` — current state, max ~8 bullets,

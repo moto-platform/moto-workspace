@@ -1,10 +1,10 @@
 #!/usr/bin/env bash
 # setup.sh — clones (or updates) every repo listed in manifest.yaml.
-# Usage: run from the moto-platform workspace root.
+# Usage: run from the vehicle-platform workspace root.
 #   ./setup.sh                    → clone/update all
-#   ./setup.sh moto-vehicle-defs  → apply only that repo's ref
+#   ./setup.sh vehicle-defs  → apply only that repo's ref
 #
-# Every repo ends on its manifest ref with its submodules (external/moto-vehicle-defs)
+# Every repo ends on its manifest ref with its submodules (external/vehicle-defs)
 # at the commits that ref pins. Any git error stops the script.
 #
 # Requires: yq (YAML reader) — install: brew install yq  (or pip install yq)

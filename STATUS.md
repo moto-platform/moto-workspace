@@ -18,7 +18,7 @@
 
 ## Open PRs
 
-- Open: analyzer#22 (A5 roadmap note, docs), this handoff PR. Merged 2026-10-29: defs#108 (D-090 freeze-frame framing + host decoders), conn#39 (E-25 (3), DeepSeek, reviewed).
+- Open: analyzer#22 (A5 roadmap note, docs). Merged 2026-10-29: defs#108 (D-090 freeze-frame framing + host decoders), conn#39 (E-25 (3), DeepSeek, reviewed), conn#40 (E-25 (4) measurement test), this handoff PR.
 - Mains pin the rename-only, off-main tags `v0.19.1` (rt-core, conn, server) and `v0.14.1` (mobile); they stay (D-089 item 3). The next defs release is **v0.20.0 from main**; consumers repin at their next bump. rt-core (#53, #54), server (#33, #34, #36) and analyzer (#21) main are unreleased.
 
 ## Roadmap (parallel tracks; G = gate)
@@ -31,7 +31,7 @@
 
 1. User: review the **C3 part 2b proposal** `vehicle-defs/docs/ideas/ride-summary-did-layout.md` (generated 0xFD40-0xFD4E layouts: raw = (value − range.min)/resolution in 1/2/4 B, all-ones = NOT_AVAILABLE, 4 B header with the stop-epoch counter and RIDE_CLOSED, last closed ride only, histograms/per-gear later). On approval Claude records a decision, does the `/signal-change` (defs MINOR), then rt-core serves them from the platform UDS server via a derived → comms snapshot.
 1b. User: decide D-082 item 6 (latching relay stays locked when the M4 loses power; bypass needed); pick the small IP65/67 IMU box (C1-IMU, C2) and check that C1-IO fits beside A/B on the 2nd story (Q-034); run the fault-catalog deep research with the brief in `ideas/physics-informed-anomaly.md` §3.
-2. Claude (in order): **A5** analyzer decoded freeze frames (D-090 framing + vectors on defs main; needs the defs v0.20.0 release, then Claude bumps the analyzer pin (red zone), then the card UI, green zone, can go to DeepSeek); **C3** rt-core D-072 follow-ups. Smaller: analyzer A1.1 (tach rev limit needs a sourced defs constant via `/signal-change`), E-20, E-25 (4) (5 ms TWAI wait: measure first). The user can try analyzer USB CAN with a real SLCAN adapter (#21: an adapter that refuses `L` is not opened). Optional: user clicks through A3 (key E) and A4 Compare (key A, CSV on V) in the browser against a local server; neither was clicked through by Claude.
+2. Claude (in order): **A5** analyzer decoded freeze frames (D-090 framing + vectors on defs main; needs the defs v0.20.0 release, then Claude bumps the analyzer pin (red zone), then the card UI, green zone, can go to DeepSeek); **C3** rt-core D-072 follow-ups. Smaller: analyzer A1.1 (tach rev limit needs a sourced defs constant via `/signal-change`), E-20, E-25 (4) fix (measured: a pass can block 20 ms vs the 10 ms step budget; user picks 0 ms wait or keep, then Claude + safety-reviewer). User: decide whether to keep graphify (installed 2026-10-29 as a CLI only, `uv tool install graphifyy`; trial graph in rt-core `graphify-out/`, git-excluded; no Claude hook yet). The user can try analyzer USB CAN with a real SLCAN adapter (#21: an adapter that refuses `L` is not opened). Optional: user clicks through A3 (key E) and A4 Compare (key A, CSV on V) in the browser against a local server; neither was clicked through by Claude.
 3. User: Q-034 measurements (§4.1 list, photos never committed); Wave 1 order; D-075 values when convenient.
 4. User + Claude: vehicle data path (IMU header, SN65HVD230 120 Ω, DLC adapter; Q-001 capture, V0/V1, GPS; record the intermittent stall under load as a case study).
 5. User: threshold proposals for the not-implemented derived signals → `/signal-change`.
@@ -45,8 +45,8 @@
 
 ## Recent sessions
 
+- 2026-10-29 (local, late): graphify CLI tried on rt-core (code-only, 0 tokens; `affected`/`path` useful, `query` noisy, hook not installed); DeepSeek's second round stopped on quota after read-only E-25 (4) analysis (no edits, no log); Claude finished it as conn#40 (host test: at most 4 frames per pass → 20 ms worst case), ISSUES E-25 (4) updated.
 - 2026-10-29 (local): first DeepSeek (opencode, free) round: fusion-lib READMEs translated (accepted, untracked) and conn#39 E-25 (3) BLE parser (merged, one Claude comment commit); D-090 (user: generic ISO now) defs#108 0x19 0x04/0x06 framing, `decode_dtc_snapshot`/`decode_dtc_ext_data`, shared synthetic vectors; analyzer#22 A5 note.
 - 2026-10-28 (local, E-25): analyzer#21 checks every SLCAN reply and refuses an adapter that does not confirm `L` (fake-port tests); server#36 `defs_pin.txt` = v0.19.1 with CI gate + test; `setup.sh` fetches tags with `--force`. User merged / let Claude merge all.
 - 2026-10-28 (local, /external-review of the rename): all 13 rename PRs merged by the user; merges verified as a mechanical substitution (no signal change); tags kept and documented (D-089, user); leftovers fixed; analysis report checked (C-01 false, E-25 added).
 - 2026-10-28 (local, rename): all 13 repos renamed to `vehicle-*` on `ext/opencode-moto-to-vehicle`; defs rename plus `v0.14`/`v0.18`/`v0.19` pin branches, tagged `v0.14.1`/`v0.19.1` for CI; host, native, server, Flutter and analyzer checks pass; 13 review PRs opened. Root folder rename left to the user.
-- 2026-10-26 (local): user accepted the derived RAM (D-088, defs#105); Claude wrote the C3 part 2b ride-summary DID layout proposal (`docs/ideas/ride-summary-did-layout.md`, sizes 8-22 B per record, computed from the YAML), awaiting the user.

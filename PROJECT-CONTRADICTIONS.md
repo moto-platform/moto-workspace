@@ -10,7 +10,7 @@
 
 | ID | Sev | Evidence | Finding |
 |---|---|---|---|
-| C-01 | P0 | `moto-vehicle-defs` tags `v0.15.0` and `v0.16.0` both resolve to `f7847a7`; `manifest.yaml:9` says `v0.16.0 = 9310893` | **The `v0.16.0` tag points at the `v0.15.0` commit.** A consumer that pins `v0.16.0` gets the older tree. `setup.sh:36` does not force-update existing tags, so a fresh setup can silently check out the wrong code. Owner: user + Claude (release). |
+| C-01 | ~~P0~~ false at origin (Claude 2026-10-28: remote `v0.16.0` = `9310893`; only a stale local tag) | `moto-vehicle-defs` tags `v0.15.0` and `v0.16.0` both resolve to `f7847a7`; `manifest.yaml:9` says `v0.16.0 = 9310893` | **The `v0.16.0` tag points at the `v0.15.0` commit.** A consumer that pins `v0.16.0` gets the older tree. `setup.sh:36` does not force-update existing tags, so a fresh setup can silently check out the wrong code. Owner: user + Claude (release). |
 | C-02 | P1 | `git fetch` + `rev-list HEAD..origin/main`: defs 2 behind, rt-core 3, conn 2, analyzer 1; mobile fetch timed out | **Local workspace is not the state the docs describe.** Any session that trusts local files works on stale code. Pull all repos before the rename; re-run this report afterwards. |
 | C-03 | P1 | `STATUS.md:21` says defs#105 merged and main is ahead only for server/rt-core; local defs HEAD is `8741baa` (PR #104), `origin/main` is `64b6b83` (PR #105) | True remotely, false locally. STATUS and the checkout disagree; D-088 and `docs/ideas/ride-summary-did-layout.md` exist only on `origin/main`. |
 | C-04 | P2 | `ISSUES.md:85` says v0.19.0 is "tag pending the user"; tag exists at `4d96a33` | Issue table is stale; the gate was already released. |

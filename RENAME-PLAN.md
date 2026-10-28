@@ -4,12 +4,12 @@ Draft (Claude, 2026-10-27), **executed by opencode on 2026-10-28** on `ext/openc
 
 Execution deviations from this draft:
 
-- No decision D-089 was recorded and no release tag or version bump was made (red zone; left for Claude/user).
-- Consumers keep their pinned defs content: the defs rename is repeated on the `v0.14.0`, `v0.18.0` and `v0.19.0` bases. Mobile pins the renamed `v0.14.0` (`325898a`), rt-core/conn/server pin the renamed `v0.19.0` (`16b8648`), and the analyzer keeps the original `v0.18.0` tag because it reads only untagged source files.
+- D-089 was recorded by Claude in the post-merge review (defs#107). Rename-only patch tags `v0.14.1` (mobile pin) and `v0.19.1` (rt-core/conn/server pin) were created and pushed without a build-file version bump or GitHub release, because the consumer CI requires the defs pin to point at a `vX.Y.Z` tag.
+- Consumers keep their pinned defs content: the defs rename is repeated on the `v0.14.0`, `v0.18.0` and `v0.19.0` bases. Mobile pins the renamed `v0.14.0` content at `325898a`, now tagged `v0.14.1`; rt-core/conn/server pin the renamed `v0.19.0` content at `16b8648`, now tagged `v0.19.1`; the analyzer keeps the original `v0.18.0` tag because it reads only untagged source files.
 - `moto-io-node` was renamed to `vehicle-io-node`, not archived.
 - Local repo folders were renamed, but the workspace root folder (`~/Desktop/moto-platform`) was left for the user; remotes were pointed at `vehicle-platform/vehicle-*`.
 - No `moto_defs` shim and no old env-var transition were added; all identifiers were replaced in place.
-- The branches were pushed and one PR per repo was opened; nothing was merged, tagged or released.
+- The branches and the two rename-only tags were pushed and one PR per repo was opened; nothing was merged and no GitHub release was created.
 
 Scale measured on 2026-10-27: about 680 files mention "moto"; `moto_defs` is used 235 times; `MOTO_*` identifiers about 400 times; every consumer has the `external/moto-vehicle-defs` submodule (relative URL `../moto-vehicle-defs.git`).
 

@@ -6,7 +6,7 @@ repos: [moto-workspace]
 branches: []
 prs: []
 zone: yellow
-review: pending
+review: done 2026-10-28 (reports kept as a dated snapshot; C-01 false at origin, C-06 and the safety items → ISSUES E-25)
 ---
 
 # Project analysis and rename preparation
@@ -70,4 +70,7 @@ Blocked on user decisions. The safe sequence I recommend:
 
 ## Claude review
 
-(Filled by Claude's /external-review: findings, fixes, PRs.)
+- **Decision / red-zone work:** done by the 2026-10-28 rename (see that log) and D-089 (defs#107).
+- **C-01 (P0) is false at `origin`:** remote `v0.16.0` = `9310893`, matching the manifest; only the local defs clone had a stale tag (now fixed with `git fetch --tags --force`). `setup.sh` not force-updating tags is the real cause.
+- **Verified true, tracked as ISSUES E-25:** C-06 server `defs_pin.txt` still `v0.14.0`; analyzer sends SLCAN `C`/`S6`/`L` without checking the adapter's reply; conn `onWrite` copies into a `std::string` and parses with `sscanf` on the BLE task (non-safety path, heap avoided rule); conn `twai_transmit` waits up to 5 ms.
+- The other findings were not re-verified; the two reports stay as a dated pre-rename snapshot, not a backlog. A future session picks findings from them into ISSUES after checking each at `origin/main`.

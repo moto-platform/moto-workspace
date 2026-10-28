@@ -7,7 +7,7 @@
 
 ## Where we are
 
-- **12 platform repos** + `vehicle-workspace` (D-081 adds vehicle-analyzer), public (D-033), MIT (D-036). Decisions D-001..D-088 (open Q up to Q-037); **D-057 intentionally unused**. The user merges PRs (or tells Claude to).
+- **12 platform repos** + `vehicle-workspace` (D-081 adds vehicle-analyzer), public (D-033), MIT (D-036). Decisions D-001..D-089 (D-089 = the `moto` → `vehicle` rename) (open Q up to Q-037); **D-057 intentionally unused**. The user merges PRs (or tells Claude to).
 - **Architecture (D-072, D-073):** one STM32H755 (NUCLEO-H755ZI-Q, not ordered): M7 = rt-core, M4 = safety partition; bike ESP32 + helmet ESP32. **Boards (D-082):** A power/CAN, B detachable Scale 1B (no safety input), C1 split (user, 2026-10-24) into C1-IO (main box) + C1-IMU (frame box), C2 M7 chassis IMU; C1-IMU and C2 share one small IP65/67 box type (product CONFIRM, Q-034); ACS758LCB-200B; 1 kHz ADC only (burst = Q-036). Procurement v2.9: DT-0505/0508 are really 126×136 mm with no IP rating (store pages), input electrolytic ≥ 50 V.
 - **On hand (user, 2026-10-23):** Pi 5 8 GB, Pi 3B+, Arduino Uno/Nano, ONE IMU board marked "MPU-6590" (likely the WHO_AM_I 0x70 MPU-6500 of 2026-10-15, CONFIRM). No STM32 board.
 - **Anomaly direction:** D-083 physics-informed, staged, compared with a model without physics; D-084 sourced fault catalog in defs, vehicle-mcp matches, the LLM only explains. Stage-0 note + deep-research brief: `ideas/physics-informed-anomaly.md`.
@@ -16,9 +16,10 @@
 - **D-070 derived on rt-core:** part 1 (28 class-A signals, rt-core#51) on main; **D-087** (user): every DID input, events and ride summaries too, uses its own `stale_after_ms` (server#33, rt-core#53), and a ride on rt-core = one D-075 stop epoch. **Part 2a done (rt-core#54):** 12 scalar class-B ride signals per stop epoch (`services/tester_epoch` → `derived_inputs` snapshot, ride change on an epoch-counter change), golden replay incl. two rides exact (server#34 vectors); RAM ~13.9 KB accepted by the user (**D-088**: measured costs set the budget, out of the EKF DTCM). E-23 (1)/(2) done (defs#102).
 - **Releases (2026-10-25, all pinned in the manifest):** defs **v0.19.0**, rt-core **v0.11.0** (v0.10.0 skipped), conn **v0.4.0**, server **v0.6.0**, analyzer **v0.2.0**, mobile v0.4.0 (pins defs v0.14.0).
 
-## Open PRs (merge order)
+## Open PRs (any order, all independent)
 
-None open. Merged 2026-10-26: defs#105 (D-088 + the 2b proposal) and this handoff PR. Main is ahead of the tags: server (#33, #34) and rt-core (#53, #54) unreleased.
+- defs#107 (D-089 + CHANGELOG for the `v0.14.1`/`v0.19.1` tags), conn#38, analyzer#20, mobile#22 (rename leftovers), workspace rename-review PR (logs closed, E-25, manifest note).
+- Merged 2026-10-28: the 13 rename PRs (defs#106 … workspace#103). Mains pin the rename-only, off-main tags `v0.19.1` (rt-core, conn, server) and `v0.14.1` (mobile); they stay (D-089 item 3). The next defs release is **v0.20.0 from main**; consumers repin at their next bump.
 
 ## Roadmap (parallel tracks; G = gate)
 
@@ -30,7 +31,7 @@ None open. Merged 2026-10-26: defs#105 (D-088 + the 2b proposal) and this handof
 
 1. User: review the **C3 part 2b proposal** `vehicle-defs/docs/ideas/ride-summary-did-layout.md` (generated 0xFD40-0xFD4E layouts: raw = (value − range.min)/resolution in 1/2/4 B, all-ones = NOT_AVAILABLE, 4 B header with the stop-epoch counter and RIDE_CLOSED, last closed ride only, histograms/per-gear later). On approval Claude records a decision, does the `/signal-change` (defs MINOR), then rt-core serves them from the platform UDS server via a derived → comms snapshot.
 1b. User: decide D-082 item 6 (latching relay stays locked when the M4 loses power; bypass needed); pick the small IP65/67 IMU box (C1-IMU, C2) and check that C1-IO fits beside A/B on the 2nd story (Q-034); run the fault-catalog deep research with the brief in `ideas/physics-informed-anomaly.md` §3.
-2. Claude (in order): **A5** analyzer decoded freeze frames (needs a snapshot record layout in defs first, `/signal-change`); **C3** rt-core D-072 follow-ups. Smaller: analyzer A1.1 (tach rev limit needs a sourced defs constant via `/signal-change`), E-20. Optional: user clicks through A3 (key E) and A4 Compare (key A, CSV on V) in the browser against a local server; neither was clicked through by Claude.
+2. Claude (in order): **A5** analyzer decoded freeze frames (needs a snapshot record layout in defs first, `/signal-change`); **C3** rt-core D-072 follow-ups. Smaller: analyzer A1.1 (tach rev limit needs a sourced defs constant via `/signal-change`), E-20, E-25 (opencode report findings verified at origin). Optional: user clicks through A3 (key E) and A4 Compare (key A, CSV on V) in the browser against a local server; neither was clicked through by Claude.
 3. User: Q-034 measurements (§4.1 list, photos never committed); Wave 1 order; D-075 values when convenient.
 4. User + Claude: vehicle data path (IMU header, SN65HVD230 120 Ω, DLC adapter; Q-001 capture, V0/V1, GPS; record the intermittent stall under load as a case study).
 5. User: threshold proposals for the not-implemented derived signals → `/signal-change`.
@@ -44,8 +45,8 @@ None open. Merged 2026-10-26: defs#105 (D-088 + the 2b proposal) and this handof
 
 ## Recent sessions
 
-- 2026-10-28 (local, rename): all 13 repos renamed to the `vehicle-*` names on `ext/opencode-moto-to-vehicle`; defs rename plus `v0.14`/`v0.18`/`v0.19` pin branches; host, native, server, Flutter and analyzer checks pass; branches pushed and 13 review PRs opened. The workspace root folder rename is left to the user.
+- 2026-10-28 (local, /external-review of the rename): all 13 rename PRs merged by the user; merges verified as a mechanical substitution (no signal change); tags kept and documented (D-089, user); leftovers fixed; analysis report checked (C-01 false, E-25 added).
+- 2026-10-28 (local, rename): all 13 repos renamed to `vehicle-*` on `ext/opencode-moto-to-vehicle`; defs rename plus `v0.14`/`v0.18`/`v0.19` pin branches, tagged `v0.14.1`/`v0.19.1` for CI; host, native, server, Flutter and analyzer checks pass; 13 review PRs opened. Root folder rename left to the user.
 - 2026-10-26 (local): user accepted the derived RAM (D-088, defs#105); Claude wrote the C3 part 2b ride-summary DID layout proposal (`docs/ideas/ride-summary-did-layout.md`, sizes 8-22 B per record, computed from the YAML), awaiting the user.
 - 2026-10-25 (local, C3 2a): rt-core#54 class-B ride summaries per stop epoch (sonnet; architecture-guard on plan + diff, safety-reviewer on the tester path, guardian: no BLOCKER/MAJOR; latch/re-open epoch tests added); CI needed two reruns for runner apt timeouts (vcan0, toolchains).
 - 2026-10-25 (local, D-087 + C3 2a start): user created the remaining tags (all pinned); user decided D-087 (DID's own stale limit everywhere; ride = stop epoch) → defs#104, server#33, rt-core#53; architecture-guard on the 2a plan (tester_epoch service, counter-based ride change, power-down close deferred); server#34 class-B golden vectors; rt-core 2a running in `claude/c3-classb`. Network drops slowed merges.
-- 2026-10-25 (local, releases): user had Claude create defs v0.19.0, server v0.5.0, analyzer v0.2.0; defs v0.19.0 bumps in server (E-20 (1): `can_codec` adapter over `vehicle_defs.platform.SIGNALS`, old reader output byte-identical, server#32), rt-core (#52) and conn (#36) with version bumps 0.6.0 / 0.11.0 / 0.4.0; manifest pins (workspace#97).

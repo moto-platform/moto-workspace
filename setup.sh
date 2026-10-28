@@ -33,7 +33,8 @@ for i in $(seq 0 $((REPO_COUNT - 1))); do
 
   if [ -d "$NAME" ]; then
     echo "→ $NAME exists, updating to $REF..."
-    git -C "$NAME" fetch --all --tags
+    # --force: a tag that moved on the remote must move here too (ISSUES E-25 (5)).
+    git -C "$NAME" fetch --all --tags --force
   else
     echo "→ cloning $NAME ($REF)..."
     git clone "$URL" "$NAME"

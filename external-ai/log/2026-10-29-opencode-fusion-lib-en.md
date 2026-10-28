@@ -60,6 +60,7 @@ Translation choices (Turkish original → English choice):
 - `tezgah` → "bench"; `şasi` → "chassis"; `gövde` → "body"/"housing" depending on context (relay/terminal vs. JST housing).
 - `Bozuk çerçeve enjeksiyonu` → "Malformed frame injection"; `arıza/besleme düğümü` → "fault/supply node".
 - `açık kollektör` → "open collector"; `boştayken (yüksüz)` → "unloaded (no target)"; `Kart üstü` → "on-board".
+- `takılı giriş` (IND_L/R failure list) → "stuck input" (could also read "plugged-in input"; "stuck" fits the failure-mode list).
 - `kayıt` (S2 page plan) → "logging"; `park modu` → "park mode"; `halka` → "ring"; `sinyal lambası` → "turn signal".
 - `Güven` → "Confidence" (README table column); `Bilinen açıklar` → "Known gaps"; `kenar birimi` → "edge unit".
 - `baskı` → "silkscreen"; `kumpas` → "calipers"; `damar` (cable) → "core"; `blendaj` → "shield".

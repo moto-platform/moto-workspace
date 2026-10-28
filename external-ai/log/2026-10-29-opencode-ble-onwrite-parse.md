@@ -6,7 +6,7 @@ repos: [vehicle-connectivity-node, vehicle-workspace]
 branches: [vehicle-connectivity-node:ext/opencode-ble-onwrite-parse, vehicle-workspace:ext/opencode-ble-onwrite-parse]
 prs: [vehicle-connectivity-node#39]
 zone: yellow
-review: pending
+review: done 2026-10-29 (merge; one Claude comment commit; conn#39, closes E-25 (3))
 ---
 
 # BLE telematics write parser without heap or sscanf (E-25 3)
@@ -67,4 +67,7 @@ PR: vehicle-connectivity-node#39 (branch `ext/opencode-ble-onwrite-parse`, marke
 
 ## Claude review
 
-(Filled by Claude's /external-review: findings, fixes, PRs.)
+- Verdict: merge. Zones: all five paths yellow, no red path. CI green (native tests + builds). architecture-guard: no BLOCKER/MAJOR; the parser is BLE-free, bounded by `len`, heap-free and sscanf-free; the telematics text format is not a defs signal (`ble/ble_schema.json` lists `telematicsRx` as "not part of this schema"), so nothing is hand-written over defs.
+- Accepted as intended: the two tightenings (DIST 0..65535 / ICON 0..255 rejected instead of wrapping; writes above 160 B dropped), `DIST:12km` → 12 and an empty `SONG:` clearing the title (old `sscanf` behaviour). Minor difference noted, not changed: `parseDecimal` skips only space and tab, `%d` skipped any whitespace; the phone never sends either.
+- Claude commit on the branch: a comment on why `kTelematicsMaxWrite` is 160 (largest valid write ~100 B). The `<cstring>` include flagged by the guard stays, `update()` still uses `strncpy`.
+- Follow-up idea (not opened): document the telematics text format in `vehicle-defs/ble/README.md` if a second phone client appears.

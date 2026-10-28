@@ -6,7 +6,7 @@ repos: [vehicle-workspace]
 branches: [vehicle-workspace:ext/opencode-fusion-lib-en]
 prs: []
 zone: green
-review: pending
+review: done 2026-10-29 (faithful translation, accepted; docs stay untracked until git-lfs; log merged with the 2026-10-29 review PR)
 ---
 
 # fusion-lib English translation
@@ -80,4 +80,8 @@ Translation choices (Turkish original → English choice):
 
 ## Claude review
 
-(Filled by Claude's /external-review: findings, fixes, PRs.)
+- Verdict: accepted, no fix. Zone green (only this log is committed; `models/` stays untracked by design).
+- Spot check: the SCHEMATIC-README header (version line, priority order, libraries, the CONFIRM/TBD/Proposal rule, the §1 sheet table) matches the Turkish original read earlier the same day line by line; the power-chain values (SMBJ30CA 33.3-36.8 V / 48.4 V, electrolytic ≥ 50 V, 1N5822 note, L1 TBD) and every CONFIRM/TBD marker are intact; no Turkish characters left; line counts 286/92 unchanged.
+- Limitation: the originals were overwritten in place and were never tracked, so a full diff against them is not possible; the user keeps the only copy check (Turkish originals in `docs/archive/` are not read by Claude, D-038).
+- `moto-vehicle-defs` → `vehicle-defs` in README line 3 is correct (D-089 renamed the repo). The `moto-*.lbr` and design names stay until the library rename is decided with the git-lfs commit (STATUS S-track).
+- `takılı giriş` → "stuck input" fits the failure-mode list.

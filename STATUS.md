@@ -3,7 +3,7 @@
 > Keep it short (≤60 lines). Updated by the `/handoff` skill. "Recent sessions" keeps at most 5 one-line entries; drop the oldest.
 
 **Phase:** 0 hardware build (user, ESP32-only data-collection prototype; enclosure placement Q-034) · 1 data pipeline done in code; D-068/D-069 + D-075 stop epoch and **D-080 freeze frames in conn and rt-core** · D-070 derived: defs + server reference + **rt-core `features/derived` part 1 (28 class-A signals, rt-core#51)** · analyzer A3 + A4 done (recorded sessions, session comparison) · 2 rt-core without hardware: republisher, heartbeat, FC check, EKF lean, 0xFD03 `LEAN_HEALTH` (D-067, D-086) · defs v0.19.0 (0x19 gate narrowed, per-signal tables in `vehicle_defs.platform`) pinned by rt-core, conn and server · roadmap: three parallel tracks (S schematics/CAD, C code, H hardware) below
-**Last updated:** 2026-10-26
+**Last updated:** 2026-10-28
 
 ## Where we are
 
@@ -44,8 +44,8 @@ None open. Merged 2026-10-26: defs#105 (D-088 + the 2b proposal) and this handof
 
 ## Recent sessions
 
+- 2026-10-28 (local, rename): all 13 repos renamed to the `vehicle-*` names on `ext/opencode-moto-to-vehicle`; defs rename plus `v0.14`/`v0.18`/`v0.19` pin branches; host, native, server, Flutter and analyzer checks pass; nothing pushed. Push the defs pin branches before the consumers; the workspace root folder rename is left to the user.
 - 2026-10-26 (local): user accepted the derived RAM (D-088, defs#105); Claude wrote the C3 part 2b ride-summary DID layout proposal (`docs/ideas/ride-summary-did-layout.md`, sizes 8-22 B per record, computed from the YAML), awaiting the user.
 - 2026-10-25 (local, C3 2a): rt-core#54 class-B ride summaries per stop epoch (sonnet; architecture-guard on plan + diff, safety-reviewer on the tester path, guardian: no BLOCKER/MAJOR; latch/re-open epoch tests added); CI needed two reruns for runner apt timeouts (vcan0, toolchains).
 - 2026-10-25 (local, D-087 + C3 2a start): user created the remaining tags (all pinned); user decided D-087 (DID's own stale limit everywhere; ride = stop epoch) → defs#104, server#33, rt-core#53; architecture-guard on the 2a plan (tester_epoch service, counter-based ride change, power-down close deferred); server#34 class-B golden vectors; rt-core 2a running in `claude/c3-classb`. Network drops slowed merges.
 - 2026-10-25 (local, releases): user had Claude create defs v0.19.0, server v0.5.0, analyzer v0.2.0; defs v0.19.0 bumps in server (E-20 (1): `can_codec` adapter over `vehicle_defs.platform.SIGNALS`, old reader output byte-identical, server#32), rt-core (#52) and conn (#36) with version bumps 0.6.0 / 0.11.0 / 0.4.0; manifest pins (workspace#97).
-- 2026-10-25 (local, E-20 (1)/(2), autonomous): server#31 drops the `_load_e2e()` workaround; defs#103 generates per-signal tables (`Signal`, `SIGNALS`) in `vehicle_defs.platform`, folded into the untagged v0.19.0. Loop stopped here: the remaining items need the user (tags, E-24 (1), ride boundary for C3 part 2, A1.1 constant) or hardware.

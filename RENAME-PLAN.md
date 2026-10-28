@@ -1,6 +1,6 @@
 # Rename plan: moto-* → vehicle-* (draft)
 
-Draft (Claude, 2026-10-27), **executed by opencode on 2026-10-28** on local `ext/opencode-moto-to-vehicle` branches (not pushed). User choices: GitHub org `vehicle-platform`; mobile `applicationId` unchanged; new prefix `vehicle-*`; scope = everything including the GitHub org and repos; the CL250 files stay the CL250 model profile (layer 3 of `moto-vehicle-defs/docs/ideas/vehicle-agnostic-anomaly-reasoning.md`) and a vehicle-class template is added beside them instead.
+Draft (Claude, 2026-10-27), **executed by opencode on 2026-10-28** on `ext/opencode-moto-to-vehicle` branches, with one review PR per repo. User choices: GitHub org `vehicle-platform`; mobile `applicationId` unchanged; new prefix `vehicle-*`; scope = everything including the GitHub org and repos; the CL250 files stay the CL250 model profile (layer 3 of `moto-vehicle-defs/docs/ideas/vehicle-agnostic-anomaly-reasoning.md`) and a vehicle-class template is added beside them instead.
 
 Execution deviations from this draft:
 
@@ -9,7 +9,7 @@ Execution deviations from this draft:
 - `moto-io-node` was renamed to `vehicle-io-node`, not archived.
 - Local repo folders were renamed, but the workspace root folder (`~/Desktop/moto-platform`) was left for the user; remotes were pointed at `vehicle-platform/vehicle-*`.
 - No `moto_defs` shim and no old env-var transition were added; all identifiers were replaced in place.
-- Nothing was pushed, merged, tagged or released.
+- The branches were pushed and one PR per repo was opened; nothing was merged, tagged or released.
 
 Scale measured on 2026-10-27: about 680 files mention "moto"; `moto_defs` is used 235 times; `MOTO_*` identifiers about 400 times; every consumer has the `external/moto-vehicle-defs` submodule (relative URL `../moto-vehicle-defs.git`).
 

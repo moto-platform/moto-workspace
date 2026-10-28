@@ -4,7 +4,7 @@ tool: opencode/deepseek-v4.1-flash-free
 topic: moto-to-vehicle-rename
 repos: [vehicle-workspace, vehicle-defs, vehicle-rt-core, vehicle-connectivity-node, vehicle-server, vehicle-mobile, vehicle-analyzer, vehicle-safety-node, vehicle-linux-node, vehicle-mcp, vehicle-ml, vehicle-hil-bench, vehicle-io-node]
 branches: [vehicle-workspace:ext/opencode-moto-to-vehicle, vehicle-defs:ext/opencode-moto-to-vehicle, vehicle-rt-core:ext/opencode-moto-to-vehicle, vehicle-connectivity-node:ext/opencode-moto-to-vehicle, vehicle-server:ext/opencode-moto-to-vehicle, vehicle-mobile:ext/opencode-moto-to-vehicle, vehicle-analyzer:ext/opencode-moto-to-vehicle, vehicle-safety-node:ext/opencode-moto-to-vehicle, vehicle-linux-node:ext/opencode-moto-to-vehicle, vehicle-mcp:ext/opencode-moto-to-vehicle, vehicle-ml:ext/opencode-moto-to-vehicle, vehicle-hil-bench:ext/opencode-moto-to-vehicle, vehicle-io-node:ext/opencode-moto-to-vehicle]
-prs: []
+prs: [vehicle-defs#106, vehicle-rt-core#55, vehicle-connectivity-node#37, vehicle-server#35, vehicle-mobile#21, vehicle-analyzer#19, vehicle-safety-node#7, vehicle-linux-node#8, vehicle-mcp#7, vehicle-ml#7, vehicle-hil-bench#7, vehicle-io-node#7, vehicle-workspace#103]
 zone: red
 review: pending
 ---
@@ -17,7 +17,7 @@ Execute `RENAME-PLAN.md`: replace the `moto` identifier prefix and repo names wi
 
 ## Changes
 
-All changes are local commits on `ext/opencode-moto-to-vehicle`; nothing was pushed, tagged, merged or released. The GitHub repos were renamed with `gh repo rename` (org was already `vehicle-platform`).
+All changes are commits on `ext/opencode-moto-to-vehicle`; the branches were pushed and one review PR per repo was opened. Nothing was merged, tagged or released. The GitHub repos were renamed with `gh repo rename` (org was already `vehicle-platform`).
 
 | Repo | Commit(s) | What changed |
 |---|---|---|
@@ -40,7 +40,7 @@ Local cleanup after the commits: every `moto-*` checkout folder was renamed to `
 
 ## Result
 
-- `vehicle-defs` is on `ext/opencode-moto-to-vehicle` at `2a754f2`; the consumer pin commits live on `ext/opencode-moto-to-vehicle-v0.14`, `-v0.18` and `-v0.19`. Those pin branches must be pushed together with the defs rename branch, otherwise the mobile/rt-core/conn/server submodule pins are unresolvable in CI.
+- `vehicle-defs` is on `ext/opencode-moto-to-vehicle` at `2a754f2`; the consumer pin commits live on the pushed `ext/opencode-moto-to-vehicle-v0.14`, `-v0.18` and `-v0.19` branches, so the mobile/rt-core/conn/server submodule pins resolve in CI.
 - `PROJECT-OVERVIEW.md`, `PROJECT-CONTRADICTIONS.md`, `RENAME-PLAN.md` and the 2026-10-27 log now carry a post-rename note; `SIGNATURES.md` was regenerated.
 - No remaining `moto_*`, `MOTO_*`, `moto-*` or standalone `moto` identifier remains in tracked text outside `docs/archive/`, the pre-rename reports/log, and the analyzer's deliberately preserved `v0.18.0` submodule content. `motorcycle`, `motor`, `Motorobit` and `Motorola` were not touched.
 
@@ -57,7 +57,7 @@ Local cleanup after the commits: every `moto-*` checkout folder was renamed to `
 
 ## Unsure about
 
-- The defs pin branches are local-only. Until they are pushed, consumer CI cannot fetch the submodule commits `325898a` and `16b8648`.
+- CI results were not waited for after opening the PRs; the local checks above are the evidence recorded here.
 - The workspace root folder still has the old name `moto-platform`; renaming it is left to the user so the running session does not lose its working directory.
 - The analyzer's submodule content still says `moto_*` because it is pinned to the unmodified `v0.18.0` tag. The analyzer itself uses only DBC/YAML files whose paths did not contain `moto`.
 - `manifest.yaml` still records the released tag refs (`v0.19.0`, etc.), not the rename-only pin commits; that is intentional to avoid a release/version bump (D-036).
@@ -66,5 +66,5 @@ Local cleanup after the commits: every `moto-*` checkout folder was renamed to `
 ## For Claude
 
 - Record the naming decision in `DECISIONS.md` (the draft assumed D-089, which does not exist) and review the red-zone edits: `vehicle-defs` codegen/generated trees, `.claude/*`, `AGENTS.md`, `GEMINI.md`, `PLATFORM-RULES.md`, `manifest.yaml`, `scripts/*`, `zones.json`.
-- Decide how to publish the defs rename and its `v0.14`/`v0.18`/`v0.19` pin branches. A release/tag or a different pin strategy is a red-zone decision.
+- Review the 13 PRs (defs#106, rt-core#55, conn#37, server#35, mobile#21, analyzer#19, safety-node#7, linux-node#8, mcp#7, ml#7, hil-bench#7, io-node#7, workspace#103). The defs rename and its `v0.14`/`v0.18`/`v0.19` pin branches are pushed; a release/tag is still a red-zone decision and is not part of these PRs.
 - Re-check `PROJECT-OVERVIEW.md` and `PROJECT-CONTRADICTIONS.md` against the renamed tree; the reports intentionally keep the pre-rename names with a banner.

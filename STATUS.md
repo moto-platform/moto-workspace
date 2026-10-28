@@ -44,7 +44,7 @@ None open. Merged 2026-10-26: defs#105 (D-088 + the 2b proposal) and this handof
 
 ## Recent sessions
 
-- 2026-10-28 (local, rename): all 13 repos renamed to the `vehicle-*` names on `ext/opencode-moto-to-vehicle`; defs rename plus `v0.14`/`v0.18`/`v0.19` pin branches; host, native, server, Flutter and analyzer checks pass; nothing pushed. Push the defs pin branches before the consumers; the workspace root folder rename is left to the user.
+- 2026-10-28 (local, rename): all 13 repos renamed to the `vehicle-*` names on `ext/opencode-moto-to-vehicle`; defs rename plus `v0.14`/`v0.18`/`v0.19` pin branches; host, native, server, Flutter and analyzer checks pass; branches pushed and 13 review PRs opened. The workspace root folder rename is left to the user.
 - 2026-10-26 (local): user accepted the derived RAM (D-088, defs#105); Claude wrote the C3 part 2b ride-summary DID layout proposal (`docs/ideas/ride-summary-did-layout.md`, sizes 8-22 B per record, computed from the YAML), awaiting the user.
 - 2026-10-25 (local, C3 2a): rt-core#54 class-B ride summaries per stop epoch (sonnet; architecture-guard on plan + diff, safety-reviewer on the tester path, guardian: no BLOCKER/MAJOR; latch/re-open epoch tests added); CI needed two reruns for runner apt timeouts (vcan0, toolchains).
 - 2026-10-25 (local, D-087 + C3 2a start): user created the remaining tags (all pinned); user decided D-087 (DID's own stale limit everywhere; ride = stop epoch) → defs#104, server#33, rt-core#53; architecture-guard on the 2a plan (tester_epoch service, counter-based ride change, power-down close deferred); server#34 class-B golden vectors; rt-core 2a running in `claude/c3-classb`. Network drops slowed merges.

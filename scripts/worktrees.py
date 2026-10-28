@@ -46,11 +46,11 @@ def git(repo: Path, *args: str, check: bool = True) -> str:
 
 def repos() -> list[Path]:
     """The workspace itself plus every cloned platform repo (own .git)."""
-    return [ROOT] + sorted(p for p in ROOT.glob("moto-*") if (p / ".git").exists())
+    return [ROOT] + sorted(p for p in ROOT.glob("vehicle-*") if (p / ".git").exists())
 
 
 def repo_slug(repo: Path) -> str:
-    return "moto-workspace" if repo == ROOT else repo.name
+    return "vehicle-workspace" if repo == ROOT else repo.name
 
 
 def ensure_excluded(repo: Path) -> None:
@@ -68,7 +68,7 @@ def pr_for(slug: str, branch: str) -> tuple[str, str]:
     """(number, state) of the newest PR from this branch, or ("", "") if none / gh unavailable."""
     try:
         out = subprocess.run(
-            ["gh", "pr", "list", "-R", f"moto-platform/{slug}", "--head", branch, "--state", "all",
+            ["gh", "pr", "list", "-R", f"vehicle-platform/{slug}", "--head", branch, "--state", "all",
              "--json", "number,state", "--limit", "1"],
             capture_output=True, text=True, timeout=30,
         )

@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Copy shared Claude Code assets from moto-workspace into each platform repo.
+"""Copy shared Claude Code assets from vehicle-workspace into each platform repo.
 
 Single-repo cloud sessions only see the repo they clone, so every repo carries
 copies of PLATFORM-RULES.md and the agents/skills relevant to it. The source of
@@ -13,7 +13,7 @@ Usage:
     python3 scripts/sync_claude.py            # write copies
     python3 scripts/sync_claude.py --check    # exit 1 if any copy is missing/stale
     python3 scripts/sync_claude.py --workspace                 # AGENTS.md/GEMINI.md at the root only
-    python3 scripts/sync_claude.py moto-server --into <worktree>  # one repo, into its worktree
+    python3 scripts/sync_claude.py vehicle-server --into <worktree>  # one repo, into its worktree
 """
 
 from __future__ import annotations
@@ -24,7 +24,7 @@ import sys
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
-MARKER = "<!-- Synced from moto-workspace/{src} by scripts/sync_claude.py. Do not edit here; edit the source and re-run the sync. -->"
+MARKER = "<!-- Synced from vehicle-workspace/{src} by scripts/sync_claude.py. Do not edit here; edit the source and re-run the sync. -->"
 IMPORT_LINE = "@.claude/PLATFORM-RULES.md"
 LEDGER = ".claude/.synced"  # list of files this script owns in the repo
 
@@ -36,18 +36,18 @@ SOFTWARE = {"agents": COMMON_AGENTS, "skills": ["repo-bootstrap"]}
 SAFETY_SOFTWARE = {"agents": SAFETY_AGENTS, "skills": ["repo-bootstrap"]}
 
 REPO_ASSETS: dict[str, dict[str, list[str]]] = {
-    "moto-vehicle-defs": {"agents": COMMON_AGENTS, "skills": ["signal-change", "repo-bootstrap"]},
-    "moto-rt-core": FIRMWARE,
-    "moto-safety-node": FIRMWARE,
-    "moto-io-node": FIRMWARE,
-    "moto-hil-bench": FIRMWARE,
-    "moto-connectivity-node": FIRMWARE,  # temporary sole vehicle-bus tester (D-023): tester latch
-    "moto-linux-node": SAFETY_SOFTWARE,
-    "moto-mcp": SOFTWARE,
-    "moto-server": SAFETY_SOFTWARE,
-    "moto-ml": SOFTWARE,
-    "moto-mobile": SOFTWARE,
-    "moto-analyzer": SAFETY_SOFTWARE,  # listen-only adapters and HAL (D-081)
+    "vehicle-defs": {"agents": COMMON_AGENTS, "skills": ["signal-change", "repo-bootstrap"]},
+    "vehicle-rt-core": FIRMWARE,
+    "vehicle-safety-node": FIRMWARE,
+    "vehicle-io-node": FIRMWARE,
+    "vehicle-hil-bench": FIRMWARE,
+    "vehicle-connectivity-node": FIRMWARE,  # temporary sole vehicle-bus tester (D-023): tester latch
+    "vehicle-linux-node": SAFETY_SOFTWARE,
+    "vehicle-mcp": SOFTWARE,
+    "vehicle-server": SAFETY_SOFTWARE,
+    "vehicle-ml": SOFTWARE,
+    "vehicle-mobile": SOFTWARE,
+    "vehicle-analyzer": SAFETY_SOFTWARE,  # listen-only adapters and HAL (D-081)
 }
 
 
@@ -167,13 +167,13 @@ def sync_repo(repo: str, check: bool, repo_dir: Path | None = None) -> list[str]
 
 
 def sync_workspace(check: bool) -> list[str]:
-    """AGENTS.md / GEMINI.md at the workspace root (committed in moto-workspace)."""
+    """AGENTS.md / GEMINI.md at the workspace root (committed in vehicle-workspace)."""
     problems: list[str] = []
     for rel, content in agent_files().items():
         dest = ROOT / rel
         if dest.exists() and dest.read_text() == content:
             continue
-        problems.append(f"moto-workspace: {rel} {'stale' if dest.exists() else 'missing'}")
+        problems.append(f"vehicle-workspace: {rel} {'stale' if dest.exists() else 'missing'}")
         if not check:
             dest.write_text(content)
     return problems

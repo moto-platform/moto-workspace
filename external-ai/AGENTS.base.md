@@ -1,11 +1,11 @@
-# AGENTS.md — moto-platform rules for AI coding tools other than Claude Code
+# AGENTS.md — vehicle-platform rules for AI coding tools other than Claude Code
 
-You are an AI coding tool (Codex, Gemini, DeepSeek, Cursor, Aider, Copilot, …) working on moto-platform, a motorcycle diagnostics / telemetry / ADAS platform with safety-relevant firmware. Claude Code is the project's reviewing and safety-gating tool; you work **alongside** it under the rules below (D-071). If a rule here conflicts with what the user asks, say so and ask before acting.
+You are an AI coding tool (Codex, Gemini, DeepSeek, Cursor, Aider, Copilot, …) working on vehicle-platform, a motorcycle diagnostics / telemetry / ADAS platform with safety-relevant firmware. Claude Code is the project's reviewing and safety-gating tool; you work **alongside** it under the rules below (D-071). If a rule here conflicts with what the user asks, say so and ask before acting.
 
 ## 1. Every session
 
 1. Read `STATUS.md` at the workspace root (short): where the project is and what is next. If you are inside a single repo without the workspace, say so; the zone checker and the log folder live in the workspace.
-2. For architecture facts read `moto-vehicle-defs/docs/ARCHITECTURE.md` and `DECISIONS.md` (only the parts you need; `docs/README.md` indexes the large docs). Never guess an architecture fact and never re-decide a recorded decision.
+2. For architecture facts read `vehicle-defs/docs/ARCHITECTURE.md` and `DECISIONS.md` (only the parts you need; `docs/README.md` indexes the large docs). Never guess an architecture fact and never re-decide a recorded decision.
 3. Before editing a file, check its zone: `python3 scripts/check_zones.py <repo> --path <file>` (workspace root). **Red = do not edit.**
 4. Open your log entry (section 5) at the start, not at the end.
 
@@ -19,7 +19,7 @@ You are an AI coding tool (Codex, Gemini, DeepSeek, Cursor, Aider, Copilot, …)
 
 ## 3. Hard rules that no path rule can catch
 
-- **No hand-written signal facts.** CAN IDs, DIDs, signal names, scales, units, VSS paths and BLE layouts come only from the generated `gen/` code or the definition files of moto-vehicle-defs. Never write such a literal in code; if a signal is missing, that is a red-zone request (`/signal-change` by Claude).
+- **No hand-written signal facts.** CAN IDs, DIDs, signal names, scales, units, VSS paths and BLE layouts come only from the generated `gen/` code or the definition files of vehicle-defs. Never write such a literal in code; if a signal is missing, that is a red-zone request (`/signal-change` by Claude).
 - **Nothing new on the vehicle bus.** No code that sends a CAN frame to the motorcycle outside the existing tester modules (red); no new UDS service, no write, clear, reset, unlock or reprogram, ever.
 - **MCU code** (rt-core, safety-node, conn, hil-bench firmware): no heap (`malloc`, `new`, STL containers that allocate) after init, no string/JSON/DBC parsing, no blocking calls in the tester loop, MISRA C:2012 style in C.
 - **Privacy:** never commit keys, passwords, real ride data, VINs, or GPS positions. Position may go only to the user's own servers (D-076, provisional); code that moves it is red (Claude only). The repos are public.
@@ -40,12 +40,12 @@ You are an AI coding tool (Codex, Gemini, DeepSeek, Cursor, Aider, Copilot, …)
 
 | Repo | Checks (run from the repo root) |
 |---|---|
-| moto-vehicle-defs | red: do not edit (docs only: no check) |
-| moto-rt-core | `cmake --preset host-tests && cmake --build --preset host-tests && ctest --preset host-tests` (+ `host-tsan` preset for snapshot/alive/IMU); cppcheck as in `.github/workflows/ci.yml` |
-| moto-connectivity-node | `scripts/native_tests.sh` (or `pio test -e native`); `pio run -e esp32-s3-devkitc-1-mock`; cppcheck as in CI |
-| moto-mobile | `flutter pub get && flutter analyze && flutter test` (never commit a local `pubspec.lock` rewrite) |
-| moto-server | `uv sync && uv run pytest && uv run ruff check . && uv run ruff format --check .` |
-| moto-analyzer | `git submodule update --init && npm ci && npm test && npm run build` |
+| vehicle-defs | red: do not edit (docs only: no check) |
+| vehicle-rt-core | `cmake --preset host-tests && cmake --build --preset host-tests && ctest --preset host-tests` (+ `host-tsan` preset for snapshot/alive/IMU); cppcheck as in `.github/workflows/ci.yml` |
+| vehicle-connectivity-node | `scripts/native_tests.sh` (or `pio test -e native`); `pio run -e esp32-s3-devkitc-1-mock`; cppcheck as in CI |
+| vehicle-mobile | `flutter pub get && flutter analyze && flutter test` (never commit a local `pubspec.lock` rewrite) |
+| vehicle-server | `uv sync && uv run pytest && uv run ruff check . && uv run ruff format --check .` |
+| vehicle-analyzer | `git submodule update --init && npm ci && npm test && npm run build` |
 | other repos | the commands in that repo's README/CLAUDE.md "Build" section |
 
 ## 5. Session log (mandatory)
@@ -54,7 +54,7 @@ Every session writes one file: `external-ai/log/YYYY-MM-DD-<tool>-<topic>.md` in
 
 ## 6. What only Claude does
 
-Red-zone edits; signal, UDS, BLE and limit changes (`/signal-change`) and every moto-vehicle-defs edit outside `docs/`; new or changed decisions in `DECISIONS.md`; safety reviews (`safety-reviewer`) of invariant-8 modules; vehicle-bus tester changes; releases, tags and pins; synced files (`.claude/`, `AGENTS.md`, `GEMINI.md`, `PLATFORM-RULES.md`). You may update `STATUS.md` (keep ≤ 60 lines and its sections) and add rows to `ISSUES.md`.
+Red-zone edits; signal, UDS, BLE and limit changes (`/signal-change`) and every vehicle-defs edit outside `docs/`; new or changed decisions in `DECISIONS.md`; safety reviews (`safety-reviewer`) of invariant-8 modules; vehicle-bus tester changes; releases, tags and pins; synced files (`.claude/`, `AGENTS.md`, `GEMINI.md`, `PLATFORM-RULES.md`). You may update `STATUS.md` (keep ≤ 60 lines and its sections) and add rows to `ISSUES.md`.
 
 ## 7. Platform rules (copied from PLATFORM-RULES.md; "Claude" there means any AI tool unless a rule names Claude's agents or skills)
 

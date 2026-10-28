@@ -5,10 +5,10 @@ For non-Claude AI tools and for Claude's review of their work. A red path means
 "Claude only": the change must not be committed by another tool.
 
 Usage (from the workspace root):
-    python3 scripts/check_zones.py moto-server            # changes vs origin/main + uncommitted
-    python3 scripts/check_zones.py moto-rt-core --base main
+    python3 scripts/check_zones.py vehicle-server            # changes vs origin/main + uncommitted
+    python3 scripts/check_zones.py vehicle-rt-core --base main
     python3 scripts/check_zones.py .                       # the workspace itself
-    python3 scripts/check_zones.py moto-mobile --path lib/ui/x.dart   # classify paths, no git
+    python3 scripts/check_zones.py vehicle-mobile --path lib/ui/x.dart   # classify paths, no git
 
 The repo name is taken from the `origin` remote, so a worktree under
 <repo>/.claude/worktrees/<topic> works too. Exit code: 2 if any path is red,

@@ -30,13 +30,12 @@ Both documents are fully English with the original structure and technical facts
 
 ## Checks
 
-- `wc -l models/fusion-lib/SCHEMATIC-README.md models/fusion-lib/README.md`:
+- `grep -c '' models/fusion-lib/SCHEMATIC-README.md models/fusion-lib/README.md`:
   ```
-       286 models/fusion-lib/SCHEMATIC-README.md
-        92 models/fusion-lib/README.md
-       378 total
+  models/fusion-lib/SCHEMATIC-README.md:286
+  models/fusion-lib/README.md:92
   ```
-  (originals: 286 and 92 lines — exact match)
+  (originals: 286 and 92 lines — exact match; `wc -l` gives the same 286/92/378 total)
 - `grep -nE '[çğıöşüÇĞİÖŞÜ]' models/fusion-lib/*.md`: no output (exit 1, no Turkish characters left).
 - `python3 scripts/check_zones.py . --path models/fusion-lib/SCHEMATIC-README.md models/fusion-lib/README.md external-ai/log/2026-10-29-opencode-fusion-lib-en.md`:
   ```

@@ -19,13 +19,13 @@
 
 ## Open PRs
 
-- Open: none. Merged 2026-10-29: server#37 (MDF4 export, DeepSeek + Claude), defs#109 (D-091), defs#110 (anomaly-reasoning idea note), workspace#108/#109 (review, `models/`), rules sync PRs in all 12 repos, analyzer#22.
-- Mains pin the rename-only, off-main tags `v0.19.1` (rt-core, conn, server) and `v0.14.1` (mobile); they stay (D-089 item 3). The next defs release is **v0.20.0 from main**; consumers repin at their next bump. rt-core (#53, #54), server (#33, #34, #36, #37) and analyzer (#21) main are unreleased.
+- Open: none. Merged 2026-10-29: analyzer#24 (A8 part 1, DeepSeek + Claude), server#37 (MDF4 export), defs#109 (D-091), defs#110, workspace#108-#111, rules sync PRs in all 12 repos.
+- Mains pin the rename-only, off-main tags `v0.19.1` (rt-core, conn, server) and `v0.14.1` (mobile); they stay (D-089 item 3). The next defs release is **v0.20.0 from main**; consumers repin at their next bump. rt-core (#53, #54), server (#33, #34, #36, #37) and analyzer (#21, #24) main are unreleased.
 
 ## Roadmap (parallel tracks; G = gate)
 
 - **S, schematics/CAD (user, now):** S0 done (procurement v2.9 on defs main) → S1 `vehicle-bike-p0` schematic (ESP32 Phase 0) before soldering → S2 CubeMX pin plan for the H755 (no board needed; fixes the CONFIRM/TBD pins) → S3 `vehicle-bike` sheets: power, M7, Board B, C1/C2 → S4 Fusion: bike mesh, boxes, brackets once Q-034 is chosen. `models/fusion-lib` and `models/hardware-integration` are committed in the workspace (workspace#109; SCHEMATIC-README v1.2 matches v2.9/D-082); the Meshy AI bike meshes stay local and gitignored (32 MB, licence unclear, D-033).
-- **C, code without hardware (Claude):** ~~C1 rt-core D-080~~ done (rt-core#49) → C2 safety-node Layer 1 → C3 rt-core `features/derived` (part 1 done, rt-core#51; part 2 E-24) + D-072 follow-ups → C4 server D-076/D-077 packaging (`/ws/live` and `/series` done) → C5 fault-catalog schema in defs once the user's deep research lands (D-084) → C6 analyzer (task list `vehicle-analyzer/docs/ROADMAP.md`; A1-A4 done; next A5 decoded freeze frames (D-090 on defs main; needs v0.20.0 + pin), later A6 Tauri shell + listen-only HAL tests, needs rustup).
+- **C, code without hardware (Claude):** ~~C1 rt-core D-080~~ done (rt-core#49) → C2 safety-node Layer 1 → C3 rt-core `features/derived` (part 1 done, rt-core#51; part 2 E-24) + D-072 follow-ups → C4 server D-076/D-077 packaging (`/ws/live` and `/series` done) → C5 fault-catalog schema in defs once the user's deep research lands (D-084) → C6 analyzer (task list `vehicle-analyzer/docs/ROADMAP.md`; A1-A4 and A8 part 1 done (component + Playwright UI smoke tests in CI, layout persistence, export key `V`); next A5 decoded freeze frames (D-090 on defs main; needs v0.20.0 + pin), later A6 Tauri shell + listen-only HAL tests, needs rustup).
 - **H, hardware (user):** H0 Q-034 measurements + Wave 1 order (NUCLEO-H755ZI-Q, MPU-6500 for C1) → H1 Phase 0 ESP32 build → **G1** bike listen-only capture (Q-001), V0/V1 → H2 NUCLEO arrives: flash, Renode, FDCAN → H3 Wave 2 sensors (ACS758-200B, NTCs) → D-083 stage 1 data.
 
 ## Next up (in order)
@@ -46,8 +46,8 @@
 
 ## Recent sessions
 
+- 2026-10-29 (local, /external-review 2): DeepSeek's analyzer A8 part 1 reviewed (clean; E→V export key confirmed as a collision fix); Claude added `COCKPIT_TABS` and the CI Playwright step; analyzer#24 + workspace#111 merged on the user's request; all repos on main and in sync. Good next DeepSeek tasks: A8 part 2 (Web Worker ingest), mobile E-18 (3).
 - 2026-10-29 (local, /external-review): DeepSeek's MDF4 export reviewed; Claude fixed the position filter dropping `throttle_pos_*`, moved asammdf (LGPL) to an optional extra (D-091, user), added yellow zones for dependency manifests; all 15 PRs merged on the user's request; `models/` libraries and the defs idea note committed; every repo on main and in sync.
 - 2026-10-29 (local, late): graphify CLI tried on rt-core (code-only, 0 tokens; `affected`/`path` useful, `query` noisy, hook not installed); DeepSeek's second round stopped on quota after read-only E-25 (4) analysis (no edits, no log); Claude finished it as conn#40 (host test: at most 4 frames per pass → 20 ms worst case), ISSUES E-25 (4) updated.
 - 2026-10-29 (local): first DeepSeek (opencode, free) round: fusion-lib READMEs translated (accepted, untracked) and conn#39 E-25 (3) BLE parser (merged, one Claude comment commit); D-090 (user: generic ISO now) defs#108 0x19 0x04/0x06 framing, `decode_dtc_snapshot`/`decode_dtc_ext_data`, shared synthetic vectors; analyzer#22 A5 note.
 - 2026-10-28 (local, E-25): analyzer#21 checks every SLCAN reply and refuses an adapter that does not confirm `L` (fake-port tests); server#36 `defs_pin.txt` = v0.19.1 with CI gate + test; `setup.sh` fetches tags with `--force`. User merged / let Claude merge all.
-- 2026-10-28 (local, /external-review of the rename): all 13 rename PRs merged by the user; merges verified as a mechanical substitution (no signal change); tags kept and documented (D-089, user); leftovers fixed; analysis report checked (C-01 false, E-25 added).

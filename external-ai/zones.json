@@ -16,6 +16,12 @@
     {"repo": "*", "glob": "gen/*", "zone": "red", "why": "generated code: change the source in vehicle-defs, never gen/ (invariant 2)"},
     {"repo": "*", "glob": "*/gen/*", "zone": "red", "why": "generated code: change the source in vehicle-defs, never gen/ (invariant 2)"},
     {"repo": "*", "glob": "misra/*", "zone": "red", "why": "MISRA deviation register (D-046)"},
+    {"repo": "*", "glob": "pyproject.toml", "zone": "yellow", "why": "dependency manifest: a new dependency needs the user's approval and a licence check (AGENTS.md section 3, D-091)"},
+    {"repo": "*", "glob": "*/pyproject.toml", "zone": "yellow", "why": "dependency manifest: a new dependency needs the user's approval and a licence check (AGENTS.md section 3, D-091)"},
+    {"repo": "*", "glob": "pubspec.yaml", "zone": "yellow", "why": "dependency manifest: a new dependency needs the user's approval and a licence check (AGENTS.md section 3, D-091)"},
+    {"repo": "*", "glob": "package.json", "zone": "yellow", "why": "dependency manifest: a new dependency needs the user's approval and a licence check (AGENTS.md section 3, D-091)"},
+    {"repo": "*", "glob": "Cargo.toml", "zone": "yellow", "why": "dependency manifest: a new dependency needs the user's approval and a licence check (AGENTS.md section 3, D-091)"},
+    {"repo": "*", "glob": "*/Cargo.toml", "zone": "yellow", "why": "dependency manifest: a new dependency needs the user's approval and a licence check (AGENTS.md section 3, D-091)"},
 
     {"repo": "vehicle-workspace", "glob": "external-ai/log/TEMPLATE.md", "zone": "red", "why": "copy it, do not edit it"},
     {"repo": "vehicle-workspace", "glob": "external-ai/log/*", "zone": "green", "why": "your session log"},
@@ -70,6 +76,7 @@
     {"repo": "vehicle-linux-node", "glob": "*", "zone": "yellow", "why": "VSS, CV, HMI; no safety decisions on the Raspi (invariant 3)"},
 
     {"repo": "vehicle-server", "glob": "*ota*", "zone": "red", "why": "OTA packages (invariant 8)"},
+    {"repo": "vehicle-server", "glob": "*mdf4*", "zone": "yellow", "why": "MDF4 export can write position with --include-position (D-076, D-091): Claude reviews"},
     {"repo": "vehicle-server", "glob": "*gps*", "zone": "yellow", "why": "position storage and access (D-076, provisional): Claude reviews"},
     {"repo": "vehicle-server", "glob": "*position*", "zone": "yellow", "why": "position storage and access (D-076, provisional): Claude reviews"},
     {"repo": "vehicle-server", "glob": "*", "zone": "green", "why": "ingestion, storage, reports; position paths are yellow (D-076)"},

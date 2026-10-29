@@ -19,7 +19,7 @@
 
 ## Open PRs
 
-- Open: none. Merged 2026-10-29: analyzer#24 (A8 part 1, DeepSeek + Claude), server#37 (MDF4 export), defs#109 (D-091), defs#110, workspace#108-#111, rules sync PRs in all 12 repos.
+- Open: **analyzer#26** (A8 part 2 Web Worker log import, opencode + Claude fix; merge #26, then close #25 unmerged). Merged 2026-10-29: analyzer#24 (A8 part 1, DeepSeek + Claude), server#37 (MDF4 export), defs#109 (D-091), defs#110, workspace#108-#111, rules sync PRs in all 12 repos.
 - Mains pin the rename-only, off-main tags `v0.19.1` (rt-core, conn, server) and `v0.14.1` (mobile); they stay (D-089 item 3). The next defs release is **v0.20.0 from main**; consumers repin at their next bump. rt-core (#53, #54), server (#33, #34, #36, #37) and analyzer (#21, #24) main are unreleased.
 
 ## Roadmap (parallel tracks; G = gate)

@@ -14,3 +14,5 @@ docs-presentation/references/*.pdf
 __pycache__/
 # Manufacturer studio photos used as CAD references: copyrighted, never commit (D-033)
 /models/hardware-integration/reference-images/
+# AI-generated bike meshes (Meshy, 32 MB): large and their licence is unclear for a public repo (D-033)
+/models/Meshy_AI_*

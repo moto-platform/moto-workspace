@@ -19,7 +19,7 @@
 
 ## Open PRs
 
-- Open (2026-10-30, merge in this order): **vehicle-defs#112** (D-092, docs), **vehicle-mcp#10** (v0.1, supersedes #9: close #9 on merge), workspace review PR. Merged 2026-10-30: analyzer#30 (A5.1 DTC export), server#38 (C-07), rt-core#57 (C-10..C-12 docs), workspace#119 (analyzer#31 / rt-core#58 duplicates closed); analyzer#29 (A5 decoded freeze frames, DeepSeek + Claude), mobile#25 (E-18 (3), with #24), defs#111 (v0.20.0), analyzer#28 (pin v0.20.0), workspace#115-#116. Merged 2026-10-29: analyzer#26/#27, analyzer#24, server#37, defs#109, defs#110, workspace#108-#114, rules sync PRs in all 12 repos.
+- Open (2026-10-30, merge in this order): **vehicle-defs#112** (D-092, docs), **vehicle-mcp#10** (v0.1, supersedes #9: close #9 on merge), **workspace#121**. Merged 2026-10-30: analyzer#30 (A5.1 DTC export), server#38 (C-07), rt-core#57 (C-10..C-12 docs), workspace#119 (analyzer#31 / rt-core#58 duplicates closed); analyzer#29 (A5 decoded freeze frames, DeepSeek + Claude), mobile#25 (E-18 (3), with #24), defs#111 (v0.20.0), analyzer#28 (pin v0.20.0), workspace#115-#116. Merged 2026-10-29: analyzer#26/#27, analyzer#24, server#37, defs#109, defs#110, workspace#108-#114, rules sync PRs in all 12 repos.
 - Mains pin the rename-only, off-main tags `v0.19.1` (rt-core, conn, server) and `v0.14.1` (mobile); they stay (D-089 item 3). **defs v0.20.0** released from main 2026-10-30 (D-089 rename + D-090); analyzer main pins it, the others repin at their next bump. rt-core (#53, #54), server (#33, #34, #36, #37) and analyzer (#21, #24, #26) main are unreleased.
 
 ## Roadmap (parallel tracks; G = gate)

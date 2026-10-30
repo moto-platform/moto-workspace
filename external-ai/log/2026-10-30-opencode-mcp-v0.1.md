@@ -4,9 +4,9 @@ tool: opencode/deepseek-v4.1-flash
 topic: mcp-v0.1
 repos: [vehicle-mcp]
 branches: [vehicle-mcp:ext/opencode-mcp-v0.1]
-prs: [vehicle-mcp#9]
+prs: [vehicle-mcp#9, vehicle-mcp#10, vehicle-defs#112]
 zone: yellow
-review: pending
+review: done 2026-10-30 (good base; Claude fixed the altitude false positive, added HistorySource, CI and CLAUDE.md; tool set approved as D-092; mcp#10 supersedes #9, defs#112)
 ---
 
 # vehicle-mcp v0.1: read-only MCP server over the vehicle-server HTTP API
@@ -100,4 +100,8 @@ n/a (code change)
 - `README.md` now says v0.1.0; this is not a release, just the package version.
 
 ## Claude review
-(Filled by Claude's /external-review: findings, fixes, PRs.)
+- Zones: yellow, as logged; Claude edited the red CI and `CLAUDE.md`. architecture-guard: no BLOCKER; MAJOR = the position filter hid `derived.altitude_change` (barometric, since key-on), fixed: latitude/longitude match anywhere, height/alt/altitude only as the last name token (tests for `altitude_change`, `road_grade`, `gps_height`). `mcp` 2.3.0 `MCPServer` confirmed installed.
+- Claude's commits on `claude/review-mcp-v0.1` (the ext commit is kept): token masked in echoed server error details (+ test); `compare_sessions` docstring states the rides are not time-aligned; `source.py` with a `HistorySource` interface implemented by `VehicleServerClient`, so the tools never build URLs (CLAUDE.md rule 4) + an in-memory source test; CI (uv sync --locked, ruff, pytest); `CLAUDE.md` rewritten.
+- *For Claude*: the tool list conflict was real and came from Claude's prompt, which did not check the repo CLAUDE.md; the user approved the v0.1 set (**D-092**, defs#112), the old list stays as the planned live set. CI added. Streamable HTTP stays an open D-077 item. No defs submodule (D-092 item 3). The `{"sessions": [...]}` wrapper is fine. A v0.1.0 release after merge (D-036) is a `Next up` line.
+- Noted, not changed: stats ask for 20000 points (the server maximum), so a longer window gets null mean/std; a server-side stats endpoint or paging is a later question.
+- Checks: 65 passed, ruff clean. PR vehicle-mcp#10 (supersedes #9), vehicle-defs#112.

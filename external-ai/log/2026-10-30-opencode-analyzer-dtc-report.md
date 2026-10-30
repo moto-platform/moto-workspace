@@ -4,9 +4,9 @@ tool: opencode/deepseek-v4.1-flash
 topic: analyzer-dtc-export
 repos: [vehicle-analyzer]
 branches: [vehicle-analyzer:ext/opencode-analyzer-dtc-export]
-prs: []
+prs: [vehicle-analyzer#30]
 zone: green
-review: pending
+review: done 2026-10-30 (clean; Claude added the code column, ext-data CSV row and a shared didHex; analyzer#30)
 ---
 
 # analyzer A5.1 DTC report export + composer default DID from defs
@@ -51,4 +51,8 @@ n/a (code change)
 - None. Venturing no guess about A5.1 wording in `docs/ROADMAP.md`; adjust freely.
 
 ## Claude review
-(Filled by Claude's /external-review: findings, fixes, PRs.)
+- Zones: all green; `udsComposer*` (red) untouched, the default-DID change is UI state only. architecture-guard and vss-schema-guardian: no blocker, no hand-written DID/SID/unit in `src/`.
+- Claude's commits on `claude/a51-dtc-export` (the ext commit is kept): `didHex` moved to `services/format` and used for the composer options too (the options were unpadded, the new default padded, so a DID below 0x1000 would have had no matching option); the SAE `code` the DTCs tab shows is in both reports; the CSV writes an `ext:<kind>` row (first record number, raw bytes) instead of a bare row when only extended data exists; ROADMAP row updated.
+- *Unsure about* answers: keeping `snapshot` / `extData` as the decoder result plus `snapshotRaw` / `extDataRaw` hex is right (no change); hex status in CSV, numeric in JSON is fine; the empty fallback DID is fine.
+- Accepted: the tests repeat values from the defs vectors (`0x123456`, `VEHICLE_SPEED`, `km/h`); a defs change fails them loudly. Noted for later: the composer's `0x22` / `0x03` SID/sub defaults are older literals (could default to the first `composerServices(defs)` entry).
+- Checks: `npm test` 159/159, `npm run build`, `npm run test:ui` 12/12. PR analyzer#30.

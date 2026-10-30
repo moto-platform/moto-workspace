@@ -4,9 +4,9 @@ tool: opencode/deepseek-v4.1-flash
 topic: rtcore-doc-drift
 repos: [vehicle-rt-core]
 branches: [vehicle-rt-core:ext/opencode-rtcore-doc-drift]
-prs: []
+prs: [vehicle-rt-core#57]
 zone: yellow
-review: pending
+review: done 2026-10-30 (clean; Claude removed the remaining pin literals incl. the red misra/README.md and derived README; rt-core#57)
 ---
 
 # rt-core doc drift C-10 / C-11 / C-12
@@ -64,4 +64,8 @@ n/a (docs only)
   not opened for this docs-only task; no request about them.
 
 ## Claude review
-(Filled by Claude's /external-review: findings, fixes, PRs.)
+- Zones: three yellow, as logged. architecture-guard checked every claim (submodule = v0.19.1, all `derived_*.h` banners v0.19.0, `comms_pass(..., ekf, lean)` in `comms.h`, `services/com.c`): all correct.
+- Claude's commits on `claude/rtcore-doc-drift` (the ext commit is kept): the vectors README states the requirement (same derived table) instead of a new "pins v0.19.1" literal that would drift at the next bump; README says the manifest records the known-good combination; *For Claude*: `misra/README.md` (red) no longer says the pinned defs is v0.2.0 and predates the gate; `src/features/derived/README.md` (yellow, listed in C-10 but missed) no longer says "banner v0.14.0, pinned v0.18.1". The heartbeat README's `defs v0.15.0` is historical and stays.
+- Lesson for external tools: when a finding lists several files (C-10 named five), close or explicitly defer each one in the log.
+- Second pass: `CLAUDE.md` (red) build line still said `defs pinned to v0.19.0`; it now points at the manifest tag (commit on #57).
+- PR rt-core#57 (docs only). Closes C-10, C-11, C-12 on merge.

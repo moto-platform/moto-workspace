@@ -6,7 +6,7 @@ repos: [vehicle-ml, vehicle-server, vehicle-analyzer]
 branches: [vehicle-ml:ext/opencode-ml-data-layer, vehicle-server:ext/opencode-server-e18-verify, vehicle-analyzer:ext/opencode-analyzer-session-filter]
 prs: [vehicle-ml#9, vehicle-server#39, vehicle-analyzer#34]
 zone: yellow
-review: pending
+review: done 2026-10-31 (no zone breach; ml fixed + CI/defs submodule in vehicle-ml#10, analyzer fix in vehicle-analyzer#35, server#39 merge as is; E-18 (4) closed)
 ---
 
 # DeepSeek long run: vehicle-ml data layer, E-18 (4) verification, analyzer session filter
@@ -69,4 +69,11 @@ Build the vehicle-ml data layer (ML-1..ML-9), verify ISSUES E-18 (4) in vehicle-
 - PRs: https://github.com/vehicle-platform/vehicle-ml/pull/9, https://github.com/vehicle-platform/vehicle-server/pull/39, https://github.com/vehicle-platform/vehicle-analyzer/pull/34.
 
 ## Claude review
-(Filled by Claude's /external-review: findings, fixes, PRs.)
+- Zones: no red path; `vehicle-ml/pyproject.toml` yellow. Licences checked: numpy/pandas BSD-3, pyarrow Apache-2.0, pytest/ruff MIT, all transitive deps permissive, no LGPL (D-091). The user approves the dependency set by merging vehicle-ml#10.
+- architecture-guard (vehicle-ml): no blocker. Read-only store, no server/mcp imports, position filter identical to vehicle-mcp's, session split with a leakage check. Findings fixed by Claude in vehicle-ml#10: the scaler standardised `start_ms`/`end_ms` and skipped its train-only guard without a manifest; one missing IMU sample in a banded window aborted the whole build (now dropped as `rate`); band FFT now removes the mean before the NaN fill; `no_data` drop reason; small duplicate bookkeeping removed.
+- Open questions decided (reversible): `--channels all` now also skips `*_age_ms`, `*_valid`, `can_*`, `unanswered_did_count` and the v4 tester statistics, which can still be named explicitly, and the dataset card lists them. The time base stays the kind with the most rows, with ties broken by `KINDS` order, and the card records it.
+- vss-schema-guardian: no signal literals in `src/` of either repo. The column names are vehicle-server's storage layout. The position-rule copy from vehicle-mcp is noted; there is no shared home yet.
+- Red-zone request done: vehicle-ml CI (`test` job, release-tag pin check) and `external/vehicle-defs` at v0.20.0 (vehicle-ml#10).
+- vehicle-analyzer#34: clean. Claude fix in #35: a status remembered in localStorage that no loaded session has hid every row with no chip left to clear it.
+- vehicle-server#39: test-only, merge as is. Claude verified E-18 (4) in `report.py` and closed it in ISSUES.md (the MDF4 part came with server#37).
+- PRs: vehicle-ml#10 (supersedes #9), vehicle-analyzer#35 (supersedes #34), vehicle-server#39, and this workspace PR (supersedes #123).

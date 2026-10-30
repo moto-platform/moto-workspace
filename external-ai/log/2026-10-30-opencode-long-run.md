@@ -50,6 +50,7 @@ Build the vehicle-ml data layer (ML-1..ML-9), verify ISSUES E-18 (4) in vehicle-
 - `python3 scripts/check_zones.py vehicle-ml --base origin/main`: YELLOW for `vehicle-ml/pyproject.toml`; all other changed paths GREEN.
 - `python3 scripts/check_zones.py vehicle-server --base origin/main`: GREEN.
 - `python3 scripts/check_zones.py vehicle-analyzer --base origin/main`: GREEN.
+- GitHub CI: vehicle-server#39 `test` SUCCESS; vehicle-analyzer#34 `test` SUCCESS. vehicle-ml has no CI workflow yet (red path, requested below), so its checks are local only.
 
 ## Unsure about
 - ML-8 `--channels all` includes numeric metadata columns such as `*_age_ms`, `*_valid` and tester counters; only exact metadata names are excluded. An explicit `--channels` list avoids them. If "all" should mean measured signals only, the exclusion rule needs a decision.
@@ -57,7 +58,7 @@ Build the vehicle-ml data layer (ML-1..ML-9), verify ISSUES E-18 (4) in vehicle-
 - `vehicle-ml/pyproject.toml` is yellow: numpy/pandas/pyarrow are the task's allowed deps (BSD/Apache) and pytest/ruff are dev-only, but the dependency manifest still needs user approval and a licence check per AGENTS.md section 3 / D-091.
 - SV-1 found code and tests for every sub-item already; the only addition is the combined block-version test. No production gap was found.
 - The analyzer filter is remembered per browser viewer under one localStorage key, not per token/account; "per viewer" was read as per browser.
-- Only local checks were run; GitHub CI status of the three PRs was not awaited.
+- vehicle-ml has no CI workflow yet (red path), so only its local checks cover PR #9.
 - No hardware was used; all data is synthetic.
 
 ## For Claude

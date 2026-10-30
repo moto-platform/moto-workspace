@@ -4,9 +4,9 @@ tool: opencode/deepseek-v4.1-flash
 topic: server-openapi-version
 repos: [vehicle-server]
 branches: [vehicle-server:ext/opencode-server-openapi-version]
-prs: []
+prs: [vehicle-server#38]
 zone: green
-review: pending
+review: done 2026-10-30 (clean, no Claude change; server#38)
 ---
 
 # server OpenAPI version from the package version (C-07)
@@ -39,4 +39,5 @@ n/a (code change)
 - None.
 
 ## Claude review
-(Filled by Claude's /external-review: findings, fixes, PRs.)
+- Zones green; architecture-guard: no finding. The chained assertion catches a missed bump in either `__init__.py` or `pyproject.toml`. A single version source (`importlib.metadata`) is possible later, not needed.
+- PR server#38 opened from the ext branch as is. Closes C-07 (`PROJECT-CONTRADICTIONS.md`) on merge.

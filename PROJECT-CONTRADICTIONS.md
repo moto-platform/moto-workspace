@@ -16,7 +16,7 @@
 | C-04 | P2 | `ISSUES.md:85` says v0.19.0 is "tag pending the user"; tag exists at `4d96a33` | Issue table is stale; the gate was already released. |
 | C-05 | P2 | `ISSUES.md:82` says v0.19.0 is untagged and server takes it "at its next bump"; server v0.6.0 already uses `moto_defs.platform.SIGNALS` | Same stale-issue class; E-20 (1) is done. |
 | C-06 | P1 | `moto-server/src/moto_server/defs_pin.txt:1` = `v0.14.0`; submodule at `4d96a33` (v0.19.0); `tests/golden/MANIFEST.sha256:12` says v0.19.0 | The Docker fallback reports a defs version four releases old. A container without `.git` (`.dockerignore:1` excludes `.git`) will label sessions with the wrong defs version. |
-| C-07 | P2 | `moto-server/src/moto_server/api.py:63` FastAPI version `0.2.0`; `pyproject.toml:3` and `__init__.py:3` say `0.6.0` | Swagger/OpenAPI advertises the wrong server version. |
+| C-07 | ~~P2~~ fixed in server#38 (Claude 2026-10-30, opencode) | `moto-server/src/moto_server/api.py:63` FastAPI version `0.2.0`; `pyproject.toml:3` and `__init__.py:3` say `0.6.0` | Swagger/OpenAPI advertises the wrong server version. |
 | C-08 | P3 | `STATUS.md:17` puts mobile v0.4.0 in the 2026-10-25 release batch; tag date is 2026-10-17 | Release chronology is wrong; harmless for builds. |
 | C-09 | P2 | `moto-server/Dockerfile:10-13` installs git and relies on `git describe`; `.dockerignore:1` excludes `.git` | Defensive fallback exists (defs_pin), but the fallback is C-06; the two defects combine into wrong version reporting in containers. |
 
@@ -24,9 +24,9 @@
 
 | ID | Sev | Evidence | Finding |
 |---|---|---|---|
-| C-10 | P1 | `moto-rt-core/README.md:5` says defs pinned to `v0.8.0`; actual submodule `4d96a33` = v0.19.0. Other stale pins: `misra/README.md:15` (v0.2.0), `tests/host/vectors/README.md:19` (v0.14.0), `src/features/derived/README.md:51` (v0.18.1), `src/features/heartbeat/README.md:11` (v0.15.0) | Five different "pinned defs" values in one repo. Readers cannot tell which is authoritative. |
-| C-11 | P2 | `moto-rt-core/README.md:14,18` and `src/services/README.md:10,12,18` mark signal pool/com/target setup "not yet"; `src/services/README.md` later marks them implemented | Self-contradicting status table. |
-| C-12 | P2 | `src/app/README.md:5` documents `comms_pass(client, server, republisher, heartbeat, ekf)`; `src/app/comms.h:112-113` has a sixth `lean_tx_t*` argument; `comms.c:94-113` calls lean step and health | Doc is one refactor behind the code. |
+| C-10 | ~~P1~~ fixed in rt-core#57 (Claude 2026-10-30, opencode) | `moto-rt-core/README.md:5` says defs pinned to `v0.8.0`; actual submodule `4d96a33` = v0.19.0. Other stale pins: `misra/README.md:15` (v0.2.0), `tests/host/vectors/README.md:19` (v0.14.0), `src/features/derived/README.md:51` (v0.18.1), `src/features/heartbeat/README.md:11` (v0.15.0) | Five different "pinned defs" values in one repo. Readers cannot tell which is authoritative. |
+| C-11 | ~~P2~~ fixed in rt-core#57 (Claude 2026-10-30, opencode) | `moto-rt-core/README.md:14,18` and `src/services/README.md:10,12,18` mark signal pool/com/target setup "not yet"; `src/services/README.md` later marks them implemented | Self-contradicting status table. |
+| C-12 | ~~P2~~ fixed in rt-core#57 (Claude 2026-10-30, opencode) | `src/app/README.md:5` documents `comms_pass(client, server, republisher, heartbeat, ekf)`; `src/app/comms.h:112-113` has a sixth `lean_tx_t*` argument; `comms.c:94-113` calls lean step and health | Doc is one refactor behind the code. |
 | C-13 | P3 | `src/features/derived/README.md:56` says 547 speed samples in the 60 s window; `:60` says 548 | Off-by-one in prose. |
 | C-14 | P2 | `src/features/uds/README.md:233` says client is 1328 B; `:328` says 1608 B; `src/hal/README.md:55` says RX FIFO holds 9 CFs, `src/features/uds/README.md:324` says 36 | Two sizes for the same object; the transport assumptions differ by 4x. |
 | C-15 | P1 | `moto-safety-node/CLAUDE.md:7,37` describes `src/features/` modules and `tests/host/`; the repo has 11 markdown files, no `src/`, no tests, no CMake | The safety repo documents code that does not exist. README.md:7 correctly says "skeleton". |

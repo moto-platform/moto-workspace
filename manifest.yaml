@@ -46,7 +46,7 @@ repos:
 
   - name: vehicle-mcp
     url: https://github.com/vehicle-platform/vehicle-mcp.git
-    ref: main
+    ref: v0.1.0           # commit c770f23 (D-092 v0.1: seven read-only stdio history tools incl. `query_ride_history`, exact `/stats` with a `/series` fallback; no defs submodule)
 
   - name: vehicle-analyzer      # CAN analyzer, web host then Tauri desktop (D-081)
     url: https://github.com/vehicle-platform/vehicle-analyzer.git

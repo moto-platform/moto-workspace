@@ -6,7 +6,7 @@ repos: [vehicle-ml, vehicle-server, vehicle-mcp, vehicle-workspace]
 branches: [vehicle-ml:ext/opencode-ml-stage1, vehicle-server:ext/opencode-server-stats, vehicle-mcp:ext/opencode-mcp-exact-stats, vehicle-workspace:ext/opencode-long-run-2-log]
 prs: [vehicle-ml#11, vehicle-server#40, vehicle-mcp#13]
 zone: yellow
-review: pending
+review: done 2026-10-31 (no zone breach, no blocker; Claude fixed defs-sourced synthetic gear ratios and one shared server position rule; vehicle-ml#12, vehicle-server#41, vehicle-mcp#14 supersede #11/#40/#13)
 ---
 
 # DeepSeek long run 2 — vehicle-ml stage 1 and exact statistics
@@ -75,4 +75,10 @@ old-server fallback (MCP-1).
 - Review whether the name-based position filter is sufficient for the new `/stats` route.
 
 ## Claude review
-(Filled by Claude's /external-review: findings, fixes, PRs.)
+- **Zones:** vehicle-ml and vehicle-server green, vehicle-mcp yellow (reviewed here); no red path. Every commit carries the `AI-Agent:` trailer; CI green on all three PRs.
+- **Reviews:** architecture-guard (no blocker; task conformance ML-10..ML-18, SV-2, MCP-1 confirmed, no new dependencies), vss-schema-guardian (roles validated against defs v0.20.0; one finding below).
+- **vehicle-ml (#12):** the synthetic gear ratios in `tests/physics_synthetic.py` were hand-written (3.0 .. 0.95) and disagreed with the defs constants `gear_ratio_1..6` (3.416 .. 1.038); gear 6 never appeared. Claude reads them from `vehicle_defs.vehicle_constants` with six speed bands. Recorded, not fixed: per-modality attribution is the arg-max of the firing detector, not a signal group (CLAUDE.md rule 3 only partly met); `RPM_PROXY_MAX = 6000` is a documented cooling proxy; one synthetic seed.
+- **vehicle-server (#41):** the new name filter disagreed with the MDF4 export's (`gps_altitude_m`, `hmsl`, `ecef` passed; the export dropped defs' barometric `derived.altitude_change`). Claude moved one rule to `src/vehicle_server/position.py` (yellow by the `*position*` glob), applied once in `series.load_all` for `/series` and `/stats` and used by the MDF4 export; a test asserts no defs series name is hidden. `CLAUDE.md` read API lists `/stats` (the *For Claude* request).
+- **vehicle-mcp (#14):** read-only, tool list unchanged, numbers from the server; the 404 fallback is correct because the server's own 404s carry a detail. Claude updated `CLAUDE.md` (exact `/stats`, fallback) and commented the 404 rule.
+- **Answer to "is the name-based position filter sufficient":** yes for now. Positions are never stored as a series the read API loads (vehicle-server does not serve GPS position, D-076 item 3), so the filter is a second line; it is now one shared, tested rule.
+- **Merge order:** free (mcp falls back on an older server). Merging #12/#41/#14 also closes #11/#40/#13.
